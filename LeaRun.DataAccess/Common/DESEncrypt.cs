@@ -27,6 +27,7 @@ namespace LeaRun.DataAccess.Common
         public static string Encrypt(string Text)
         {
             return Encrypt(Text, "learun###***");
+
         }
         /// <summary> 
         /// 加密数据 
