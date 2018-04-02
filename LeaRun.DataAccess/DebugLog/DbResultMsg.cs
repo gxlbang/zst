@@ -24,5 +24,6 @@ namespace LeaRun.DataAccess
         /// 耗时
         /// </summary>
         public static string TimeConsuming { get; set; }
+
     }
 }
