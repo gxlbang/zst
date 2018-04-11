@@ -96,6 +96,7 @@
     <Compile Include="ProductModule\Fx_UserPVCountBll.cs" />
     <Compile Include="ProductModule\Fx_WebConfigBll.cs" />
     <Compile Include="ProductModule\OrderCountBLL.cs" />
+    <Compile Include="WebModule\Fx_WebAdvBll.cs" />
     <Compile Include="WebModule\Ho_OnePageBll.cs" />
   </ItemGroup>
   <ItemGroup>

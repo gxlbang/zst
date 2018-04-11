@@ -1,0 +1,77 @@
+@{
+    ViewBag.Title = "Fx_WebAdv》明细页面";
+    Layout = "~/Views/Shared/_LayoutForm.cshtml";
+}
+<script type="text/javascript">
+    $(function () {
+        InitControl();
+    })
+    //得到一个对象实体
+    function InitControl() {
+        if (!!GetQuery('KeyValue')) {
+            AjaxJson("/WebModule/Fx_WebAdv/SetForm", { KeyValue: GetQuery('KeyValue') }, function (data) {
+                SetWebControls(data);
+            });
+        }
+    }
+</script>
+<form id="form1" style="margin: 1px">
+    <table class="form">
+        <tr>
+            <th class='formTitle'>Number：</th>
+            <td class='formValue'>
+                <label id="Number" />
+            </td>
+            <th class='formTitle'>Title：</th>
+            <td class='formValue'>
+                <label id="Title" />
+            </td>
+            <th class='formTitle'>AdvDes：</th>
+            <td class='formValue'>
+                <label id="AdvDes" />
+            </td>
+            <th class='formTitle'>AdvImg：</th>
+            <td class='formValue'>
+                <label id="AdvImg" />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>AdvLink：</th>
+            <td class='formValue'>
+                <label id="AdvLink" />
+            </td>
+            <th class='formTitle'>CreateTime：</th>
+            <td class='formValue'>
+                <label id="CreateTime" />
+            </td>
+            <th class='formTitle'>Status：</th>
+            <td class='formValue'>
+                <label id="Status" />
+            </td>
+            <th class='formTitle'>IsDel：</th>
+            <td class='formValue'>
+                <label id="IsDel" />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>JsFile：</th>
+            <td class='formValue'>
+                <label id="JsFile" />
+            </td>
+            <th class='formTitle'>Width：</th>
+            <td class='formValue'>
+                <label id="Width" />
+            </td>
+            <th class='formTitle'>Height：</th>
+            <td class='formValue'>
+                <label id="Height" />
+            </td>
+            <th class='formTitle'>Remark：</th>
+            <td class='formValue'>
+                <label id="Remark" />
+            </td>
+        </tr>
+        <tr>
+        </tr>
+    </table>
+</form>

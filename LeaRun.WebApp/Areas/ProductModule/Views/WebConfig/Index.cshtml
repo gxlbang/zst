@@ -11,7 +11,7 @@
         $("#gridTable").jqGrid({
         url: "@Url.Content("~/ProductModule/WebConfig/GridPageJson")",
         datatype: "json",
-        height: $(window).height() - 149,
+        height: $(window).height() - 110,
         autowidth: true,
         colModel: [
                 { label: 'Ö÷¼ü', name: 'Number', index: 'Number', width: 20, align: 'left', hidden: true },
@@ -25,6 +25,7 @@
                 { label: 'AppSecret', name: 'AppSecret', index: 'AppSecret', width: 300, align: 'left' },
                 { label: '±¸×¢', name: 'Remark', index: 'Remark', width: 100, align: 'left' },
         ],
+        viewrecords: true,
         pager: "#gridPager",
         sortname: 'Number',
         sortorder: 'desc',

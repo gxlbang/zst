@@ -117,6 +117,7 @@
     <Compile Include="ProductModule\Fx_UserPVCount.cs" />
     <Compile Include="ProductModule\Fx_WebConfig.cs" />
     <Compile Include="ProductModule\OrderCountModel.cs" />
+    <Compile Include="WebModule\Fx_WebAdv.cs" />
     <Compile Include="WeiXinModeule\JSSDKModel.cs" />
     <Compile Include="WebModule\Ho_OnePage.cs" />
   </ItemGroup>
