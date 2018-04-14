@@ -150,6 +150,10 @@
     <Compile Include="01 Extension\ManagerPermissionAttribute.cs" />
     <Compile Include="01 Extension\WeixinExecutor.cs" />
     <Compile Include="App_Start\WeixinConfig.cs" />
+    <Compile Include="Areas\AmmeterModule\AmmeterModuleAreaRegistration.cs" />
+    <Compile Include="Areas\AmmeterModule\Controllers\Am_AmmeterController.cs" />
+    <Compile Include="Areas\AmmeterModule\Controllers\Am_AmmeterMoneyController.cs" />
+    <Compile Include="Areas\AmmeterModule\Controllers\Am_UserRoleController.cs" />
     <Compile Include="Areas\HouseModule\Controllers\Am_AmmeterTypeController.cs" />
     <Compile Include="Areas\HouseModule\Controllers\Ho_AssistantController.cs" />
     <Compile Include="Areas\HouseModule\Controllers\Ho_CityInfoController.cs" />
@@ -157,7 +161,7 @@
     <Compile Include="Areas\HouseModule\Controllers\Ho_HouseInfoController.cs" />
     <Compile Include="Areas\HouseModule\Controllers\Ho_MyHouseInfoController.cs" />
     <Compile Include="Areas\HouseModule\Controllers\Ho_MySubscribeController.cs" />
-    <Compile Include="Areas\HouseModule\Controllers\Ho_PartnerUserController.cs" />
+    <Compile Include="Areas\AmmeterModule\Controllers\Ho_PartnerUserController.cs" />
     <Compile Include="Areas\HouseModule\Controllers\Ho_SetSubscribeController.cs" />
     <Compile Include="Areas\HouseModule\HouseModuleAreaRegistration.cs" />
     <Compile Include="Areas\NewsModule\Controllers\Fx_NewsClassController.cs" />
@@ -9130,9 +9134,9 @@
     <Content Include="Areas\HouseModule\Views\Ho_CityInfo\Detail.cshtml" />
     <Content Include="Areas\HouseModule\Views\Ho_CityInfo\Form.cshtml" />
     <Content Include="Areas\HouseModule\Views\Ho_CityInfo\Index.cshtml" />
-    <Content Include="Areas\HouseModule\Views\Ho_PartnerUser\Detail.cshtml" />
-    <Content Include="Areas\HouseModule\Views\Ho_PartnerUser\Form.cshtml" />
-    <Content Include="Areas\HouseModule\Views\Ho_PartnerUser\Index.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Ho_PartnerUser\Detail.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Ho_PartnerUser\Form.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Ho_PartnerUser\Index.cshtml" />
     <Content Include="Areas\HouseModule\Views\Ho_MySubscribe\Detail.cshtml" />
     <Content Include="Areas\HouseModule\Views\Ho_MySubscribe\Form.cshtml" />
     <Content Include="Areas\HouseModule\Views\Ho_MySubscribe\Index.cshtml" />
@@ -9146,6 +9150,16 @@
     <Content Include="Areas\HouseModule\Views\Am_AmmeterType\Detail.cshtml" />
     <Content Include="Areas\HouseModule\Views\Am_AmmeterType\Form.cshtml" />
     <Content Include="Areas\HouseModule\Views\Am_AmmeterType\Index.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Web.config" />
+    <Content Include="Areas\AmmeterModule\Views\Am_UserRole\Detail.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_UserRole\Form.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_UserRole\Index.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_Ammeter\Detail.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_Ammeter\Form.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_Ammeter\Index.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_AmmeterMoney\Detail.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_AmmeterMoney\Form.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_AmmeterMoney\Index.cshtml" />
     <None Include="Properties\PublishProfiles\House.pubxml" />
     <Content Include="Views\Home\SkinIndex.cshtml" />
     <Content Include="Views\Login\Default.cshtml" />
@@ -9475,6 +9489,8 @@
     <Content Include="Areas\ExampleModule\Views\Print\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Areas\AmmeterModule\Models\" />
+    <Folder Include="Areas\AmmeterModule\Views\Shared\" />
     <Folder Include="Areas\HouseModule\Models\" />
     <Folder Include="Areas\HouseModule\Views\Shared\" />
     <Folder Include="Areas\NewsModule\Models\" />

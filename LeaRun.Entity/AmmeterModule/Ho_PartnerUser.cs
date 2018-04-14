@@ -2,7 +2,7 @@
 * 姓名:gxlbang
 * 类名:Ho_PartnerUser
 * CLR版本：
-* 创建时间:2017-12-05 11:50:47
+* 创建时间:2018-04-14 10:32:53
 * 功能描述:
 *
 * 修改历史：
@@ -21,190 +21,244 @@ using System.Text;
 namespace LeaRun.Entity
 {
     /// <summary>
-    /// 合伙人
+    /// Ho_PartnerUser
     /// <author>
     ///		<name>she</name>
-    ///		<date>2017.12.05 11:50</date>
+    ///		<date>2018.04.14 10:32</date>
     /// </author>
     /// </summary>
-    [Description("合伙人")]
-    [PrimaryKey("Number")]
+    [Description("Ho_PartnerUser")]
+    [PrimaryKey("UserRoleNumber")]
     public class Ho_PartnerUser : BaseEntity
     {
         #region 获取/设置 字段值
         /// <summary>
-        /// 主键
+        /// Number
         /// </summary>
         /// <returns></returns>
-        [DisplayName("主键")]
+        [DisplayName("Number")]
         public string Number { get; set; }
         /// <summary>
-        /// 姓名
+        /// Name
         /// </summary>
         /// <returns></returns>
-        [DisplayName("姓名")]
+        [DisplayName("Name")]
         public string Name { get; set; }
         /// <summary>
-        /// 身份证号
+        /// CardCode
         /// </summary>
         /// <returns></returns>
-        [DisplayName("身份证号")]
+        [DisplayName("CardCode")]
         public string CardCode { get; set; }
         /// <summary>
-        /// 手机号
+        /// Mobile
         /// </summary>
         /// <returns></returns>
-        [DisplayName("手机号")]
+        [DisplayName("Mobile")]
         public string Mobile { get; set; }
         /// <summary>
-        /// 微信id
+        /// OpenId
         /// </summary>
         /// <returns></returns>
-        [DisplayName("微信id")]
+        [DisplayName("OpenId")]
         public string OpenId { get; set; }
         /// <summary>
-        /// 微信帐号
+        /// WeiXin
         /// </summary>
         /// <returns></returns>
-        [DisplayName("微信帐号")]
+        [DisplayName("WeiXin")]
         public string WeiXin { get; set; }
         /// <summary>
-        /// 头像
+        /// HeadImg
         /// </summary>
         /// <returns></returns>
-        [DisplayName("头像")]
+        [DisplayName("HeadImg")]
         public string HeadImg { get; set; }
         /// <summary>
-        /// 身份证正面
+        /// CodeImg1
         /// </summary>
         /// <returns></returns>
-        [DisplayName("身份证正面")]
+        [DisplayName("CodeImg1")]
         public string CodeImg1 { get; set; }
         /// <summary>
-        /// 身份证反面
+        /// CodeImg2
         /// </summary>
         /// <returns></returns>
-        [DisplayName("身份证反面")]
+        [DisplayName("CodeImg2")]
         public string CodeImg2 { get; set; }
         /// <summary>
-        /// 手持身份证
+        /// PCardImg
         /// </summary>
         /// <returns></returns>
-        [DisplayName("手持身份证")]
+        [DisplayName("PCardImg")]
         public string PCardImg { get; set; }
         /// <summary>
-        /// 创建时间
+        /// CreatTime
         /// </summary>
         /// <returns></returns>
-        [DisplayName("创建时间")]
+        [DisplayName("CreatTime")]
         public DateTime? CreatTime { get; set; }
         /// <summary>
-        /// 修改时间
+        /// ModifyTime
         /// </summary>
         /// <returns></returns>
-        [DisplayName("修改时间")]
+        [DisplayName("ModifyTime")]
         public DateTime? ModifyTime { get; set; }
         /// <summary>
-        /// 审核时间
+        /// SureTime
         /// </summary>
         /// <returns></returns>
-        [DisplayName("审核时间")]
+        [DisplayName("SureTime")]
         public DateTime? SureTime { get; set; }
         /// <summary>
-        /// 审核人
+        /// SureUser
         /// </summary>
         /// <returns></returns>
-        [DisplayName("审核人")]
+        [DisplayName("SureUser")]
         public string SureUser { get; set; }
         /// <summary>
-        /// 状态
+        /// Status
         /// </summary>
         /// <returns></returns>
-        [DisplayName("状态")]
+        [DisplayName("Status")]
         public int? Status { get; set; }
         /// <summary>
-        /// 状态字符
+        /// StatusStr
         /// </summary>
         /// <returns></returns>
-        [DisplayName("状态字符")]
+        [DisplayName("StatusStr")]
         public string StatusStr { get; set; }
         /// <summary>
-        /// 帐号
+        /// Accout
         /// </summary>
         /// <returns></returns>
-        [DisplayName("帐号")]
+        [DisplayName("Accout")]
         public string Accout { get; set; }
         /// <summary>
-        /// 密码
+        /// Password
         /// </summary>
         /// <returns></returns>
-        [DisplayName("密码")]
+        [DisplayName("Password")]
         public string Password { get; set; }
         /// <summary>
-        /// 上级编号
+        /// PayPassword
         /// </summary>
         /// <returns></returns>
-        [DisplayName("上级编号")]
+        [DisplayName("PayPassword")]
+        public string PayPassword { get; set; }
+        /// <summary>
+        /// ParentNumber
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("ParentNumber")]
         public string ParentNumber { get; set; }
         /// <summary>
-        /// 上级名称
+        /// ParentName
         /// </summary>
         /// <returns></returns>
-        [DisplayName("上级名称")]
+        [DisplayName("ParentName")]
         public string ParentName { get; set; }
         /// <summary>
-        /// 性别
+        /// Sex
         /// </summary>
         /// <returns></returns>
-        [DisplayName("性别")]
+        [DisplayName("Sex")]
         public string Sex { get; set; }
         /// <summary>
-        /// 电话
+        /// Phone
         /// </summary>
         /// <returns></returns>
-        [DisplayName("电话")]
+        [DisplayName("Phone")]
         public string Phone { get; set; }
         /// <summary>
-        /// 生日
+        /// Birthday
         /// </summary>
         /// <returns></returns>
-        [DisplayName("生日")]
+        [DisplayName("Birthday")]
         public DateTime? Birthday { get; set; }
         /// <summary>
-        /// 电邮
+        /// Email
         /// </summary>
         /// <returns></returns>
-        [DisplayName("电邮")]
+        [DisplayName("Email")]
         public string Email { get; set; }
         /// <summary>
-        /// 编号
+        /// InnerCode
         /// </summary>
         /// <returns></returns>
-        [DisplayName("编号")]
+        [DisplayName("InnerCode")]
         public string InnerCode { get; set; }
         /// <summary>
-        /// 用户层级
+        /// Sign
         /// </summary>
         /// <returns></returns>
-        [DisplayName("用户层级")]
+        [DisplayName("Sign")]
         public string Sign { get; set; }
         /// <summary>
-        /// 助理编号
+        /// As_Number
         /// </summary>
         /// <returns></returns>
-        [DisplayName("助理编号")]
+        [DisplayName("As_Number")]
         public string As_Number { get; set; }
         /// <summary>
-        /// 助理名字
+        /// As_Name
         /// </summary>
         /// <returns></returns>
-        [DisplayName("助理名字")]
+        [DisplayName("As_Name")]
         public string As_Name { get; set; }
         /// <summary>
-        /// 备注
+        /// Money
         /// </summary>
         /// <returns></returns>
-        [DisplayName("备注")]
+        [DisplayName("Money")]
+        public double? Money { get; set; }
+        /// <summary>
+        /// FreezeMoney
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("FreezeMoney")]
+        public double? FreezeMoney { get; set; }
+        /// <summary>
+        /// Province
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("Province")]
+        public string Province { get; set; }
+        /// <summary>
+        /// City
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("City")]
+        public string City { get; set; }
+        /// <summary>
+        /// County
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("County")]
+        public string County { get; set; }
+        /// <summary>
+        /// Address
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("Address")]
+        public string Address { get; set; }
+        /// <summary>
+        /// UserRoleNumber
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("UserRoleNumber")]
+        public string UserRoleNumber { get; set; }
+        /// <summary>
+        /// UserRole
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("UserRole")]
+        public string UserRole { get; set; }
+        /// <summary>
+        /// Remark
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("Remark")]
         public string Remark { get; set; }
         #endregion
 
@@ -214,13 +268,7 @@ namespace LeaRun.Entity
         /// </summary>
         public override void Create()
         {
-            this.CreatTime = DateTime.Now;
-            this.InnerCode = "0";
-            this.ModifyTime = DateTime.Now;
-            this.Status = 0;
-            this.StatusStr = "游客";
-            this.SureTime = DateTime.Now;
-            this.Number = CommonHelper.GetGuid;
+            this.UserRoleNumber = CommonHelper.GetGuid;
                                             }
         /// <summary>
         /// 编辑调用
@@ -228,8 +276,7 @@ namespace LeaRun.Entity
         /// <param name="KeyValue"></param>
         public override void Modify(string KeyValue)
         {
-            this.ModifyTime = DateTime.Now;
-            this.Number = KeyValue;
+            this.UserRoleNumber = KeyValue;
                                             }
         #endregion
     }
