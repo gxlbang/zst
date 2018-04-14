@@ -113,7 +113,9 @@ namespace LeaRun.Entity
         public override void Create()
         {
             this.Number = CommonHelper.GetGuid;
-                                            }
+            this.CreateTime = DateTime.Now;
+            this.IsDel = 0;
+        }
         /// <summary>
         /// ±à¼­µ÷ÓÃ
         /// </summary>
@@ -121,7 +123,7 @@ namespace LeaRun.Entity
         public override void Modify(string KeyValue)
         {
             this.Number = KeyValue;
-                                            }
+        }
         #endregion
     }
 }

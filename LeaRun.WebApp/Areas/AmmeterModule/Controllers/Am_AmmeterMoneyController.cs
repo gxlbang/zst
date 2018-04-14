@@ -1,8 +1,8 @@
 /*
 * 姓名:gxlbang
-* 类名:Am_AmmeterType
+* 类名:Am_AmmeterMoney
 * CLR版本：
-* 创建时间:2018-04-11 17:19:30
+* 创建时间:2018-04-14 10:54:41
 * 功能描述:
 *
 * 修改历史：
@@ -22,12 +22,12 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace LeaRun.WebApp.Areas.HouseModule.Controllers
+namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
 {
     /// <summary>
-    /// Am_AmmeterType控制器
+    /// Am_AmmeterMoney控制器
     /// </summary>
-    public class Am_AmmeterTypeController : PublicController<Am_AmmeterType>
+    public class Am_AmmeterMoneyController : PublicController<Am_AmmeterMoney>
     {
     }
 }

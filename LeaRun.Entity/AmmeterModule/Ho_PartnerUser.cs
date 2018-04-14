@@ -269,7 +269,12 @@ namespace LeaRun.Entity
         public override void Create()
         {
             this.UserRoleNumber = CommonHelper.GetGuid;
-                                            }
+            this.Birthday = DateTime.Now;
+            this.CreatTime = DateTime.Now;
+            this.FreezeMoney = 0;
+            this.ModifyTime = DateTime.Now;
+            this.Status = 0;
+        }
         /// <summary>
         /// ±à¼­µ÷ÓÃ
         /// </summary>
@@ -277,7 +282,8 @@ namespace LeaRun.Entity
         public override void Modify(string KeyValue)
         {
             this.UserRoleNumber = KeyValue;
-                                            }
+            this.ModifyTime = DateTime.Now;
+        }
         #endregion
     }
 }

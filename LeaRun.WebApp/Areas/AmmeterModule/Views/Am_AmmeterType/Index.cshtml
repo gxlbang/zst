@@ -9,7 +9,7 @@
     //加载表格
     function GetGrid() {
         $("#gridTable").jqGrid({
-            url: "@Url.Content("~/HouseModule/Am_AmmeterType/GridPageJson")",
+            url: "@Url.Content("~/AmmeterModule/Am_AmmeterType/GridPageJson")",
             datatype: "json",
             height: $(window).height() - 149,
             autowidth: true,
@@ -37,7 +37,7 @@
     }
     //新增
     function btn_add() {
-        var url = "/HouseModule/Am_AmmeterType/Form"
+        var url = "/AmmeterModule/Am_AmmeterType/Form"
         openDialog(url, "Form", "新增电表类型", 770, 395, function (iframe) {
             top.frames[iframe].AcceptClick()
         });
@@ -46,7 +46,7 @@
     function btn_edit() {
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsChecked(KeyValue)) {
-            var url = "/HouseModule/Am_AmmeterType/Form?KeyValue=" + KeyValue;
+            var url = "/AmmeterModule/Am_AmmeterType/Form?KeyValue=" + KeyValue;
             openDialog(url, "Form", "编辑电表类型", 770, 395, function (iframe) {
                 top.frames[iframe].AcceptClick();
             });
@@ -57,14 +57,14 @@
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsDelData(KeyValue)) {
             var delparm = 'KeyValue=' + KeyValue;
-            delConfig('/HouseModule/Am_AmmeterType/Delete', delparm, KeyValue.split(",").length);
+            delConfig('/AmmeterModule/Am_AmmeterType/Delete', delparm, KeyValue.split(",").length);
         }
     }
     //明细
     function btn_detail() {
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsChecked(KeyValue)) {
-            var url = "/HouseModule/Am_AmmeterType/Detail?KeyValue=" + KeyValue;
+            var url = "/AmmeterModule/Am_AmmeterType/Detail?KeyValue=" + KeyValue;
             Dialog(url, "Detail", "电表类型明细", 820, 500, function (iframe) {
                 top.frames[iframe].AcceptClick();
             });
@@ -79,7 +79,7 @@
     function btn_Search() {
         var keywords = $("#keywords").val();
         $("#gridTable").jqGrid('setGridParam', {
-            url: "@Url.Content("~/HouseModule/Am_AmmeterType/GridPageListJson")?Keyword=" + keywords, page: 1
+            url: "@Url.Content("~/AmmeterModule/Am_AmmeterType/GridPageListJson")?Keyword=" + keywords, page: 1
         }).trigger('reloadGrid');
     }
 </script>

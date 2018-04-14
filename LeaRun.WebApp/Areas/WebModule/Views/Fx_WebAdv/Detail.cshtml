@@ -11,6 +11,7 @@
         if (!!GetQuery('KeyValue')) {
             AjaxJson("/WebModule/Fx_WebAdv/SetForm", { KeyValue: GetQuery('KeyValue') }, function (data) {
                 SetWebControls(data);
+                $("#pimg").attr("src", data.AdvImg);
             });
         }
     }
@@ -18,60 +19,67 @@
 <form id="form1" style="margin: 1px">
     <table class="form">
         <tr>
-            <th class='formTitle'>Number：</th>
+            <th class='formTitle'>广告标题：</th>
             <td class='formValue'>
-                <label id="Number" />
+                <input id="Title" maxlength=128 type="text" class="txt" />
             </td>
-            <th class='formTitle'>Title：</th>
-            <td class='formValue'>
-                <label id="Title" />
-            </td>
-            <th class='formTitle'>AdvDes：</th>
-            <td class='formValue'>
-                <label id="AdvDes" />
-            </td>
-            <th class='formTitle'>AdvImg：</th>
-            <td class='formValue'>
-                <label id="AdvImg" />
+            <th width="10"></th>
+            <td class='formValue' rowspan="5">
+                <img src="~/Content/Images/noimg.gif" id="pimg" width="150" height="150" />
             </td>
         </tr>
         <tr>
-            <th class='formTitle'>AdvLink：</th>
+            <th class='formTitle'>广告描述：</th>
             <td class='formValue'>
-                <label id="AdvLink" />
-            </td>
-            <th class='formTitle'>CreateTime：</th>
-            <td class='formValue'>
-                <label id="CreateTime" />
-            </td>
-            <th class='formTitle'>Status：</th>
-            <td class='formValue'>
-                <label id="Status" />
-            </td>
-            <th class='formTitle'>IsDel：</th>
-            <td class='formValue'>
-                <label id="IsDel" />
+                <input id="AdvDes" maxlength=256 type="text" class="txt" />
             </td>
         </tr>
         <tr>
-            <th class='formTitle'>JsFile：</th>
+            <th class='formTitle'>广告链接：</th>
             <td class='formValue'>
-                <label id="JsFile" />
-            </td>
-            <th class='formTitle'>Width：</th>
-            <td class='formValue'>
-                <label id="Width" />
-            </td>
-            <th class='formTitle'>Height：</th>
-            <td class='formValue'>
-                <label id="Height" />
-            </td>
-            <th class='formTitle'>Remark：</th>
-            <td class='formValue'>
-                <label id="Remark" />
+                <input id="AdvLink" maxlength=256 type="text" class="txt" />
             </td>
         </tr>
         <tr>
+            <th class='formTitle'>广告图片：</th>
+            <td class='formValue'>
+                <input id="AdvImg" type="hidden" />
+            </td>
         </tr>
+
+        <tr>
+            <th class='formTitle'>广告状态：</th>
+            <td class='formValue'>
+                <select id="Status" class="txtselect">
+                    <option value="1">正常</option>
+                    <option value="0">禁用</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>Js文件：</th>
+            <td class='formValue' colspan="3">
+                <input id="JsFile" maxlength=128 type="text" class="txt" />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>广告宽度：</th>
+            <td class='formValue' colspan="3">
+                <input id="Width" maxlength=5 type="text" class="txt" />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>广告高度：</th>
+            <td class='formValue' colspan="3">
+                <input id="Height" maxlength=5 type="text" class="txt" />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>备注：</th>
+            <td class='formValue' colspan="3">
+                <textarea id="Remark" name="Remark" maxlength="600" class="txtArea" rows="9"></textarea>
+            </td>
+        </tr>
+        <tr></tr>
     </table>
 </form>

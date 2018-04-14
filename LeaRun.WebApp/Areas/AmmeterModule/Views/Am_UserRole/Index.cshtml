@@ -14,10 +14,10 @@
         height: $(window).height() - 149,
         autowidth: true,
         colModel: [
-                { label: 'Number', name: 'Number', index: 'Number', width: 0, align: 'left',sortable: true  },
-                { label: 'RoleName', name: 'RoleName', index: 'RoleName', width: 0, align: 'left',sortable: true  },
-                { label: 'RoleMark', name: 'RoleMark', index: 'RoleMark', width: 0, align: 'left',sortable: true  },
-                { label: 'Remark', name: 'Remark', index: 'Remark', width: 0, align: 'left',sortable: true  },
+                { label: 'Number', name: 'Number', index: 'Number', width: 0, align: 'left', hidden: true },
+                { label: '角色名称', name: 'RoleName', index: 'RoleName', width: 200, align: 'left'  },
+                { label: '角色说明', name: 'RoleMark', index: 'RoleMark', width: 400, align: 'left' },
+                { label: '备注', name: 'Remark', index: 'Remark', width: 400, align: 'left'  },
         ],
         pager: "#gridPager",
         sortname: '',
@@ -30,7 +30,7 @@
     //新增
     function btn_add() {
         var url = "/AmmeterModule/Am_UserRole/Form"
-        openDialog(url, "Form", "新增Am_UserRole", 770, 395, function (iframe) {
+        openDialog(url, "Form", "角色新增", 580, 270, function (iframe) {
             top.frames[iframe].AcceptClick()
         });
     }
@@ -39,7 +39,7 @@
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsChecked(KeyValue)) {
             var url = "/AmmeterModule/Am_UserRole/Form?KeyValue=" + KeyValue;
-            openDialog(url, "Form", "编辑Am_UserRole", 770, 395, function (iframe) {
+            openDialog(url, "Form", "角色编辑", 580, 270, function (iframe) {
                 top.frames[iframe].AcceptClick();
             });
         }
@@ -57,7 +57,7 @@
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsChecked(KeyValue)) {
             var url = "/AmmeterModule/Am_UserRole/Detail?KeyValue=" + KeyValue;
-            Dialog(url, "Detail", "Am_UserRole明细", 820, 500, function (iframe) {
+            Dialog(url, "Detail", "角色明细", 580, 270, function (iframe) {
                 top.frames[iframe].AcceptClick();
             });
         }
@@ -65,7 +65,14 @@
     //刷新
     function windowload() {
         $("#gridTable").trigger("reloadGrid"); //重新载入
-        
+
+    }
+    //搜索
+    function btn_Search() {
+        var keywords = $("#keywords").val();
+        $("#gridTable").jqGrid('setGridParam', {
+            url: "@Url.Content("~/AmmeterModule/Am_UserRole/GridPageListJson")?Keyword=" + keywords, page: 1
+    }).trigger('reloadGrid');
     }
 </script>
 <!--工具栏-->

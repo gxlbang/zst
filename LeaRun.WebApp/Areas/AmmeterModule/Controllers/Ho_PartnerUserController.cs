@@ -26,7 +26,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace LeaRun.WebApp.Areas.HouseModule.Controllers
+namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
 {
     /// <summary>
     /// 合伙人控制器
@@ -37,13 +37,14 @@ namespace LeaRun.WebApp.Areas.HouseModule.Controllers
         /// 搜索
         /// </summary>
         /// <returns></returns>
-        public ActionResult GridPageListJson(JqGridParam jqgridparam, string keyword)
+        public ActionResult GridPageListJson(JqGridParam jqgridparam, string StartTime, string EndTime,
+            string Keyword, string Stuts)
         {
             try
             {
                 Stopwatch watch = CommonHelper.TimerStart();
                 Ho_PartnerUserBll bll = new Ho_PartnerUserBll();
-                var ListData = bll.GetPageList(ref jqgridparam, keyword);
+                var ListData = bll.GetPageList(ref jqgridparam, Keyword, StartTime, EndTime, Stuts);
                 var JsonData = new
                 {
                     total = jqgridparam.total,
@@ -128,14 +129,14 @@ namespace LeaRun.WebApp.Areas.HouseModule.Controllers
             {
                 string Message = KeyValue == "" ? "新增成功。" : "编辑成功。";
                 var result = "禁用";
-                if (!string.IsNullOrEmpty(KeyValue))
+                if (!string.IsNullOrEmpty(KeyValue))//编辑
                 {
                     var oldmodel = database.FindEntity<Ho_PartnerUser>(KeyValue);
                     oldmodel.Status = 9;
                     oldmodel.StatusStr = "黑名单";
                     oldmodel.Modify(KeyValue);
                     var IsOk = database.Update(oldmodel, isOpenTrans);
-                    Base_SysLogBll.Instance.WriteLog(KeyValue, OperationType.Update, IsOk > 0 ? "成功" : "失败", "合伙人" + result);
+                    Base_SysLogBll.Instance.WriteLog(KeyValue, OperationType.Update, IsOk > 0 ? "成功" : "失败", "用户" + result);
                 }
                 database.Commit();
                 return Content(new JsonMessage { Success = true, Code = "1", Message = Message }.ToString());
@@ -153,13 +154,13 @@ namespace LeaRun.WebApp.Areas.HouseModule.Controllers
             switch (struts)
             {
                 case 0:
-                    return "游客";
+                    return "新注册";
                 case 1:
-                    return "待审核";
+                    return "已提交";
                 case 2:
-                    return "未认证";
+                    return "不通过";
                 case 3:
-                    return "已认证";
+                    return "已审核";
                 case 9:
                     return "黑名单";
                 default:

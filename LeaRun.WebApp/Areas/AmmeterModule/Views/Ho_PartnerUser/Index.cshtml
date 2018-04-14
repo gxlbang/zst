@@ -9,38 +9,31 @@
     //加载表格
     function GetGrid() {
         $("#gridTable").jqGrid({
-        url: "@Url.Content("~/HouseModule/Ho_PartnerUser/GridPageJson")",
+        url: "@Url.Content("~/AmmeterModule/Ho_PartnerUser/GridPageJson")",
         datatype: "json",
         height: $(window).height() - 149,
         autowidth: true,
         colModel: [
                 { label: '主键', name: 'Number', index: 'Number', width: 0, align: 'left', hidden: true },
-                { label: '上级编号', name: 'ParentNumber', index: 'ParentNumber', width: 0, align: 'left', hidden: true },
-                 {
-                     label: '主图', name: 'HeadImg', index: 'HeadImg', width: 60, align: 'left',
-                     formatter: function (cellvalue, options, rowObject) {
-                         if (cellvalue) {
-                             return "<div style='padding:1px;'><img src='" + cellvalue + "' width='48' height='48' /></div>";
-                         } else {
-                             return "<div style='padding:1px;'><img src='/Content/Images/noimg.gif' width='48' height='48'/></div>";
-                         }
-                     }
-                 },
-                { label: '姓名', name: 'Name', index: 'Name', width: 100, align: 'left'  },
+                //{ label: '省', name: 'Province', index: 'Province', width: 60, align: 'left' },
+                //{ label: '市', name: 'City', index: 'City', width: 60, align: 'left' },
+                //{ label: '区', name: 'County', index: 'County', width: 60, align: 'left' },
+                { label: '姓名', name: 'Name', index: 'Name', width: 60, align: 'left'  },
                 { label: '身份证号', name: 'CardCode', index: 'CardCode', width: 180, align: 'left' },
-                { label: '手机号', name: 'Mobile', index: 'Mobile', width: 150, align: 'left'  },
-                { label: '微信帐号', name: 'WeiXin', index: 'WeiXin', width: 150, align: 'left'  },
+                { label: '手机号', name: 'Mobile', index: 'Mobile', width: 120, align: 'left' },
+                { label: '角色', name: 'UserRole', index: 'UserRole', width: 100, align: 'left' },
+                { label: '余额', name: 'Money', index: 'Money', width: 100, align: 'left' },
+                { label: '地址', name: 'Address', index: 'Address', width: 250, align: 'left' },
                 {
                     label: "创建时间", name: "CreatTime", index: "CreatTime", width: 150,
                     formatter: function (value, options, rowObject) {
                         return formatDate(value, 'yyyy-MM-dd hh:mm:ss');
                     }
                 },
-                { label: '状态字符', name: 'StatusStr', index: 'StatusStr', width: 80, align: 'left'  },
-                { label: '上级名称', name: 'ParentName', index: 'ParentName', width: 100, align: 'left' },
-                { label: '私人助理', name: 'As_Name', index: 'As_Name', width: 100, align: 'left' },
+                { label: '状态字符', name: 'StatusStr', index: 'StatusStr', width: 60, align: 'left'  },
                 { label: '备注', name: 'Remark', index: 'Remark', width: 250, align: 'left'  },
         ],
+        viewrecords: true,
         pager: "#gridPager",
         sortname: 'CreatTime',
         sortorder: 'desc',
@@ -53,7 +46,7 @@
     function btn_edit() {
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsChecked(KeyValue)) {
-            var url = "/HouseModule/Ho_PartnerUser/Form?KeyValue=" + KeyValue;
+            var url = "/AmmeterModule/Ho_PartnerUser/Form?KeyValue=" + KeyValue;
             openDialog(url, "Form", "编辑合伙人", 800, 460, function (iframe) {
                 top.frames[iframe].AcceptClick();
             });
@@ -64,14 +57,14 @@
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsDelData(KeyValue)) {
             var delparm = 'KeyValue=' + KeyValue;
-            delConfig('/HouseModule/Ho_PartnerUser/Delete', delparm, KeyValue.split(",").length);
+            delConfig('/AmmeterModule/Ho_PartnerUser/Delete', delparm, KeyValue.split(",").length);
         }
     }
     //明细
     function btn_detail() {
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsChecked(KeyValue)) {
-            var url = "/HouseModule/Ho_PartnerUser/Detail?KeyValue=" + KeyValue;
+            var url = "/AmmeterModule/Ho_PartnerUser/Detail?KeyValue=" + KeyValue;
             Dialog(url, "Detail", "合伙人明细", 800, 460, function (iframe) {
                 top.frames[iframe].AcceptClick();
             });
@@ -80,13 +73,16 @@
     //刷新
     function windowload() {
         $("#gridTable").trigger("reloadGrid"); //重新载入
-        
+
     }
     //搜索
     function btn_Search() {
         var keywords = $("#keywords").val();
+        var Stuts = $("#Stuts").val();
+        var StartTime = $("#StartTime").val();
+        var EndTime = $("#EndTime").val();
         $("#gridTable").jqGrid('setGridParam', {
-            url: "@Url.Content("~/HouseModule/Ho_PartnerUser/GridPageListJson")?Keyword=" + keywords, page: 1
+            url: "@Url.Content("~/AmmeterModule/Ho_PartnerUser/GridPageListJson")?StartTime=" + StartTime + '&EndTime=' + EndTime + '&Keyword=' + keywords + '&Stuts=' + Stuts, page: 1
     }).trigger('reloadGrid');
     }
     //禁用
@@ -94,7 +90,7 @@
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsDelData(KeyValue)) {
             var delparm = 'KeyValue=' + KeyValue;
-            OpConfig('/HouseModule/Ho_PartnerUser/DisableUser', delparm, "确定要禁用此合伙人么?");
+            OpConfig('/AmmeterModule/Ho_PartnerUser/DisableUser', delparm, "确定要禁用此用户么?");
         }
     }
 </script>
@@ -109,7 +105,28 @@
         <tr>
             <th>关键字：</th>
             <td>
-                <input id="keywords" type="text" class="txt" style="width: 200px" />
+                <input id="keywords" type="text" class="txt" style="width: 150px" />
+            </td>
+
+            <th>角色：</th>
+            <td>
+                <select id="Stuts" class="txtselect" style="width: 100px">
+                    <option value="">请选择</option>
+                    <option value="0">普通会员</option>
+                    <option value="2">运营商</option>
+                    <option value="1">维修师傅</option>
+                </select>
+            </td>
+            <th>状态：</th>
+            <td>
+                <select id="Stuts" class="txtselect" style="width: 100px">
+                    <option value="">请选择</option>
+                    <option value="0">新注册</option>
+                    <option value="1">已提交</option>
+                    <option value="2">不通过</option>
+                    <option value="3">已审核</option>
+                    <option value="9">黑名单</option>
+                </select>
             </td>
             <td>
                 <input id="btnSearch" type="button" class="btnSearch" value="搜 索" onclick="btn_Search()" />
