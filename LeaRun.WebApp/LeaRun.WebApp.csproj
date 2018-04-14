@@ -195,8 +195,10 @@
     <Compile Include="CommonClass\WebData.cs" />
     <Compile Include="CommonClass\WeixinConfig.cs" />
     <Compile Include="CommonClass\WeixinHelper.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\WeixinController.cs" />
     <Compile Include="Controllers\WXPayController.cs" />
+    <Compile Include="Extensions\PasswordHash.cs" />
     <Compile Include="Services\AuthorizationManager.cs" />
     <Compile Include="UploadweixinImgHandler.ashx.cs">
       <DependentUpon>UploadweixinImgHandler.ashx</DependentUpon>
@@ -279,6 +281,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewsModel\Account\Register.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\ExampleModule\Views\Order\ItemJson.txt" />
@@ -8262,6 +8265,8 @@
     <Content Include="Content\Scripts\kindeditor-4.1.3\themes\qq\editor.gif" />
     <Content Include="Content\Scripts\kindeditor-4.1.3\themes\qq\qq.css" />
     <Content Include="Content\Scripts\kindeditor-4.1.3\themes\simple\simple.css" />
+    <Content Include="Content\Scripts\layer.mobile-v2.0\layer_mobile\layer.js" />
+    <Content Include="Content\Scripts\layer.mobile-v2.0\layer_mobile\need\layer.css" />
     <Content Include="Content\Scripts\layer\extend\layer.ext.js" />
     <Content Include="Content\Scripts\layer\layer.js" />
     <Content Include="Content\Scripts\layer\skin\default\icon-ext.png" />
@@ -9189,6 +9194,8 @@
     <Content Include="Views\Ui\Industry - 复制.cshtml" />
     <Content Include="Views\Ui\MyPartner.cshtml" />
     <Content Include="Views\Ui\ht.cshtml" />
+    <Content Include="Views\Account\Register.cshtml" />
+    <Content Include="Views\Shared\_Partial.cshtml" />
     <None Include="Views\Utility\PrintPage.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

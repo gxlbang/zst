@@ -151,9 +151,11 @@
     </div>
 </div>
 <div class="popover2"></div>
-@{  ViewDataDictionary vdd = new ViewDataDictionary();
+@{  
+    ViewDataDictionary vdd = new ViewDataDictionary();
     vdd.Add("ind", "3");
-    Html.RenderPartial("UIDown", vdd); }
+    Html.RenderPartial("UIDown", vdd);
+ }
 
 <script type="text/javascript">
     jQuery(document).ready(function ($) {
