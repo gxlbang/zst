@@ -104,6 +104,7 @@
     <Compile Include="Base.Extension\ManageProvider.cs" />
     <Compile Include="Base.Web\ToState.cs" />
     <Compile Include="Base.Xml\XMLHelper.cs" />
+    <Compile Include="Extensions\PasswordHash.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
