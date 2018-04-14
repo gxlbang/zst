@@ -154,7 +154,7 @@
     <Compile Include="Areas\AmmeterModule\Controllers\Am_AmmeterController.cs" />
     <Compile Include="Areas\AmmeterModule\Controllers\Am_AmmeterMoneyController.cs" />
     <Compile Include="Areas\AmmeterModule\Controllers\Am_UserRoleController.cs" />
-    <Compile Include="Areas\HouseModule\Controllers\Am_AmmeterTypeController.cs" />
+    <Compile Include="Areas\AmmeterModule\Controllers\Am_AmmeterTypeController.cs" />
     <Compile Include="Areas\HouseModule\Controllers\Ho_AssistantController.cs" />
     <Compile Include="Areas\HouseModule\Controllers\Ho_CityInfoController.cs" />
     <Compile Include="Areas\HouseModule\Controllers\Ho_HouseImageController.cs" />
@@ -9153,9 +9153,9 @@
     <Content Include="Areas\WebModule\Views\Fx_WebAdv\Detail.cshtml" />
     <Content Include="Areas\WebModule\Views\Fx_WebAdv\Form.cshtml" />
     <Content Include="Areas\WebModule\Views\Fx_WebAdv\Index.cshtml" />
-    <Content Include="Areas\HouseModule\Views\Am_AmmeterType\Detail.cshtml" />
-    <Content Include="Areas\HouseModule\Views\Am_AmmeterType\Form.cshtml" />
-    <Content Include="Areas\HouseModule\Views\Am_AmmeterType\Index.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_AmmeterType\Detail.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_AmmeterType\Form.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_AmmeterType\Index.cshtml" />
     <Content Include="Areas\AmmeterModule\Views\Web.config" />
     <Content Include="Areas\AmmeterModule\Views\Am_UserRole\Detail.cshtml" />
     <Content Include="Areas\AmmeterModule\Views\Am_UserRole\Form.cshtml" />

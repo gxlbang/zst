@@ -14,18 +14,39 @@
         height: $(window).height() - 149,
         autowidth: true,
         colModel: [
-                { label: 'Number', name: 'Number', index: 'Number', width: 0, align: 'left',sortable: true  },
-                { label: 'Title', name: 'Title', index: 'Title', width: 0, align: 'left',sortable: true  },
-                { label: 'AdvDes', name: 'AdvDes', index: 'AdvDes', width: 0, align: 'left',sortable: true  },
-                { label: 'AdvImg', name: 'AdvImg', index: 'AdvImg', width: 0, align: 'left',sortable: true  },
-                { label: 'AdvLink', name: 'AdvLink', index: 'AdvLink', width: 0, align: 'left',sortable: true  },
-                { label: 'CreateTime', name: 'CreateTime', index: 'CreateTime', width: 0, align: 'left',sortable: true  },
-                { label: 'Status', name: 'Status', index: 'Status', width: 0, align: 'left',sortable: true  },
-                { label: 'IsDel', name: 'IsDel', index: 'IsDel', width: 0, align: 'left',sortable: true  },
-                { label: 'JsFile', name: 'JsFile', index: 'JsFile', width: 0, align: 'left',sortable: true  },
-                { label: 'Width', name: 'Width', index: 'Width', width: 0, align: 'left',sortable: true  },
-                { label: 'Height', name: 'Height', index: 'Height', width: 0, align: 'left',sortable: true  },
-                { label: 'Remark', name: 'Remark', index: 'Remark', width: 0, align: 'left',sortable: true  },
+                { label: 'Number', name: 'Number', index: 'Number', width: 0, align: 'left', hidden: true },
+                {
+                    label: '广告图片', name: 'AdvImg', index: 'AdvImg', width: 60, align: 'left',
+                    formatter: function (cellvalue, options, rowObject) {
+                        if (cellvalue) {
+                            return "<div style='padding:1px;'><img src='" + cellvalue + "' width='48' height='48' /></div>";
+                        } else {
+                            return "<div style='padding:1px;'><img src='/Content/Images/noimg.gif' width='48' height='48'/></div>";
+                        }
+                    }
+                },
+                { label: '标题', name: 'Title', index: 'Title', width: 150, align: 'left'  },
+                { label: '描述', name: 'AdvDes', index: 'AdvDes', width: 240, align: 'left'  },
+                { label: '链接', name: 'AdvLink', index: 'AdvLink', width: 240, align: 'left'  },
+                {
+                    label: "创建时间", name: "CreateTime", index: "CreateTime", width: 150,
+                    formatter: function (value, options, rowObject) {
+                        return formatDate(value, 'yyyy-MM-dd hh:mm:ss');
+                    }
+                },
+                {
+                    label: "状态", name: "Status", index: "Status", width: 80,
+                    formatter: function (value, options, rowObject) {
+                        if (value == "1") {
+                            return "正常";
+                        } else {
+                            return "禁用";
+                        }
+                    }
+                },
+                { label: '宽度', name: 'Width', index: 'Width', width: 80, align: 'left',sortable: true  },
+                { label: '高度', name: 'Height', index: 'Height', width: 80, align: 'left',sortable: true  },
+                { label: '备注', name: 'Remark', index: 'Remark', width: 150, align: 'left',sortable: true  },
         ],
         pager: "#gridPager",
         sortname: '',
@@ -38,7 +59,7 @@
     //新增
     function btn_add() {
         var url = "/WebModule/Fx_WebAdv/Form"
-        openDialog(url, "Form", "新增Fx_WebAdv", 770, 395, function (iframe) {
+        openDialog(url, "Form", "新增广告", 770, 395, function (iframe) {
             top.frames[iframe].AcceptClick()
         });
     }
@@ -47,7 +68,7 @@
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsChecked(KeyValue)) {
             var url = "/WebModule/Fx_WebAdv/Form?KeyValue=" + KeyValue;
-            openDialog(url, "Form", "编辑Fx_WebAdv", 770, 395, function (iframe) {
+            openDialog(url, "Form", "编辑广告", 770, 395, function (iframe) {
                 top.frames[iframe].AcceptClick();
             });
         }
@@ -65,7 +86,7 @@
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsChecked(KeyValue)) {
             var url = "/WebModule/Fx_WebAdv/Detail?KeyValue=" + KeyValue;
-            Dialog(url, "Detail", "Fx_WebAdv明细", 820, 500, function (iframe) {
+            Dialog(url, "Detail", "广告明细", 770, 395, function (iframe) {
                 top.frames[iframe].AcceptClick();
             });
         }
@@ -73,7 +94,14 @@
     //刷新
     function windowload() {
         $("#gridTable").trigger("reloadGrid"); //重新载入
-        
+
+    }
+    //搜索
+    function btn_Search() {
+        var keywords = $("#keywords").val();
+        $("#gridTable").jqGrid('setGridParam', {
+            url: "@Url.Content("~/WebModule/Fx_WebAdv/GridPageListJson")?Keyword=" + keywords, page: 1
+    }).trigger('reloadGrid');
     }
 </script>
 <!--工具栏-->

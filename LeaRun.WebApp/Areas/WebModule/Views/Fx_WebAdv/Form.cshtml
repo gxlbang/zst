@@ -2,10 +2,36 @@
     ViewBag.Title = "Fx_WebAdv》表单页面";
     Layout = "~/Views/Shared/_LayoutForm.cshtml";
 }
+<!--上传文件组件start-->
+<link href="~/Content/Scripts/uploadify/uploadify.css" rel="stylesheet" />
+<script src="~/Content/Scripts/uploadify/jquery.uploadify.js"></script>
+<script type="text/javascript">
+    //上传文件
+    function uploadify() {
+        $("#uploadify").uploadify({
+            uploader: '/HouseModule/Ho_HouseInfo/ImgUpload',
+            swf: '/Content/Scripts/uploadify/uploadify.swf',
+            buttonText: "上传图片",
+            height: 24,
+            width: 70,
+            removeCompleted: true,               // 上传成功后移除进度条
+            removeTimeout: 0,
+            onFallback: function () {
+                alert("您未安装FLASH控件，无法上传！请安装FLASH控件后再试。");
+            },
+            onUploadSuccess: function (file, data, response) {
+                var DataJson = JSON.parse(data);
+                $("#pimg").attr("src", DataJson.Path);
+                $("#AdvImg").val(DataJson.Path);
+            }
+        });
+    }
+</script>
 <script type="text/javascript">
     var KeyValue = GetQuery('KeyValue');//主键
     $(function () {
         InitControl();
+        uploadify();
     })
     //得到一个对象实体
     function InitControl() {
@@ -32,63 +58,66 @@
     <div id="message" style="display: none"></div>
     <table class="form">
         <tr>
-            <th class='formTitle'>Number：</th>
-            <td class='formValue'>
-                <input id="Number" maxlength=50 type="text" class="txt"   />
-            </td>
-            <th class='formTitle'>Title：</th>
+            <th class='formTitle'>广告标题：</th>
             <td class='formValue'>
                 <input id="Title" maxlength=128 type="text" class="txt"   />
             </td>
-        </tr>
-        <tr>
-            <th class='formTitle'>AdvDes：</th>
-            <td class='formValue'>
-                <input id="AdvDes" maxlength=256 type="text" class="txt"   />
-            </td>
-            <th class='formTitle'>AdvImg：</th>
-            <td class='formValue'>
-                <input id="AdvImg" maxlength=256 type="text" class="txt"   />
+            <th width="10"></th>
+            <td class='formValue' rowspan="5">
+                <img src="~/Content/Images/noimg.gif" id="pimg" width="150" height="150" />
             </td>
         </tr>
         <tr>
-            <th class='formTitle'>AdvLink：</th>
+            <th class='formTitle'>广告描述：</th>
             <td class='formValue'>
-                <input id="AdvLink" maxlength=256 type="text" class="txt"   />
-            </td>
-            <th class='formTitle'>CreateTime：</th>
-            <td class='formValue'>
-                <input id="CreateTime" maxlength=23 type="text" class="txt"   />
+                <input id="AdvDes" maxlength=256 type="text" class="txt" />
             </td>
         </tr>
         <tr>
-            <th class='formTitle'>Status：</th>
+            <th class='formTitle'>广告链接：</th>
             <td class='formValue'>
-                <input id="Status" maxlength=10 type="text" class="txt"   />
-            </td>
-            <th class='formTitle'>IsDel：</th>
-            <td class='formValue'>
-                <input id="IsDel" maxlength=5 type="text" class="txt"   />
+                <input id="AdvLink" maxlength=256 type="text" class="txt" />
             </td>
         </tr>
         <tr>
-            <th class='formTitle'>JsFile：</th>
+            <th class='formTitle'>广告图片：</th>
             <td class='formValue'>
-                <input id="JsFile" maxlength=128 type="text" class="txt"   />
+                <input id="uploadify" name="uploadify" type="file" />
+                <input id="AdvImg" type="hidden" />
             </td>
-            <th class='formTitle'>Width：</th>
+        </tr>
+        
+        <tr>
+            <th class='formTitle'>广告状态：</th>
             <td class='formValue'>
-                <input id="Width" maxlength=5 type="text" class="txt"   />
+                <select id="Status" class="txtselect">
+                    <option value="1">正常</option>
+                    <option value="0">禁用</option>
+                </select>
             </td>
         </tr>
         <tr>
-            <th class='formTitle'>Height：</th>
-            <td class='formValue'>
-                <input id="Height" maxlength=5 type="text" class="txt"   />
+            <th class='formTitle'>Js文件：</th>
+            <td class='formValue' colspan="3">
+                <input id="JsFile" maxlength=128 type="text" class="txt" />
             </td>
-            <th class='formTitle'>Remark：</th>
-            <td class='formValue'>
-                <input id="Remark" maxlength=128 type="text" class="txt"   />
+        </tr>
+        <tr>
+            <th class='formTitle'>广告宽度：</th>
+            <td class='formValue' colspan="3">
+                <input id="Width" maxlength=5 type="text" class="txt" />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>广告高度：</th>
+            <td class='formValue' colspan="3">
+                <input id="Height" maxlength=5 type="text" class="txt" />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>备注：</th>
+            <td class='formValue' colspan="3">
+                <textarea id="Remark" name="Remark" maxlength="600" class="txtArea" rows="9"></textarea>
             </td>
         </tr>
         <tr>

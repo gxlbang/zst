@@ -11,11 +11,13 @@
 * ┃            Copyright(c) gxlbang ALL rights reserved                    ┃
 * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 */
+using LeaRun.DataAccess;
 using LeaRun.Entity;
 using LeaRun.Repository;
 using LeaRun.Utilities;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Text;
 
 namespace LeaRun.Business
@@ -29,5 +31,25 @@ namespace LeaRun.Business
     /// </summary>
     public class Fx_WebAdvBll : RepositoryFactory<Fx_WebAdv>
     {
+        /// <summary>
+        /// 获取列表
+        /// </summary>
+        /// <param name="jqgridparam">分页条件</param>
+        /// <returns></returns>
+        public IList<Fx_WebAdv> GetPageList(ref JqGridParam jqgridparam, string keyword)
+        {
+            StringBuilder strSql = new StringBuilder();
+            List<DbParameter> parameter = new List<DbParameter>();
+            strSql.Append(@"SELECT  *
+                            FROM  Fx_WebAdv where 1=1 ");
+            //关键字
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                strSql.Append(@" AND (Title LIKE @keyword
+                                    OR AdvDes LIKE @keyword)");
+                parameter.Add(DbFactory.CreateDbParameter("@keyword", '%' + keyword + '%'));
+            }
+            return Repository().FindListPageBySql(strSql.ToString(), parameter.ToArray(), ref jqgridparam);
+        }
     }
 }

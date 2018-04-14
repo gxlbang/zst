@@ -1,105 +1,81 @@
 @{
-    ViewBag.Title = "Am_AmmeterType》表单页面";
+    ViewBag.Title = "Am_AmmeterType》明细页面";
     Layout = "~/Views/Shared/_LayoutForm.cshtml";
 }
 <script type="text/javascript">
-    var KeyValue = GetQuery('KeyValue');//主键
     $(function () {
         InitControl();
     })
     //得到一个对象实体
     function InitControl() {
         if (!!GetQuery('KeyValue')) {
-            AjaxJson("/HouseModule/Am_AmmeterType/SetForm", { KeyValue: KeyValue }, function (data) {
+            AjaxJson("/AmmeterModule/Am_AmmeterType/SetForm", { KeyValue: GetQuery('KeyValue') }, function (data) {
                 SetWebControls(data);
-
             });
         }
     }
-    //保存事件
-    function AcceptClick() {
-        if (!CheckDataValid('#form1')) {
-            return false;
-        }
-        var postData = GetWebControls("#form1");
-        AjaxJson("/HouseModule/Am_AmmeterType/SubmitForm?KeyValue=" + KeyValue, postData, function (data) {
-            tipDialog(data.Message, 3, data.Code);
-            top.frames[tabiframeId()].windowload();
-            closeDialog();
-        });
-    }
 </script>
 <form id="form1" style="margin: 1px">
-    <div id="message" style="display: none"></div>
     <table class="form">
         <tr>
-             
             <th class='formTitle'>名称：</th>
             <td class='formValue'>
-                <input id="Name" maxlength=50 type="text" class="txt"   />
+                <label id="Name" />
             </td>
-        </tr>
-        <tr>
             <th class='formTitle'>接线方式：</th>
             <td class='formValue'>
-                <input id="Jxfs" maxlength=50 type="text" class="txt"   />
+                <label id="Jxfs" />
             </td>
             <th class='formTitle'>通讯规约：</th>
             <td class='formValue'>
-                <input id="Txgy" maxlength=50 type="text" class="txt"   />
+                <label id="Txgy" />
             </td>
         </tr>
         <tr>
             <th class='formTitle'>电价类型：</th>
             <td class='formValue'>
-                <input id="Djlx" maxlength=50 type="text" class="txt"   />
+                <label id="Djlx" />
             </td>
             <th class='formTitle'>阶梯类型：</th>
             <td class='formValue'>
-                <input id="Jtlx" maxlength=50 type="text" class="txt"   />
+                <label id="Jtlx" />
             </td>
-        </tr>
-        <tr>
             <th class='formTitle'>电表类型：</th>
             <td class='formValue'>
-                <input id="Dblx" maxlength=50 type="text" class="txt"   />
+                <label id="Dblx" />
             </td>
             <th class='formTitle'>权限：</th>
             <td class='formValue'>
-                <input id="Qx" maxlength=50 type="text" class="txt"   />
+                <label id="Qx" />
             </td>
         </tr>
         <tr>
             <th class='formTitle'>密码：</th>
             <td class='formValue'>
-                <input id="PASSWORD" maxlength=50 type="text" class="txt"   />
+                <label id="PASSWORD" />
             </td>
             <th class='formTitle'>其他类型：</th>
             <td class='formValue'>
-                <input id="OtherType" maxlength=50 type="text" class="txt"   />
+                <label id="OtherType" />
             </td>
-        </tr>
-        <tr>
             <th class='formTitle'>用户编号：</th>
             <td class='formValue'>
-                <input id="UserNumber" maxlength=50 type="text" class="txt"   />
+                <label id="UserNumber" />
             </td>
             <th class='formTitle'>用户名：</th>
             <td class='formValue'>
-                <input id="UserName" maxlength=50 type="text" class="txt"   />
+                <label id="UserName" />
             </td>
         </tr>
         <tr>
             <th class='formTitle'>姓名：</th>
             <td class='formValue'>
-                <input id="UserRealName" maxlength=50 type="text" class="txt"   />
+                <label id="UserRealName" />
             </td>
             <th class='formTitle'>备注：</th>
             <td class='formValue'>
-                <input id="Remark" maxlength=50 type="text" class="txt"   />
+                <label id="Remark" />
             </td>
-        </tr>
-        <tr>
         </tr>
     </table>
 </form>

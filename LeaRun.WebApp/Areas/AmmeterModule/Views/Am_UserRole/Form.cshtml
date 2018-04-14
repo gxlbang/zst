@@ -32,23 +32,21 @@
     <div id="message" style="display: none"></div>
     <table class="form">
         <tr>
-            <th class='formTitle'>Number：</th>
+            <th class='formTitle'>角色名称：</th>
             <td class='formValue'>
-                <input id="Number" maxlength=50 type="text" class="txt"   />
-            </td>
-            <th class='formTitle'>RoleName：</th>
-            <td class='formValue'>
-                <input id="RoleName" maxlength=50 type="text" class="txt"   />
+                <input id="RoleName" maxlength=50 type="text" class="txt required" datacol="yes" err="角色名称" checkexpession="NotNull"  />
             </td>
         </tr>
         <tr>
-            <th class='formTitle'>RoleMark：</th>
+            <th class='formTitle'>角色说明：</th>
             <td class='formValue'>
-                <input id="RoleMark" maxlength=50 type="text" class="txt"   />
+                <input id="RoleMark" maxlength=50 type="text" class="txt" />
             </td>
-            <th class='formTitle'>Remark：</th>
+        </tr>
+        <tr>
+            <th class='formTitle'>备注：</th>
             <td class='formValue'>
-                <input id="Remark" maxlength=50 type="text" class="txt"   />
+                <textarea id="Remark" name="Remark" maxlength="600" class="txtArea" rows="13"></textarea>
             </td>
         </tr>
         <tr>
