@@ -1,6 +1,7 @@
-﻿@{
+﻿@model LeaRun.WebApp.ViewsModel.Account.Register
+@{
     ViewBag.Title = "注册";
-    Layout = "~/Views/Shared/UiIndex.cshtml";
+    Layout = "~/Views/Shared/_Partial.cshtml";
 }
 <div>
     <div>
@@ -19,3 +20,15 @@
          <input type="button"  value="注册"/>
     </div>
 </div>
+@using (Ajax.BeginForm("Register", "Account", new { }, new AjaxOptions() { HttpMethod = "post", OnSuccess = "success" }, new { @id = "registerForm" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="item-reg">
+        <label>手机号</label>
+        @Html.TextBoxFor(m => m.Name, new { placeholder = "请输入手机号", @class = "input-regw400" })
+        @Html.ValidationMessageFor(m => m.Name)
+        <span class="reg-jname"></span>
+    </div>
+
+}

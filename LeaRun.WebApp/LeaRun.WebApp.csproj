@@ -196,6 +196,7 @@
     <Compile Include="CommonClass\WeixinConfig.cs" />
     <Compile Include="CommonClass\WeixinHelper.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\PersonalController.cs" />
     <Compile Include="Controllers\WeixinController.cs" />
     <Compile Include="Controllers\WXPayController.cs" />
     <Compile Include="Extensions\PasswordHash.cs" />
@@ -9196,6 +9197,9 @@
     <Content Include="Views\Ui\ht.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Shared\_Partial.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Personal\Index.cshtml" />
+    <Content Include="Views\Personal\Perfect.cshtml" />
     <None Include="Views\Utility\PrintPage.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
