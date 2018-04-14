@@ -3,7 +3,7 @@ using System;
 using System.Text;
 using System.Security.Cryptography;
 
-namespace Shop.Application.Extensions
+namespace Extensions
 {
     /// <summary>
     /// Salted password hashing with PBKDF2-SHA1.

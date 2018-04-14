@@ -44,7 +44,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AmmeterModule\Am_AmmeterBll.cs" />
-    <Compile Include="AmmeterModule\Am_AmmeterMoneyBll.cs" />
     <Compile Include="AmmeterModule\Am_UserRoleBll.cs" />
     <Compile Include="CommonModule\Base_FormAttributeBll.cs" />
     <Compile Include="CommonModule\Base_InterfaceManageBll.cs" />
