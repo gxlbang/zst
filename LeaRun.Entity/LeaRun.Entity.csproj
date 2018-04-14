@@ -97,6 +97,7 @@
     <Compile Include="ExampleModule\Base_PhoneNote.cs" />
     <Compile Include="ExampleModule\POOrder.cs" />
     <Compile Include="ExampleModule\POOrderEntry.cs" />
+    <Compile Include="HouseModule\Am_AmmeterType.cs" />
     <Compile Include="HouseModule\Ho_Assistant.cs" />
     <Compile Include="HouseModule\Ho_CityInfo.cs" />
     <Compile Include="HouseModule\Ho_HouseImage.cs" />

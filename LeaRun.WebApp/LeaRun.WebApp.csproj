@@ -150,6 +150,7 @@
     <Compile Include="01 Extension\ManagerPermissionAttribute.cs" />
     <Compile Include="01 Extension\WeixinExecutor.cs" />
     <Compile Include="App_Start\WeixinConfig.cs" />
+    <Compile Include="Areas\HouseModule\Controllers\Am_AmmeterTypeController.cs" />
     <Compile Include="Areas\HouseModule\Controllers\Ho_AssistantController.cs" />
     <Compile Include="Areas\HouseModule\Controllers\Ho_CityInfoController.cs" />
     <Compile Include="Areas\HouseModule\Controllers\Ho_HouseImageController.cs" />
@@ -9142,6 +9143,9 @@
     <Content Include="Areas\WebModule\Views\Fx_WebAdv\Detail.cshtml" />
     <Content Include="Areas\WebModule\Views\Fx_WebAdv\Form.cshtml" />
     <Content Include="Areas\WebModule\Views\Fx_WebAdv\Index.cshtml" />
+    <Content Include="Areas\HouseModule\Views\Am_AmmeterType\Detail.cshtml" />
+    <Content Include="Areas\HouseModule\Views\Am_AmmeterType\Form.cshtml" />
+    <Content Include="Areas\HouseModule\Views\Am_AmmeterType\Index.cshtml" />
     <None Include="Properties\PublishProfiles\House.pubxml" />
     <Content Include="Views\Home\SkinIndex.cshtml" />
     <Content Include="Views\Login\Default.cshtml" />

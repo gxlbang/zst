@@ -74,6 +74,7 @@
     <Compile Include="ExampleModule\Base_PhoneNoteBll.cs" />
     <Compile Include="ExampleModule\POOrderBll.cs" />
     <Compile Include="ExampleModule\ReportBll.cs" />
+    <Compile Include="HouseModule\Am_AmmeterTypeBll.cs" />
     <Compile Include="HouseModule\Ho_AssistantBll.cs" />
     <Compile Include="HouseModule\Ho_CityInfoBll.cs" />
     <Compile Include="HouseModule\Ho_HouseImageBll.cs" />

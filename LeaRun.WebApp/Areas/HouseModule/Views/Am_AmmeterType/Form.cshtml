@@ -1,0 +1,104 @@
+@{
+    ViewBag.Title = "Am_AmmeterType》表单页面";
+    Layout = "~/Views/Shared/_LayoutForm.cshtml";
+}
+<script type="text/javascript">
+    var KeyValue = GetQuery('KeyValue');//主键
+    $(function () {
+        InitControl();
+    })
+    //得到一个对象实体
+    function InitControl() {
+        if (!!GetQuery('KeyValue')) {
+            AjaxJson("/HouseModule/Am_AmmeterType/SetForm", { KeyValue: KeyValue }, function (data) {
+                SetWebControls(data);
+            });
+        }
+    }
+    //保存事件
+    function AcceptClick() {
+        if (!CheckDataValid('#form1')) {
+            return false;
+        }
+        var postData = GetWebControls("#form1");
+        AjaxJson("/HouseModule/Am_AmmeterType/SubmitForm?KeyValue=" + KeyValue, postData, function (data) {
+            tipDialog(data.Message, 3, data.Code);
+            top.frames[tabiframeId()].windowload();
+            closeDialog();
+        });
+    }
+</script>
+<form id="form1" style="margin: 1px">
+    <div id="message" style="display: none"></div>
+    <table class="form">
+        <tr>
+             
+            <th class='formTitle'>名称：</th>
+            <td class='formValue'>
+                <input id="Name" maxlength=50 type="text" class="txt"   />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>接线方式：</th>
+            <td class='formValue'>
+                <input id="Jxfs" maxlength=50 type="text" class="txt"   />
+            </td>
+            <th class='formTitle'>通讯规约：</th>
+            <td class='formValue'>
+                <input id="Txgy" maxlength=50 type="text" class="txt"   />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>电价类型：</th>
+            <td class='formValue'>
+                <input id="Djlx" maxlength=50 type="text" class="txt"   />
+            </td>
+            <th class='formTitle'>阶梯类型：</th>
+            <td class='formValue'>
+                <input id="Jtlx" maxlength=50 type="text" class="txt"   />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>电表类型：</th>
+            <td class='formValue'>
+                <input id="Dblx" maxlength=50 type="text" class="txt"   />
+            </td>
+            <th class='formTitle'>权限：</th>
+            <td class='formValue'>
+                <input id="Qx" maxlength=50 type="text" class="txt"   />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>密码：</th>
+            <td class='formValue'>
+                <input id="PASSWORD" maxlength=50 type="text" class="txt"   />
+            </td>
+            <th class='formTitle'>其他类型：</th>
+            <td class='formValue'>
+                <input id="OtherType" maxlength=50 type="text" class="txt"   />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>用户编号：</th>
+            <td class='formValue'>
+                <input id="UserNumber" maxlength=50 type="text" class="txt"   />
+            </td>
+            <th class='formTitle'>用户名：</th>
+            <td class='formValue'>
+                <input id="UserName" maxlength=50 type="text" class="txt"   />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>姓名：</th>
+            <td class='formValue'>
+                <input id="UserRealName" maxlength=50 type="text" class="txt"   />
+            </td>
+            <th class='formTitle'>备注：</th>
+            <td class='formValue'>
+                <input id="Remark" maxlength=50 type="text" class="txt"   />
+            </td>
+        </tr>
+        <tr>
+        </tr>
+    </table>
+</form>
