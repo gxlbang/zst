@@ -37,21 +37,17 @@ namespace LeaRun.Business
         /// </summary>
         /// <param name="jqgridparam">分页条件</param>
         /// <returns></returns>
-        public IList<Ho_PartnerUser> GetPageList(ref JqGridParam jqgridparam, string keyword, string StartTime, string EndTime, string Stuts)
+        public IList<Ho_PartnerUser> GetPageList(ref JqGridParam jqgridparam, string keyword, string Role, int Stuts)
         {
             StringBuilder strSql = new StringBuilder();
             List<DbParameter> parameter = new List<DbParameter>();
             strSql.Append(@"SELECT  *
                             FROM  Ho_PartnerUser where 1=1 ");
             //状态
-            if (!string.IsNullOrEmpty(Stuts))
+            if (Stuts >= 0)
             {
                 strSql.Append(" AND Status = @Stuts");
                 parameter.Add(DbFactory.CreateDbParameter("@Stuts", Stuts));
-            }
-            else
-            {
-                strSql.Append(" AND Status > 0 ");
             }
             //关键字
             if (!string.IsNullOrEmpty(keyword))
@@ -63,17 +59,11 @@ namespace LeaRun.Business
                                     OR InnerCode LIKE @keyword)");
                 parameter.Add(DbFactory.CreateDbParameter("@keyword", '%' + keyword + '%'));
             }
-            //开始时间
-            if (!string.IsNullOrEmpty(StartTime))
+            //角色
+            if (!string.IsNullOrEmpty(Role))
             {
-                strSql.Append(" AND CreatTime > @StartTime");
-                parameter.Add(DbFactory.CreateDbParameter("@StartTime", Convert.ToDateTime(StartTime).ToString("yyyy-MM-dd") + " 00:00:00"));
-            }
-            //结束时间
-            if (!string.IsNullOrEmpty(EndTime))
-            {
-                strSql.Append(" AND CreatTime < @EndTime");
-                parameter.Add(DbFactory.CreateDbParameter("@EndTime", Convert.ToDateTime(EndTime).AddDays(1).ToString("yyyy-MM-dd") + " 00:00:00"));
+                strSql.Append(" AND UserRoleNumber = @UserRoleNumber");
+                parameter.Add(DbFactory.CreateDbParameter("@UserRoleNumber", Role));
             }
             return Repository().FindListPageBySql(strSql.ToString(), parameter.ToArray(), ref jqgridparam);
         }

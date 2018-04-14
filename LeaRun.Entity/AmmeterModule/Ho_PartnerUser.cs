@@ -273,6 +273,7 @@ namespace LeaRun.Entity
             this.CreatTime = DateTime.Now;
             this.FreezeMoney = 0;
             this.ModifyTime = DateTime.Now;
+            this.SureTime = DateTime.Now;
             this.Status = 0;
         }
         /// <summary>

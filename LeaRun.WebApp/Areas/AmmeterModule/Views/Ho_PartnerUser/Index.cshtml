@@ -1,10 +1,11 @@
 @{
-    ViewBag.Title = "合伙人";
+    ViewBag.Title = "用户";
     Layout = "~/Views/Shared/_LayoutIndex.cshtml";
 }
 <script type="text/javascript">
     $(function () {
         GetGrid();
+        initUserRole();
     })
     //加载表格
     function GetGrid() {
@@ -41,13 +42,28 @@
         shrinkToFit: false,
         gridview: true,
     });
-}
+    }
+    function initUserRole() {
+        //获取用户角色
+        AjaxJson("/AmmeterModule/Ho_PartnerUser/GetUserRole", "", function (data) {
+            $.each(data, function (i) {
+                $("#Role").append($("<option></option>").val(data[i].Number).html(data[i].RoleName));
+            });
+        });
+    }
+    //新增
+    function btn_add() {
+        var url = "/AmmeterModule/Ho_PartnerUser/Form"
+        openDialog(url, "Form", "新增用户", 460, 240, function (iframe) {
+            top.frames[iframe].AcceptClick()
+        });
+    }
     //编辑
     function btn_edit() {
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsChecked(KeyValue)) {
             var url = "/AmmeterModule/Ho_PartnerUser/Form?KeyValue=" + KeyValue;
-            openDialog(url, "Form", "编辑合伙人", 800, 460, function (iframe) {
+            openDialog(url, "Form", "编辑用户", 460, 240, function (iframe) {
                 top.frames[iframe].AcceptClick();
             });
         }
@@ -65,7 +81,7 @@
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsChecked(KeyValue)) {
             var url = "/AmmeterModule/Ho_PartnerUser/Detail?KeyValue=" + KeyValue;
-            Dialog(url, "Detail", "合伙人明细", 800, 460, function (iframe) {
+            Dialog(url, "Detail", "用户明细", 800, 460, function (iframe) {
                 top.frames[iframe].AcceptClick();
             });
         }
@@ -79,10 +95,9 @@
     function btn_Search() {
         var keywords = $("#keywords").val();
         var Stuts = $("#Stuts").val();
-        var StartTime = $("#StartTime").val();
-        var EndTime = $("#EndTime").val();
+        var Role = $("#Role").val();
         $("#gridTable").jqGrid('setGridParam', {
-            url: "@Url.Content("~/AmmeterModule/Ho_PartnerUser/GridPageListJson")?StartTime=" + StartTime + '&EndTime=' + EndTime + '&Keyword=' + keywords + '&Stuts=' + Stuts, page: 1
+            url: "@Url.Content("~/AmmeterModule/Ho_PartnerUser/GridPageListJson")?Role=" + Role + '&Keyword=' + keywords + '&Stuts=' + Stuts, page: 1
     }).trigger('reloadGrid');
     }
     //禁用
@@ -110,11 +125,8 @@
 
             <th>角色：</th>
             <td>
-                <select id="Stuts" class="txtselect" style="width: 100px">
-                    <option value="">请选择</option>
-                    <option value="0">普通会员</option>
-                    <option value="2">运营商</option>
-                    <option value="1">维修师傅</option>
+                <select id="Role" class="txtselect" style="width: 100px">
+                    <option value="-1">请选择</option>
                 </select>
             </td>
             <th>状态：</th>

@@ -2,49 +2,10 @@
     ViewBag.Title = "合伙人》表单页面";
     Layout = "~/Views/Shared/_LayoutForm.cshtml";
 }
-<!--上传文件组件start-->
-<link href="~/Content/Scripts/uploadify/uploadify.css" rel="stylesheet" />
-<script src="~/Content/Scripts/uploadify/jquery.uploadify.js"></script>
-<script type="text/javascript">
-    //上传文件
-    function uploadify() {
-        $("#uploadify").uploadify({
-            uploader: '/ProductModule/Fx_Product/ImgUpload',
-            swf: '/Content/Scripts/uploadify/uploadify.swf',
-            buttonText: "上传图片",
-            height: 24,
-            width: 70,
-            onFallback: function () {
-                alert("您未安装FLASH控件，无法上传！请安装FLASH控件后再试。");
-            },
-            onUploadSuccess: function (file, data, response) {
-                var DataJson = JSON.parse(data);
-                $("#pimg1").attr("src", DataJson.Path);
-                $("#CodeImg1").val(DataJson.Path);
-            }
-        });
-        $("#uploadify1").uploadify({
-            uploader: '/ProductModule/Fx_Product/ImgUpload',
-            swf: '/Content/Scripts/uploadify/uploadify.swf',
-            buttonText: "上传图片",
-            height: 24,
-            width: 70,
-            onFallback: function () {
-                alert("您未安装FLASH控件，无法上传！请安装FLASH控件后再试。");
-            },
-            onUploadSuccess: function (file, data, response) {
-                var DataJson = JSON.parse(data);
-                $("#pimg2").attr("src", DataJson.Path);
-                $("#CodeImg2").val(DataJson.Path);
-            }
-        });
-    }
-</script>
 <script type="text/javascript">
     var KeyValue = GetQuery('KeyValue');//主键
     $(function () {
         InitControl();
-        uploadify();
     })
     //得到一个对象实体
     function InitControl() {
@@ -56,15 +17,15 @@
                 $("#pimg2").attr("src", (!IsNullOrEmpty(data.CodeImg2) ? "/Content/Images/noimg.gif" : data.CodeImg2));
                 $("#CreatTime").text(formatDate(data.CreatTime,"yyyy-MM-dd hh:mm:ss"));
                 $("#SureTime").text(formatDate(data.SureTime, "yyyy-MM-dd hh:mm:ss"));
-                //获取助理列表
-                AjaxJson("/HouseModule/Ho_PartnerUser/GetAssistant", { KeyValue: KeyValue }, function (data1) {
-                    $.each(data1, function (i) {
-                        $("#As_Numberx").append($("<option></option>").val(data1[i].Number).html(data1[i].Name));
+                //获取用户角色
+                AjaxJson("/AmmeterModule/Ho_PartnerUser/GetUserRole", "", function (data) {
+                    $.each(data, function (i) {
+                        $("#UserRoleNumber").append($("<option></option>").val(data[i].Number).html(data[i].RoleName));
                     });
                 });
                 //设置select
                 $("#StatusS").val(data.Status);
-                $("#As_Numberx").val(data.As_Number);
+                $("#UserRoleNumber").val(data.As_Number);
             });
         }
     }
@@ -89,21 +50,24 @@
     <div id="message" style="display: none"></div>
     <table class="form">
         <tr>
-            <th class='formTitle'>编号：</th>
-            <td class='formValue'>
-                @*<label id="InnerCode" />*@
-                <input id="InnerCode" maxlength=50 type="text" class="txt" />
-            </td>
-            <th width="10"></th>
-            <td class='formValue' rowspan="7">
-                <img src="~/Content/Images/noimg.gif" id="pimg1" width="200" height="150" />
-            </td>
-        </tr>
-        <tr>
             <th class='formTitle'>姓名：</th>
             <td class='formValue'>
                 @*<label id="Name" />*@
-                <input id="Name" maxlength=12 type="text" class="txt" />
+                <input id="Name" maxlength=12 type="text" class="txt required" datacol="yes" err="角色名称" checkexpession="NotNull"  />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>手机号：</th>
+            <td class='formValue'>
+                @*<label id="Mobile" />*@
+                <input id="Mobile" maxlength=11 type="text" class="txt required" datacol="yes" err="手机号" checkexpession="NotNull"  />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>登录密码：</th>
+            <td class='formValue'>
+                @*<label id="Mobile" />*@
+                <input id="Password" maxlength=16 type="text" class="txt required" datacol="yes" err="登录密码" checkexpession="NotNull" />
             </td>
         </tr>
         <tr>
@@ -114,82 +78,9 @@
             </td>
         </tr>
         <tr>
-            <th class='formTitle'>手机号：</th>
-            <td class='formValue'>
-                @*<label id="Mobile" />*@
-                <input id="Mobile" maxlength=11 type="text" class="txt" />
-            </td>
-        </tr>
-        <tr>
-            <th class='formTitle'>微信帐号：</th>
-            <td class='formValue'>
-                <label id="WeiXin" />
-            </td>
-        </tr>
-        <tr>
-            <th class='formTitle'>身份证正面：</th>
-            <td class='formValue'>
-                <input id="uploadify" name="uploadify" type="file" />
-                <input id="CodeImg1" type="hidden" />
-            </td>
-        </tr>
-        <tr>
-            <th class='formTitle'>创建时间：</th>
-            <td class='formValue'>
-                <label id="CreatTime" />
-            </td>
-        </tr>
-        <tr>
-            <th class='formTitle'>审核时间：</th>
-            <td class='formValue'>
-                <label id="SureTime" />
-            </td>
-            <th width="10"></th>
-            <td class='formValue' rowspan="6">
-                <img src="~/Content/Images/noimg.gif" id="pimg2" width="200" height="150" />
-            </td>
-        </tr>
-        <tr>
-            <th class='formTitle'>审核人：</th>
-            <td class='formValue'>
-                <label id="SureUser" />
-            </td>
-        </tr>
-        <tr>
-            <th class='formTitle'>上级名称：</th>
-            <td class='formValue'>
-                <label id="ParentName" />
-            </td>
-        </tr>
-        <tr>
-            <th class='formTitle' style="color:blue;">私人助理：</th>
-            <td class='formValue'>
-                <select id="As_Numberx" class="txtselect">
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <th class='formTitle' style="color:red;">状态：</th>
-            <td class='formValue'>
-                <select id="StatusS" class="txtselect">
-                    @*<option value="1">待审核</option>*@
-                    <option value="2">未认证</option>
-                    <option value="3">已认证</option>
-                    <option value="9">黑名单</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <th class='formTitle'>身份证反面：</th>
-            <td class='formValue'>
-                <input id="uploadify1" name="uploadify1" type="file" />
-                <input id="CodeImg2" type="hidden" />
-            </td>
-        </tr>
-        <tr>
             <th class='formTitle'>备注：</th>
-            <td class='formValue' colspan="3">
-                <textarea id="Remarkstr" name="Remarkstr" maxlength="600" class="txtArea" rows="8"></textarea>
+            <td class='formValue'>
+                <textarea id="Remarkstr" name="Remarkstr" maxlength="600" class="txtArea" rows="7"></textarea>
             </td>
         </tr>
     </table>

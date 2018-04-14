@@ -29,7 +29,7 @@ using System.Web.Mvc;
 namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
 {
     /// <summary>
-    /// 合伙人控制器
+    /// 用户控制器
     /// </summary>
     public class Ho_PartnerUserController : PublicController<Ho_PartnerUser>
     {
@@ -37,14 +37,13 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
         /// 搜索
         /// </summary>
         /// <returns></returns>
-        public ActionResult GridPageListJson(JqGridParam jqgridparam, string StartTime, string EndTime,
-            string Keyword, string Stuts)
+        public ActionResult GridPageListJson(JqGridParam jqgridparam, string Role, string Keyword, int Stuts)
         {
             try
             {
                 Stopwatch watch = CommonHelper.TimerStart();
                 Ho_PartnerUserBll bll = new Ho_PartnerUserBll();
-                var ListData = bll.GetPageList(ref jqgridparam, Keyword, StartTime, EndTime, Stuts);
+                var ListData = bll.GetPageList(ref jqgridparam, Keyword, Role, Stuts);
                 var JsonData = new
                 {
                     total = jqgridparam.total,
@@ -77,30 +76,17 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
             {
                 string Message = KeyValue == "" ? "新增成功。" : "编辑成功。";
                 model.StatusStr = GetStrutsStr(model.Status.Value);
-                var result = "变更";
                 if (!string.IsNullOrEmpty(KeyValue))
                 {
-                    var oldmodel = database.FindEntity<Ho_PartnerUser>(KeyValue);
-                    //if (oldmodel != null && oldmodel.Status == 0 && model.Status == 1) //第一次审核
-                    //{
-                    model.SureTime = DateTime.Now;
-                    model.SureUser = ManageProvider.Provider.Current().Account;
-                    result = "审核";
-                    //}
-                    //提交私人助理
-                    var asmodel = database.FindEntity<Ho_Assistant>(model.As_Number);
-                    if (asmodel != null)
-                    {
-                        model.As_Name = asmodel.Name;
-                    }
                     model.Modify(KeyValue);
                     var IsOk = database.Update(model, isOpenTrans);
-                    Base_SysLogBll.Instance.WriteLog(KeyValue, OperationType.Update, IsOk > 0 ? "成功" : "失败", "合伙人" + result);
+                    Base_SysLogBll.Instance.WriteLog(KeyValue, OperationType.Update, IsOk > 0 ? "成功" : "失败", "用户" + Message);
                 }
                 else //新建
                 {
                     model.Create();
-                    database.Insert(model, isOpenTrans);
+                    var IsOk = database.Insert(model, isOpenTrans);
+                    Base_SysLogBll.Instance.WriteLog(KeyValue, OperationType.Update, IsOk > 0 ? "成功" : "失败", "用户" + Message);
                 }
                 database.Commit();
                 return Content(new JsonMessage { Success = true, Code = "1", Message = Message }.ToString());
@@ -112,16 +98,16 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
             }
         }
         /// <summary>
-        /// 私人助理列表
+        /// 用户角色
         /// </summary>
         /// <returns></returns>
-        public ActionResult GetAssistant()
+        public ActionResult GetUserRole()
         {
             IDatabase database = DataFactory.Database();
-            var list = database.FindList<Ho_Assistant>();
+            var list = database.FindList<Am_UserRole>();
             return Content(list.ToJson());
         }
-        //禁用合伙人
+        //禁用用户
         public ActionResult DisableUser(string KeyValue) {
             IDatabase database = DataFactory.Database();
             DbTransaction isOpenTrans = database.BeginTrans();
