@@ -43,6 +43,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AmmeterModule\Am_AmmeterBll.cs" />
+    <Compile Include="AmmeterModule\Am_AmmeterMoneyBll.cs" />
+    <Compile Include="AmmeterModule\Am_UserRoleBll.cs" />
     <Compile Include="CommonModule\Base_FormAttributeBll.cs" />
     <Compile Include="CommonModule\Base_InterfaceManageBll.cs" />
     <Compile Include="CommonModule\Base_ShortcutsBll.cs" />
@@ -81,7 +84,7 @@
     <Compile Include="HouseModule\Ho_HouseInfoBll.cs" />
     <Compile Include="HouseModule\Ho_MyHouseInfoBll.cs" />
     <Compile Include="HouseModule\Ho_MySubscribeBll.cs" />
-    <Compile Include="HouseModule\Ho_PartnerUserBll.cs" />
+    <Compile Include="AmmeterModule\Ho_PartnerUserBll.cs" />
     <Compile Include="HouseModule\Ho_SetSubscribeBll.cs" />
     <Compile Include="NewsModule\Fx_NewsBll.cs" />
     <Compile Include="NewsModule\Fx_NewsClassBll.cs" />

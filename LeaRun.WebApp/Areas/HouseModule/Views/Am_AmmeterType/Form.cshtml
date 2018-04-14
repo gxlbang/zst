@@ -12,6 +12,7 @@
         if (!!GetQuery('KeyValue')) {
             AjaxJson("/HouseModule/Am_AmmeterType/SetForm", { KeyValue: KeyValue }, function (data) {
                 SetWebControls(data);
+
             });
         }
     }
