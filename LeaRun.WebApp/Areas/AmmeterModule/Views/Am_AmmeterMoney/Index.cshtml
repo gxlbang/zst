@@ -16,44 +16,21 @@
         colModel: [
                 { label: 'Number', name: 'Number', index: 'Number', width: 0, align: 'left', hidden: true },
                 { label: '名称', name: 'Name', index: 'Name', width: 200, align: 'left'  },
-                { label: '价格类型', name: 'Classify', index: 'Classify', width: 200, align: 'left'},
-                { label: '费率(元/kwh)', name: 'FirstMoney', index: 'FirstMoney', width: 200, align: 'left'   },
-                { label: '备注', name: 'Remark', index: 'Remark', width: 400, align: 'left'},
+                { label: '价格类型', name: 'Classify', index: 'Classify', width: 150, align: 'left'},
+                { label: '费率(元/kwh)', name: 'FirstMoney', index: 'FirstMoney', width: 150, align: 'left' },
+                { label: '业主姓名', name: 'UserRealName', index: 'UserRealName', width: 150, align: 'left' },
+                { label: '业主帐号', name: 'UserName', index: 'UserName', width: 150, align: 'left' },
+                { label: '备注', name: 'Remark', index: 'Remark', width: 300, align: 'left'},
         ],
         viewrecords: true,
         pager: "#gridPager",
-        sortname: '',
+        sortname: 'CreateTime',
         sortorder: 'desc',
         rownumbers: true,
         shrinkToFit: false,
         gridview: true,
     });
 }
-    //新增
-    function btn_add() {
-        var url = "/AmmeterModule/Am_AmmeterMoney/Form"
-        openDialog(url, "Form", "新增", 400, 150, function (iframe) {
-            top.frames[iframe].AcceptClick()
-        });
-    }
-    //编辑
-    function btn_edit() {
-        var KeyValue = GetJqGridRowValue("#gridTable", "Number");
-        if (IsChecked(KeyValue)) {
-            var url = "/AmmeterModule/Am_AmmeterMoney/Form?KeyValue=" + KeyValue;
-            openDialog(url, "Form", "编辑", 400, 150, function (iframe) {
-                top.frames[iframe].AcceptClick();
-            });
-        }
-    }
-    //删除
-    function btn_delete() {
-        var KeyValue = GetJqGridRowValue("#gridTable", "Number");
-        if (IsDelData(KeyValue)) {
-            var delparm = 'KeyValue=' + KeyValue;
-            delConfig('/AmmeterModule/Am_AmmeterMoney/Delete', delparm, KeyValue.split(",").length);
-        }
-    }
     //明细
     function btn_detail() {
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");

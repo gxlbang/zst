@@ -12,12 +12,15 @@
 * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 */
 using LeaRun.Business;
+using LeaRun.DataAccess;
 using LeaRun.Entity;
+using LeaRun.Repository;
 using LeaRun.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
@@ -69,7 +72,7 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
         /// <returns></returns>
         [HttpPost]
         [ValidateInput(false)]
-        public ActionResult SubmitUserForm(string KeyValue, Am_AmmeterType model, string BuildFormJson)
+        public ActionResult SubmitUserForm(string KeyValue, Am_AmmeterMoney model, string BuildFormJson)
         {
             IDatabase database = DataFactory.Database();
             DbTransaction isOpenTrans = database.BeginTrans();
@@ -80,16 +83,13 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
                 {
                     model.Modify(KeyValue);
                     var IsOk = database.Update(model, isOpenTrans);
-                    Base_SysLogBll.Instance.WriteLog(KeyValue, OperationType.Update, IsOk > 0 ? "成功" : "失败", "电表类型" + Message);
+                    Base_SysLogBll.Instance.WriteLog(KeyValue, OperationType.Update, IsOk > 0 ? "成功" : "失败", "电价" + Message);
                 }
                 else //新建
                 {
-                    model.UserName = ManageProvider.Provider.Current().Account;
-                    model.UserRealName = ManageProvider.Provider.Current().UserName;
-                    model.UserNumber = ManageProvider.Provider.Current().UserId;
                     model.Create();
                     var IsOk = database.Insert(model, isOpenTrans);
-                    Base_SysLogBll.Instance.WriteLog(KeyValue, OperationType.Update, IsOk > 0 ? "成功" : "失败", "电表类型" + Message);
+                    Base_SysLogBll.Instance.WriteLog(KeyValue, OperationType.Update, IsOk > 0 ? "成功" : "失败", "电价" + Message);
                 }
                 database.Commit();
                 return Content(new JsonMessage { Success = true, Code = "1", Message = Message }.ToString());

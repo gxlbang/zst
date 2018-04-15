@@ -10,7 +10,7 @@
     function InitControl() {
         if (!!GetQuery('KeyValue')) {
             AjaxJson("/AmmeterModule/Am_AmmeterMoney/SetForm", { KeyValue: GetQuery('KeyValue') }, function (data) {
-                SetWebControls(data);
+                SetWebLable(data);
             });
         }
     }
@@ -18,83 +18,44 @@
 <form id="form1" style="margin: 1px">
     <table class="form">
         <tr>
-            <th class='formTitle'>Number：</th>
-            <td class='formValue'>
-                <label id="Number" />
-            </td>
-            <th class='formTitle'>Name：</th>
+            <th class='formTitle'>名称：</th>
             <td class='formValue'>
                 <label id="Name" />
             </td>
-            <th class='formTitle'>Classify：</th>
+        </tr>
+        <tr>
+            <th class='formTitle'>价格类型：</th>
             <td class='formValue'>
                 <label id="Classify" />
             </td>
-            <th class='formTitle'>First：</th>
-            <td class='formValue'>
-                <label id="First" />
-            </td>
         </tr>
         <tr>
-            <th class='formTitle'>FirstMoney：</th>
+            <th class='formTitle'>费率(元/kwh)：</th>
             <td class='formValue'>
                 <label id="FirstMoney" />
             </td>
-            <th class='formTitle'>Second：</th>
-            <td class='formValue'>
-                <label id="Second" />
-            </td>
-            <th class='formTitle'>SecondMoney：</th>
-            <td class='formValue'>
-                <label id="SecondMoney" />
-            </td>
-            <th class='formTitle'>Third：</th>
-            <td class='formValue'>
-                <label id="Third" />
-            </td>
         </tr>
         <tr>
-            <th class='formTitle'>ThirdMoney：</th>
-            <td class='formValue'>
-                <label id="ThirdMoney" />
-            </td>
-            <th class='formTitle'>Fourth：</th>
-            <td class='formValue'>
-                <label id="Fourth" />
-            </td>
-            <th class='formTitle'>FourthMoney：</th>
-            <td class='formValue'>
-                <label id="FourthMoney" />
-            </td>
-            <th class='formTitle'>UserNumber：</th>
-            <td class='formValue'>
-                <label id="UserNumber" />
-            </td>
-        </tr>
         <tr>
-            <th class='formTitle'>UserName：</th>
+            <th class='formTitle'>业主帐号：</th>
             <td class='formValue'>
                 <label id="UserName" />
             </td>
-            <th class='formTitle'>UserRealName：</th>
+        </tr>
+        <tr>
+            <th class='formTitle'>业主姓名：</th>
             <td class='formValue'>
                 <label id="UserRealName" />
             </td>
-            <th class='formTitle'>CreateTime：</th>
+        </tr>
+        <tr>
+            <th class='formTitle'>创建时间：</th>
             <td class='formValue'>
                 <label id="CreateTime" />
             </td>
-            <th class='formTitle'>Status：</th>
-            <td class='formValue'>
-                <label id="Status" />
-            </td>
         </tr>
         <tr>
-            <th class='formTitle'>StatusStr：</th>
-            <td class='formValue'>
-                <label id="StatusStr" />
-            </td>
-            <th class='formTitle'>Remark：</th>
+            <th class='formTitle'>备注：</th>
             <td class='formValue'>
                 <label id="Remark" />
             </td>
