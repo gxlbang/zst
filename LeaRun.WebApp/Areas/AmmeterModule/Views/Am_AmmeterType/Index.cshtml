@@ -22,7 +22,7 @@
                     { label: '阶梯类型', name: 'Jtlx', index: 'Jtlx', width: 100, align: 'left' },
                     { label: '电表类型', name: 'Dblx', index: 'Dblx', width: 100, align: 'left' },
                     { label: '权限', name: 'Qx', index: 'Qx', width: 80, align: 'left' },
-                    { label: '密码', name: 'PASSWORD', index: 'PASSWORD', width: 100, align: 'left' },
+                    { label: '密码', name: 'Password', index: 'Password', width: 100, align: 'left' },
                     { label: '其他类型', name: 'OtherType', index: 'OtherType', width: 100, align: 'left' },
                     { label: '备注', name: 'Remark', index: 'Remark', width: 250, align: 'left'},
             ],
@@ -38,7 +38,7 @@
     //新增
     function btn_add() {
         var url = "/AmmeterModule/Am_AmmeterType/Form"
-        openDialog(url, "Form", "新增电表类型", 770, 395, function (iframe) {
+        openDialog(url, "Form", "新增电表类型", 500, 300, function (iframe) {
             top.frames[iframe].AcceptClick()
         });
     }
@@ -47,7 +47,7 @@
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsChecked(KeyValue)) {
             var url = "/AmmeterModule/Am_AmmeterType/Form?KeyValue=" + KeyValue;
-            openDialog(url, "Form", "编辑电表类型", 770, 395, function (iframe) {
+            openDialog(url, "Form", "编辑电表类型", 500, 300, function (iframe) {
                 top.frames[iframe].AcceptClick();
             });
         }
@@ -65,7 +65,7 @@
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsChecked(KeyValue)) {
             var url = "/AmmeterModule/Am_AmmeterType/Detail?KeyValue=" + KeyValue;
-            Dialog(url, "Detail", "电表类型明细", 820, 500, function (iframe) {
+            Dialog(url, "Detail", "电表类型明细", 500, 300, function (iframe) {
                 top.frames[iframe].AcceptClick();
             });
         }

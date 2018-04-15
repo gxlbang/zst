@@ -28,7 +28,7 @@ namespace LeaRun.Entity
     /// </author>
     /// </summary>
     [Description("Ho_PartnerUser")]
-    [PrimaryKey("UserRoleNumber")]
+    [PrimaryKey("Number")]
     public class Ho_PartnerUser : BaseEntity
     {
         #region 获取/设置 字段值
@@ -268,13 +268,15 @@ namespace LeaRun.Entity
         /// </summary>
         public override void Create()
         {
-            this.UserRoleNumber = CommonHelper.GetGuid;
+            this.Number = CommonHelper.GetGuid;
             this.Birthday = DateTime.Now;
             this.CreatTime = DateTime.Now;
             this.FreezeMoney = 0;
+            this.Money = 0;
             this.ModifyTime = DateTime.Now;
             this.SureTime = DateTime.Now;
             this.Status = 0;
+            this.StatusStr = "新注册";
         }
         /// <summary>
         /// 编辑调用
@@ -282,7 +284,7 @@ namespace LeaRun.Entity
         /// <param name="KeyValue"></param>
         public override void Modify(string KeyValue)
         {
-            this.UserRoleNumber = KeyValue;
+            this.Number = KeyValue;
             this.ModifyTime = DateTime.Now;
         }
         #endregion

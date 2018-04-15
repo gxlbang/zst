@@ -1,31 +1,26 @@
 @{
-    ViewBag.Title = "合伙人》表单页面";
+    ViewBag.Title = "用户》表单页面";
     Layout = "~/Views/Shared/_LayoutForm.cshtml";
 }
 <script type="text/javascript">
     var KeyValue = GetQuery('KeyValue');//主键
     $(function () {
+        //获取用户角色
+        AjaxJson("/AmmeterModule/Ho_PartnerUser/GetUserRole", "", function (data) {
+            $.each(data, function (i) {
+                $("#UserRoleNumber").append($("<option></option>").val(data[i].Number).html(data[i].RoleName));
+            });
+        });
         InitControl();
     })
     //得到一个对象实体
     function InitControl() {
         if (!!GetQuery('KeyValue')) {
-            AjaxJson("/HouseModule/Ho_PartnerUser/SetForm", { KeyValue: KeyValue }, function (data) {
-                SetWebHtmlValue(data);
-                $("#Remarkstr").val(data.Remark);
-                $("#pimg1").attr("src", (!IsNullOrEmpty(data.CodeImg1) ? "/Content/Images/noimg.gif" : data.CodeImg1));
-                $("#pimg2").attr("src", (!IsNullOrEmpty(data.CodeImg2) ? "/Content/Images/noimg.gif" : data.CodeImg2));
-                $("#CreatTime").text(formatDate(data.CreatTime,"yyyy-MM-dd hh:mm:ss"));
-                $("#SureTime").text(formatDate(data.SureTime, "yyyy-MM-dd hh:mm:ss"));
-                //获取用户角色
-                AjaxJson("/AmmeterModule/Ho_PartnerUser/GetUserRole", "", function (data) {
-                    $.each(data, function (i) {
-                        $("#UserRoleNumber").append($("<option></option>").val(data[i].Number).html(data[i].RoleName));
-                    });
-                });
+            AjaxJson("/AmmeterModule/Ho_PartnerUser/SetForm", { KeyValue: KeyValue }, function (data) {
+                SetWebControls(data);
                 //设置select
-                $("#StatusS").val(data.Status);
-                $("#UserRoleNumber").val(data.As_Number);
+                $("#Password").val("******");
+                $("#UserRoleNumber").val(data.UserRoleNumber);
             });
         }
     }
@@ -34,12 +29,11 @@
         if (!CheckDataValid('#form1')) {
             return false;
         }
-        var postData = jQuery.parseJSON('{"Status":"' + $("#StatusS").val() +
-            '","As_Number":"' + $("#As_Numberx").val() + '","CodeImg1":"' + $("#CodeImg1").val() +
-            '","CodeImg2":"' + $("#CodeImg2").val() + '","InnerCode":"' + $("#InnerCode").val() +
-            '","Name":"' + $("#Name").val() + '","CardCode":"' + $("#CardCode").val() +
-                '","Mobile":"' + $("#Mobile").val() + '","Remark":"' + $("#Remarkstr").val() + '"}');
-        AjaxJson("/HouseModule/Ho_PartnerUser/SubmitUserForm?KeyValue=" + KeyValue, postData, function (data) {
+        var postData = jQuery.parseJSON('{"Name":"' + $("#Name").val() +
+            '","Mobile":"' + $("#Mobile").val() + '","Password":"' + $("#Password").val() +
+            '","UserRoleNumber":"' + $("#UserRoleNumber").val() + '","UserRole":"' + $("#UserRoleNumber").find("option:selected").text() +
+            '","CardCode":"' + $("#CardCode").val() + '","Remark":"' + $("#Remark").val() + '"}');
+        AjaxJson("/AmmeterModule/Ho_PartnerUser/SubmitUserForm?KeyValue=" + KeyValue, postData, function (data) {
             tipDialog(data.Message, 3, data.Code);
             top.frames[tabiframeId()].windowload();
             closeDialog();
@@ -49,6 +43,13 @@
 <form id="form1" style="margin: 1px">
     <div id="message" style="display: none"></div>
     <table class="form">
+        <tr>
+            <th class='formTitle'>用户角色：</th>
+            <td class='formValue'>
+                <select id="UserRoleNumber" class="txtselect">
+                </select>
+            </td>
+        </tr>
         <tr>
             <th class='formTitle'>姓名：</th>
             <td class='formValue'>
@@ -67,7 +68,7 @@
             <th class='formTitle'>登录密码：</th>
             <td class='formValue'>
                 @*<label id="Mobile" />*@
-                <input id="Password" maxlength=16 type="text" class="txt required" datacol="yes" err="登录密码" checkexpession="NotNull" />
+                <input id="Password" maxlength=16 type="password" class="txt required" datacol="yes" err="登录密码" checkexpession="NotNull" />
             </td>
         </tr>
         <tr>
@@ -80,7 +81,7 @@
         <tr>
             <th class='formTitle'>备注：</th>
             <td class='formValue'>
-                <textarea id="Remarkstr" name="Remarkstr" maxlength="600" class="txtArea" rows="7"></textarea>
+                <textarea id="Remark" name="Remark" maxlength="600" class="txtArea" rows="5"></textarea>
             </td>
         </tr>
     </table>

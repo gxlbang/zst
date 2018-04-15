@@ -32,93 +32,29 @@
     <div id="message" style="display: none"></div>
     <table class="form">
         <tr>
-            <th class='formTitle'>Number：</th>
-            <td class='formValue'>
-                <input id="Number" maxlength=50 type="text" class="txt"   />
-            </td>
-            <th class='formTitle'>Name：</th>
+            <th class='formTitle'>名称：</th>
             <td class='formValue'>
                 <input id="Name" maxlength=50 type="text" class="txt"   />
             </td>
         </tr>
         <tr>
-            <th class='formTitle'>Classify：</th>
+            <th class='formTitle'>价格类型：</th>
             <td class='formValue'>
-                <input id="Classify" maxlength=10 type="text" class="txt"   />
-            </td>
-            <th class='formTitle'>First：</th>
-            <td class='formValue'>
-                <input id="First" maxlength=10 type="text" class="txt"   />
+                <input type="hidden" id="Classify" value="0" />
+                <input id="Classifystr" maxlength=10 type="text" value="单费率电价(元)" readonly="readonly" class="txt"   />
             </td>
         </tr>
         <tr>
-            <th class='formTitle'>FirstMoney：</th>
+            <th class='formTitle'>电价：</th>
             <td class='formValue'>
                 <input id="FirstMoney" maxlength=19 type="text" class="txt"   />
             </td>
-            <th class='formTitle'>Second：</th>
-            <td class='formValue'>
-                <input id="Second" maxlength=10 type="text" class="txt"   />
-            </td>
         </tr>
         <tr>
-            <th class='formTitle'>SecondMoney：</th>
-            <td class='formValue'>
-                <input id="SecondMoney" maxlength=19 type="text" class="txt"   />
-            </td>
-            <th class='formTitle'>Third：</th>
-            <td class='formValue'>
-                <input id="Third" maxlength=10 type="text" class="txt"   />
-            </td>
-        </tr>
         <tr>
-            <th class='formTitle'>ThirdMoney：</th>
+            <th class='formTitle'>备注：</th>
             <td class='formValue'>
-                <input id="ThirdMoney" maxlength=19 type="text" class="txt"   />
-            </td>
-            <th class='formTitle'>Fourth：</th>
-            <td class='formValue'>
-                <input id="Fourth" maxlength=10 type="text" class="txt"   />
-            </td>
-        </tr>
-        <tr>
-            <th class='formTitle'>FourthMoney：</th>
-            <td class='formValue'>
-                <input id="FourthMoney" maxlength=19 type="text" class="txt"   />
-            </td>
-            <th class='formTitle'>UserNumber：</th>
-            <td class='formValue'>
-                <input id="UserNumber" maxlength=50 type="text" class="txt"   />
-            </td>
-        </tr>
-        <tr>
-            <th class='formTitle'>UserName：</th>
-            <td class='formValue'>
-                <input id="UserName" maxlength=50 type="text" class="txt"   />
-            </td>
-            <th class='formTitle'>UserRealName：</th>
-            <td class='formValue'>
-                <input id="UserRealName" maxlength=50 type="text" class="txt"   />
-            </td>
-        </tr>
-        <tr>
-            <th class='formTitle'>CreateTime：</th>
-            <td class='formValue'>
-                <input id="CreateTime" maxlength=23 type="text" class="txt"   />
-            </td>
-            <th class='formTitle'>Status：</th>
-            <td class='formValue'>
-                <input id="Status" maxlength=10 type="text" class="txt"   />
-            </td>
-        </tr>
-        <tr>
-            <th class='formTitle'>StatusStr：</th>
-            <td class='formValue'>
-                <input id="StatusStr" maxlength=50 type="text" class="txt"   />
-            </td>
-            <th class='formTitle'>Remark：</th>
-            <td class='formValue'>
-                <input id="Remark" maxlength=50 type="text" class="txt"   />
+                <textarea id="Remark" name="Remark" maxlength="600" class="txtArea" rows="3"></textarea>
             </td>
         </tr>
         <tr>

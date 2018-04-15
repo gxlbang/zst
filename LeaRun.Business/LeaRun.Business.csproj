@@ -45,6 +45,11 @@
   <ItemGroup>
     <Compile Include="AmmeterModule\Am_AmmeterBll.cs" />
     <Compile Include="AmmeterModule\Am_AmmeterMoneyBll.cs" />
+    <Compile Include="AmmeterModule\Am_AmmeterOperateLogBll.cs" />
+    <Compile Include="AmmeterModule\Am_AmmeterPermissionBll.cs" />
+    <Compile Include="AmmeterModule\Am_BankInfoBll.cs" />
+    <Compile Include="AmmeterModule\Am_ChargeBll.cs" />
+    <Compile Include="AmmeterModule\Am_MoneyDetailBll.cs" />
     <Compile Include="AmmeterModule\Am_UserRoleBll.cs" />
     <Compile Include="CommonModule\Base_FormAttributeBll.cs" />
     <Compile Include="CommonModule\Base_InterfaceManageBll.cs" />
