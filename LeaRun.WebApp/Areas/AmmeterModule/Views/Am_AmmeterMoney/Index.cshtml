@@ -36,7 +36,7 @@
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsChecked(KeyValue)) {
             var url = "/AmmeterModule/Am_AmmeterMoney/Detail?KeyValue=" + KeyValue;
-            Dialog(url, "Detail", "Ã÷Ï¸", 400, 150, function (iframe) {
+            Dialog(url, "Detail", "Ã÷Ï¸", 480, 200, function (iframe) {
                 top.frames[iframe].AcceptClick();
             });
         }
