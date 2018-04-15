@@ -54,6 +54,11 @@
   <ItemGroup>
     <Compile Include="AmmeterModule\Am_Ammeter.cs" />
     <Compile Include="AmmeterModule\Am_AmmeterMoney.cs" />
+    <Compile Include="AmmeterModule\Am_AmmeterOperateLog.cs" />
+    <Compile Include="AmmeterModule\Am_AmmeterPermission.cs" />
+    <Compile Include="AmmeterModule\Am_BankInfo.cs" />
+    <Compile Include="AmmeterModule\Am_Charge.cs" />
+    <Compile Include="AmmeterModule\Am_MoneyDetail.cs" />
     <Compile Include="AmmeterModule\Am_UserRole.cs" />
     <Compile Include="AmmeterModule\Ho_PartnerUser.cs" />
     <Compile Include="BaseUtility\BaseEntity.cs" />
@@ -121,6 +126,7 @@
     <Compile Include="ProductModule\Fx_UserPVCount.cs" />
     <Compile Include="ProductModule\Fx_WebConfig.cs" />
     <Compile Include="ProductModule\OrderCountModel.cs" />
+    <Compile Include="SystemModule\Fx_Dictionary.cs" />
     <Compile Include="WebModule\Fx_WebAdv.cs" />
     <Compile Include="WeiXinModeule\JSSDKModel.cs" />
     <Compile Include="WebModule\Ho_OnePage.cs" />
@@ -138,9 +144,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="SystemModule\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

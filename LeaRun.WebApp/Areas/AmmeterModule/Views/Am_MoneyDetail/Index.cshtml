@@ -1,5 +1,5 @@
 @{
-    ViewBag.Title = "Am_AmmeterMoney";
+    ViewBag.Title = "Am_MoneyDetail";
     Layout = "~/Views/Shared/_LayoutIndex.cshtml";
 }
 <script type="text/javascript">
@@ -9,18 +9,23 @@
     //加载表格
     function GetGrid() {
         $("#gridTable").jqGrid({
-        url: "@Url.Content("~/AmmeterModule/Am_AmmeterMoney/GridPageJson")",
+        url: "@Url.Content("~/AmmeterModule/Am_MoneyDetail/GridPageJson")",
         datatype: "json",
         height: $(window).height() - 149,
         autowidth: true,
         colModel: [
-                { label: 'Number', name: 'Number', index: 'Number', width: 0, align: 'left', hidden: true },
-                { label: '名称', name: 'Name', index: 'Name', width: 200, align: 'left'  },
-                { label: '价格类型', name: 'Classify', index: 'Classify', width: 200, align: 'left'},
-                { label: '费率(元/kwh)', name: 'FirstMoney', index: 'FirstMoney', width: 200, align: 'left'   },
-                { label: '备注', name: 'Remark', index: 'Remark', width: 400, align: 'left'},
+                { label: 'Number', name: 'Number', index: 'Number', width: 0, align: 'left',sortable: true  },
+                { label: 'U_Number', name: 'U_Number', index: 'U_Number', width: 0, align: 'left',sortable: true  },
+                { label: 'UserName', name: 'UserName', index: 'UserName', width: 0, align: 'left',sortable: true  },
+                { label: 'OperateType', name: 'OperateType', index: 'OperateType', width: 0, align: 'left',sortable: true  },
+                { label: 'OperateTypeStr', name: 'OperateTypeStr', index: 'OperateTypeStr', width: 0, align: 'left',sortable: true  },
+                { label: 'Money', name: 'Money', index: 'Money', width: 0, align: 'left',sortable: true  },
+                { label: 'CreateTime', name: 'CreateTime', index: 'CreateTime', width: 0, align: 'left',sortable: true  },
+                { label: 'CurrMoney', name: 'CurrMoney', index: 'CurrMoney', width: 0, align: 'left',sortable: true  },
+                { label: 'CreateUserId', name: 'CreateUserId', index: 'CreateUserId', width: 0, align: 'left',sortable: true  },
+                { label: 'CreateUserName', name: 'CreateUserName', index: 'CreateUserName', width: 0, align: 'left',sortable: true  },
+                { label: 'Remark', name: 'Remark', index: 'Remark', width: 0, align: 'left',sortable: true  },
         ],
-        viewrecords: true,
         pager: "#gridPager",
         sortname: '',
         sortorder: 'desc',
@@ -31,8 +36,8 @@
 }
     //新增
     function btn_add() {
-        var url = "/AmmeterModule/Am_AmmeterMoney/Form"
-        openDialog(url, "Form", "新增", 400, 150, function (iframe) {
+        var url = "/AmmeterModule/Am_MoneyDetail/Form"
+        openDialog(url, "Form", "新增Am_MoneyDetail", 770, 395, function (iframe) {
             top.frames[iframe].AcceptClick()
         });
     }
@@ -40,8 +45,8 @@
     function btn_edit() {
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsChecked(KeyValue)) {
-            var url = "/AmmeterModule/Am_AmmeterMoney/Form?KeyValue=" + KeyValue;
-            openDialog(url, "Form", "编辑", 400, 150, function (iframe) {
+            var url = "/AmmeterModule/Am_MoneyDetail/Form?KeyValue=" + KeyValue;
+            openDialog(url, "Form", "编辑Am_MoneyDetail", 770, 395, function (iframe) {
                 top.frames[iframe].AcceptClick();
             });
         }
@@ -51,15 +56,15 @@
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsDelData(KeyValue)) {
             var delparm = 'KeyValue=' + KeyValue;
-            delConfig('/AmmeterModule/Am_AmmeterMoney/Delete', delparm, KeyValue.split(",").length);
+            delConfig('/AmmeterModule/Am_MoneyDetail/Delete', delparm, KeyValue.split(",").length);
         }
     }
     //明细
     function btn_detail() {
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsChecked(KeyValue)) {
-            var url = "/AmmeterModule/Am_AmmeterMoney/Detail?KeyValue=" + KeyValue;
-            Dialog(url, "Detail", "明细", 400, 150, function (iframe) {
+            var url = "/AmmeterModule/Am_MoneyDetail/Detail?KeyValue=" + KeyValue;
+            Dialog(url, "Detail", "Am_MoneyDetail明细", 820, 500, function (iframe) {
                 top.frames[iframe].AcceptClick();
             });
         }
@@ -68,13 +73,6 @@
     function windowload() {
         $("#gridTable").trigger("reloadGrid"); //重新载入
         
-    }
-    //搜索
-    function btn_Search() {
-        var keywords = $("#keywords").val();
-        $("#gridTable").jqGrid('setGridParam', {
-            url: "@Url.Content("~/AmmeterModule/Am_AmmeterMoney/GridPageListJson")?Keyword=" + keywords, page: 1
-    }).trigger('reloadGrid');
     }
 </script>
 <!--工具栏-->

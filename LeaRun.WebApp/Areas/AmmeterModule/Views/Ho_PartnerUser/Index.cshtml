@@ -62,8 +62,8 @@
     function btn_edit() {
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsChecked(KeyValue)) {
-            var url = "/AmmeterModule/Ho_PartnerUser/Form?KeyValue=" + KeyValue;
-            openDialog(url, "Form", "编辑用户", 460, 240, function (iframe) {
+            var url = "/AmmeterModule/Ho_PartnerUser/Edit?KeyValue=" + KeyValue;
+            openDialog(url, "Form", "编辑用户", 800, 460, function (iframe) {
                 top.frames[iframe].AcceptClick();
             });
         }
@@ -126,13 +126,13 @@
             <th>角色：</th>
             <td>
                 <select id="Role" class="txtselect" style="width: 100px">
-                    <option value="-1">请选择</option>
+                    <option value="">请选择</option>
                 </select>
             </td>
             <th>状态：</th>
             <td>
                 <select id="Stuts" class="txtselect" style="width: 100px">
-                    <option value="">请选择</option>
+                    <option value="-1">请选择</option>
                     <option value="0">新注册</option>
                     <option value="1">已提交</option>
                     <option value="2">不通过</option>

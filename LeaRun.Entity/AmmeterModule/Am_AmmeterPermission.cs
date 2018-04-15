@@ -1,8 +1,8 @@
 /*
 * 姓名:gxlbang
-* 类名:Am_AmmeterType
+* 类名:Am_AmmeterPermission
 * CLR版本：
-* 创建时间:2018-04-11 17:19:30
+* 创建时间:2018-04-15 14:54:05
 * 功能描述:
 *
 * 修改历史：
@@ -21,15 +21,15 @@ using System.Text;
 namespace LeaRun.Entity
 {
     /// <summary>
-    /// Am_AmmeterType
+    /// Am_AmmeterPermission
     /// <author>
     ///		<name>she</name>
-    ///		<date>2018.04.11 17:19</date>
+    ///		<date>2018.04.15 14:54</date>
     /// </author>
     /// </summary>
-    [Description("Am_AmmeterType")]
-    [PrimaryKey("Number")]
-    public class Am_AmmeterType : BaseEntity
+    [Description("Am_AmmeterPermission")]
+    [PrimaryKey("Ammeter_Number")]
+    public class Am_AmmeterPermission : BaseEntity
     {
         #region 获取/设置 字段值
         /// <summary>
@@ -39,65 +39,23 @@ namespace LeaRun.Entity
         [DisplayName("Number")]
         public string Number { get; set; }
         /// <summary>
-        /// Name
+        /// Ammeter_Number
         /// </summary>
         /// <returns></returns>
-        [DisplayName("Name")]
-        public string Name { get; set; }
+        [DisplayName("Ammeter_Number")]
+        public string Ammeter_Number { get; set; }
         /// <summary>
-        /// Jxfs
+        /// Ammeter_Code
         /// </summary>
         /// <returns></returns>
-        [DisplayName("Jxfs")]
-        public string Jxfs { get; set; }
+        [DisplayName("Ammeter_Code")]
+        public string Ammeter_Code { get; set; }
         /// <summary>
-        /// Txgy
+        /// U_Number
         /// </summary>
         /// <returns></returns>
-        [DisplayName("Txgy")]
-        public string Txgy { get; set; }
-        /// <summary>
-        /// Djlx
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Djlx")]
-        public string Djlx { get; set; }
-        /// <summary>
-        /// Jtlx
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Jtlx")]
-        public string Jtlx { get; set; }
-        /// <summary>
-        /// Dblx
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Dblx")]
-        public string Dblx { get; set; }
-        /// <summary>
-        /// Qx
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Qx")]
-        public string Qx { get; set; }
-        /// <summary>
-        /// PASSWORD
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Password")]
-        public string Password { get; set; }
-        /// <summary>
-        /// OtherType
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("OtherType")]
-        public string OtherType { get; set; }
-        /// <summary>
-        /// UserNumber
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("UserNumber")]
-        public string UserNumber { get; set; }
+        [DisplayName("U_Number")]
+        public string U_Number { get; set; }
         /// <summary>
         /// UserName
         /// </summary>
@@ -105,11 +63,35 @@ namespace LeaRun.Entity
         [DisplayName("UserName")]
         public string UserName { get; set; }
         /// <summary>
-        /// UserRealName
+        /// U_Name
         /// </summary>
         /// <returns></returns>
-        [DisplayName("UserRealName")]
-        public string UserRealName { get; set; }
+        [DisplayName("U_Name")]
+        public string U_Name { get; set; }
+        /// <summary>
+        /// CreateTime
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("CreateTime")]
+        public DateTime? CreateTime { get; set; }
+        /// <summary>
+        /// Status
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("Status")]
+        public int? Status { get; set; }
+        /// <summary>
+        /// StatusStr
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("StatusStr")]
+        public string StatusStr { get; set; }
+        /// <summary>
+        /// LeaveTime
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("LeaveTime")]
+        public DateTime? LeaveTime { get; set; }
         /// <summary>
         /// Remark
         /// </summary>
@@ -124,7 +106,7 @@ namespace LeaRun.Entity
         /// </summary>
         public override void Create()
         {
-            this.Number = CommonHelper.GetGuid;
+            this.Ammeter_Number = CommonHelper.GetGuid;
                                             }
         /// <summary>
         /// 编辑调用
@@ -132,7 +114,7 @@ namespace LeaRun.Entity
         /// <param name="KeyValue"></param>
         public override void Modify(string KeyValue)
         {
-            this.Number = KeyValue;
+            this.Ammeter_Number = KeyValue;
                                             }
         #endregion
     }

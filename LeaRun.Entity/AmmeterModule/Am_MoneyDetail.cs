@@ -1,8 +1,8 @@
 /*
 * 姓名:gxlbang
-* 类名:Am_AmmeterType
+* 类名:Am_MoneyDetail
 * CLR版本：
-* 创建时间:2018-04-11 17:19:30
+* 创建时间:2018-04-15 14:49:30
 * 功能描述:
 *
 * 修改历史：
@@ -21,15 +21,15 @@ using System.Text;
 namespace LeaRun.Entity
 {
     /// <summary>
-    /// Am_AmmeterType
+    /// Am_MoneyDetail
     /// <author>
     ///		<name>she</name>
-    ///		<date>2018.04.11 17:19</date>
+    ///		<date>2018.04.15 14:49</date>
     /// </author>
     /// </summary>
-    [Description("Am_AmmeterType")]
+    [Description("Am_MoneyDetail")]
     [PrimaryKey("Number")]
-    public class Am_AmmeterType : BaseEntity
+    public class Am_MoneyDetail : BaseEntity
     {
         #region 获取/设置 字段值
         /// <summary>
@@ -39,65 +39,11 @@ namespace LeaRun.Entity
         [DisplayName("Number")]
         public string Number { get; set; }
         /// <summary>
-        /// Name
+        /// U_Number
         /// </summary>
         /// <returns></returns>
-        [DisplayName("Name")]
-        public string Name { get; set; }
-        /// <summary>
-        /// Jxfs
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Jxfs")]
-        public string Jxfs { get; set; }
-        /// <summary>
-        /// Txgy
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Txgy")]
-        public string Txgy { get; set; }
-        /// <summary>
-        /// Djlx
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Djlx")]
-        public string Djlx { get; set; }
-        /// <summary>
-        /// Jtlx
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Jtlx")]
-        public string Jtlx { get; set; }
-        /// <summary>
-        /// Dblx
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Dblx")]
-        public string Dblx { get; set; }
-        /// <summary>
-        /// Qx
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Qx")]
-        public string Qx { get; set; }
-        /// <summary>
-        /// PASSWORD
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Password")]
-        public string Password { get; set; }
-        /// <summary>
-        /// OtherType
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("OtherType")]
-        public string OtherType { get; set; }
-        /// <summary>
-        /// UserNumber
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("UserNumber")]
-        public string UserNumber { get; set; }
+        [DisplayName("U_Number")]
+        public string U_Number { get; set; }
         /// <summary>
         /// UserName
         /// </summary>
@@ -105,11 +51,47 @@ namespace LeaRun.Entity
         [DisplayName("UserName")]
         public string UserName { get; set; }
         /// <summary>
-        /// UserRealName
+        /// OperateType
         /// </summary>
         /// <returns></returns>
-        [DisplayName("UserRealName")]
-        public string UserRealName { get; set; }
+        [DisplayName("OperateType")]
+        public int? OperateType { get; set; }
+        /// <summary>
+        /// OperateTypeStr
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("OperateTypeStr")]
+        public string OperateTypeStr { get; set; }
+        /// <summary>
+        /// Money
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("Money")]
+        public double? Money { get; set; }
+        /// <summary>
+        /// CreateTime
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("CreateTime")]
+        public DateTime? CreateTime { get; set; }
+        /// <summary>
+        /// CurrMoney
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("CurrMoney")]
+        public double? CurrMoney { get; set; }
+        /// <summary>
+        /// CreateUserId
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("CreateUserId")]
+        public string CreateUserId { get; set; }
+        /// <summary>
+        /// CreateUserName
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("CreateUserName")]
+        public string CreateUserName { get; set; }
         /// <summary>
         /// Remark
         /// </summary>
@@ -125,7 +107,9 @@ namespace LeaRun.Entity
         public override void Create()
         {
             this.Number = CommonHelper.GetGuid;
-                                            }
+                        this.CreateUserId = ManageProvider.Provider.Current().UserId;
+            this.CreateUserName = ManageProvider.Provider.Current().UserName;
+        }
         /// <summary>
         /// 编辑调用
         /// </summary>

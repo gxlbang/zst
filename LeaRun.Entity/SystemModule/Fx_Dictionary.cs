@@ -1,8 +1,8 @@
 /*
 * 姓名:gxlbang
-* 类名:Am_AmmeterType
+* 类名:Fx_Dictionary
 * CLR版本：
-* 创建时间:2018-04-11 17:19:30
+* 创建时间:2018-04-15 12:02:22
 * 功能描述:
 *
 * 修改历史：
@@ -21,15 +21,15 @@ using System.Text;
 namespace LeaRun.Entity
 {
     /// <summary>
-    /// Am_AmmeterType
+    /// Fx_Dictionary
     /// <author>
     ///		<name>she</name>
-    ///		<date>2018.04.11 17:19</date>
+    ///		<date>2018.04.15 12:02</date>
     /// </author>
     /// </summary>
-    [Description("Am_AmmeterType")]
+    [Description("Fx_Dictionary")]
     [PrimaryKey("Number")]
-    public class Am_AmmeterType : BaseEntity
+    public class Fx_Dictionary : BaseEntity
     {
         #region 获取/设置 字段值
         /// <summary>
@@ -39,77 +39,29 @@ namespace LeaRun.Entity
         [DisplayName("Number")]
         public string Number { get; set; }
         /// <summary>
-        /// Name
+        /// Dic_Code
         /// </summary>
         /// <returns></returns>
-        [DisplayName("Name")]
-        public string Name { get; set; }
+        [DisplayName("Dic_Code")]
+        public string Dic_Code { get; set; }
         /// <summary>
-        /// Jxfs
+        /// Dic_Name
         /// </summary>
         /// <returns></returns>
-        [DisplayName("Jxfs")]
-        public string Jxfs { get; set; }
+        [DisplayName("Dic_Name")]
+        public string Dic_Name { get; set; }
         /// <summary>
-        /// Txgy
+        /// Dic_Class
         /// </summary>
         /// <returns></returns>
-        [DisplayName("Txgy")]
-        public string Txgy { get; set; }
+        [DisplayName("Dic_Class")]
+        public string Dic_Class { get; set; }
         /// <summary>
-        /// Djlx
+        /// Dic_Value
         /// </summary>
         /// <returns></returns>
-        [DisplayName("Djlx")]
-        public string Djlx { get; set; }
-        /// <summary>
-        /// Jtlx
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Jtlx")]
-        public string Jtlx { get; set; }
-        /// <summary>
-        /// Dblx
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Dblx")]
-        public string Dblx { get; set; }
-        /// <summary>
-        /// Qx
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Qx")]
-        public string Qx { get; set; }
-        /// <summary>
-        /// PASSWORD
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Password")]
-        public string Password { get; set; }
-        /// <summary>
-        /// OtherType
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("OtherType")]
-        public string OtherType { get; set; }
-        /// <summary>
-        /// UserNumber
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("UserNumber")]
-        public string UserNumber { get; set; }
-        /// <summary>
-        /// UserName
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("UserName")]
-        public string UserName { get; set; }
-        /// <summary>
-        /// UserRealName
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("UserRealName")]
-        public string UserRealName { get; set; }
+        [DisplayName("Dic_Value")]
+        public string Dic_Value { get; set; }
         /// <summary>
         /// Remark
         /// </summary>

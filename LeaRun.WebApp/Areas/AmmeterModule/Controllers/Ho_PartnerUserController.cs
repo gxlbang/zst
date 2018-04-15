@@ -16,6 +16,7 @@ using LeaRun.DataAccess;
 using LeaRun.Entity;
 using LeaRun.Repository;
 using LeaRun.Utilities;
+using LeaRun.Utilities.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -60,6 +61,10 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
                 return null;
             }
         }
+        public ActionResult Edit()
+        {
+            return View();
+        }
         /// <summary>
         /// 提交表单
         /// </summary>
@@ -75,7 +80,6 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
             try
             {
                 string Message = KeyValue == "" ? "新增成功。" : "编辑成功。";
-                model.StatusStr = GetStrutsStr(model.Status.Value);
                 if (!string.IsNullOrEmpty(KeyValue))
                 {
                     model.Modify(KeyValue);
@@ -84,6 +88,7 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
                 }
                 else //新建
                 {
+                    model.Password = PasswordHash.CreateHash(model.Password);
                     model.Create();
                     var IsOk = database.Insert(model, isOpenTrans);
                     Base_SysLogBll.Instance.WriteLog(KeyValue, OperationType.Update, IsOk > 0 ? "成功" : "失败", "用户" + Message);
@@ -108,7 +113,8 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
             return Content(list.ToJson());
         }
         //禁用用户
-        public ActionResult DisableUser(string KeyValue) {
+        public ActionResult DisableUser(string KeyValue)
+        {
             IDatabase database = DataFactory.Database();
             DbTransaction isOpenTrans = database.BeginTrans();
             try

@@ -1,8 +1,8 @@
 /*
 * 姓名:gxlbang
-* 类名:Am_AmmeterType
+* 类名:Am_Charge
 * CLR版本：
-* 创建时间:2018-04-11 17:19:30
+* 创建时间:2018-04-15 14:52:49
 * 功能描述:
 *
 * 修改历史：
@@ -21,15 +21,15 @@ using System.Text;
 namespace LeaRun.Entity
 {
     /// <summary>
-    /// Am_AmmeterType
+    /// Am_Charge
     /// <author>
     ///		<name>she</name>
-    ///		<date>2018.04.11 17:19</date>
+    ///		<date>2018.04.15 14:52</date>
     /// </author>
     /// </summary>
-    [Description("Am_AmmeterType")]
+    [Description("Am_Charge")]
     [PrimaryKey("Number")]
-    public class Am_AmmeterType : BaseEntity
+    public class Am_Charge : BaseEntity
     {
         #region 获取/设置 字段值
         /// <summary>
@@ -39,65 +39,23 @@ namespace LeaRun.Entity
         [DisplayName("Number")]
         public string Number { get; set; }
         /// <summary>
-        /// Name
+        /// OrderNumber
         /// </summary>
         /// <returns></returns>
-        [DisplayName("Name")]
-        public string Name { get; set; }
+        [DisplayName("OrderNumber")]
+        public string OrderNumber { get; set; }
         /// <summary>
-        /// Jxfs
+        /// OutNumber
         /// </summary>
         /// <returns></returns>
-        [DisplayName("Jxfs")]
-        public string Jxfs { get; set; }
+        [DisplayName("OutNumber")]
+        public string OutNumber { get; set; }
         /// <summary>
-        /// Txgy
+        /// U_Number
         /// </summary>
         /// <returns></returns>
-        [DisplayName("Txgy")]
-        public string Txgy { get; set; }
-        /// <summary>
-        /// Djlx
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Djlx")]
-        public string Djlx { get; set; }
-        /// <summary>
-        /// Jtlx
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Jtlx")]
-        public string Jtlx { get; set; }
-        /// <summary>
-        /// Dblx
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Dblx")]
-        public string Dblx { get; set; }
-        /// <summary>
-        /// Qx
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Qx")]
-        public string Qx { get; set; }
-        /// <summary>
-        /// PASSWORD
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Password")]
-        public string Password { get; set; }
-        /// <summary>
-        /// OtherType
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("OtherType")]
-        public string OtherType { get; set; }
-        /// <summary>
-        /// UserNumber
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("UserNumber")]
-        public string UserNumber { get; set; }
+        [DisplayName("U_Number")]
+        public string U_Number { get; set; }
         /// <summary>
         /// UserName
         /// </summary>
@@ -105,11 +63,41 @@ namespace LeaRun.Entity
         [DisplayName("UserName")]
         public string UserName { get; set; }
         /// <summary>
-        /// UserRealName
+        /// ChargeType
         /// </summary>
         /// <returns></returns>
-        [DisplayName("UserRealName")]
-        public string UserRealName { get; set; }
+        [DisplayName("ChargeType")]
+        public int? ChargeType { get; set; }
+        /// <summary>
+        /// ChargeTypeStr
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("ChargeTypeStr")]
+        public string ChargeTypeStr { get; set; }
+        /// <summary>
+        /// CreateTime
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("CreateTime")]
+        public DateTime? CreateTime { get; set; }
+        /// <summary>
+        /// STATUS
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("STATUS")]
+        public int? STATUS { get; set; }
+        /// <summary>
+        /// StatusStr
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("StatusStr")]
+        public string StatusStr { get; set; }
+        /// <summary>
+        /// SucTime
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("SucTime")]
+        public DateTime? SucTime { get; set; }
         /// <summary>
         /// Remark
         /// </summary>
