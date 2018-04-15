@@ -1,34 +1,95 @@
 ﻿@model LeaRun.WebApp.ViewsModel.Account.Register
 @{
     ViewBag.Title = "注册";
-    Layout = "~/Views/Shared/_Partial.cshtml";
+    //Layout = "~/Views/Shared/_Partial.cshtml";
 }
-<div>
-    <div>
-        手机号：<input type="text" name="" />
-    </div>
-    <div>
-        密码：<input type="text" name="" />
-    </div>
-    <div>
-        确认密码：<input type="text" name="" />
-    </div>
-    <div>
-        验证码：<input type="text" name="" /><img />
-    </div>
-    <div>
-         <input type="button"  value="注册"/>
-    </div>
-</div>
+<style type="text/css">
+    .field-validation-error {
+        display: block;
+        float: none;
+        color: red;
+        width: 100%;
+        line-height: 30px;
+        margin: 0px;
+    }
+
+    .byl-form .form.formlogin {
+        height: 70px;
+        margin-bottom: 10px;
+    }
+    /*#b2b2b2*/
+    .byl-registered-btn.backcolor {
+        background-color: #b2b2b2;
+    }
+</style>
+
+
 @using (Ajax.BeginForm("Register", "Account", new { }, new AjaxOptions() { HttpMethod = "post", OnSuccess = "success" }, new { @id = "registerForm" }))
 {
     @Html.AntiForgeryToken()
-
     <div class="item-reg">
         <label>手机号</label>
         @Html.TextBoxFor(m => m.Name, new { placeholder = "请输入手机号", @class = "input-regw400" })
         @Html.ValidationMessageFor(m => m.Name)
         <span class="reg-jname"></span>
     </div>
-
+    <div class="item-reg">
+        <label>设置密码</label>
+        @Html.PasswordFor(m => m.Password, new { placeholder = "设置登录密码", @class = "input-regw400" })
+        @Html.ValidationMessageFor(m => m.Password)
+        <span class="reg-recommend"><!--程序判断后选择其中一个输出<i>密码正确</i><b>密码错误</b>--></span>
+    </div>
+    <div class="item-reg">
+        <label>确认密码</label>
+        @Html.PasswordFor(m => m.ConfirmPassword, new { placeholder = "再次输入密码", @class = "input-regw400" })
+        @Html.ValidationMessageFor(m => m.ConfirmPassword)
+        <span class="reg-recommend"><!--程序判断后选择其中一个输出<i>密码正确</i><b>密码错误</b>--></span>
+    </div>
+    <div class="item-reg">
+        <label>验证码</label>
+        @Html.TextBoxFor(m => m.ValidCode, new { placeholder = "请输入验证码", @class = "input-regw400" })
+        @Html.ValidationMessageFor(m => m.Name)
+        <span class="reg-jname"></span>
+        <input type="button" onclick="getVreifyCode()" value="发送验证码"/>
+    </div>
+    <div class="reg-btn" style="margin-top: 40px;">
+        <a href="javascript:;" onclick="sumbit()">注&nbsp;&nbsp;&nbsp;册</a>
+    </div>
 }
+<script src="~/Content/Scripts/jquery/jquery-1.8.3.min.js"></script>
+<script src="~/Content/Scripts/validate/jquery.unobtrusive-ajax.js"></script>
+<script src="~/Content/Scripts/validate/jquery.validate.min.js"></script>
+<script src="~/Content/Scripts/validate/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/Content/Scripts/validate/validate.js"></script>
+<script src="~/Content/Scripts/layer/layer.js"></script>
+<script>
+
+    function success(data) {
+        if (data.res == "Ok") {
+            // layer.msg(data.Msg, { time: 800 });
+            layer.msg('注册成功，跳转中……', { icon: 16 })
+
+            setTimeout("jump()", 1000);
+        } else {
+            layer.msg(data.Msg, { time: 2000 });
+        }
+    }
+    function sumbit() {
+        $('#registerForm').submit();
+    }
+    function getVreifyCode() {
+
+        var phone = $('#Name').val();
+        alert(phone);
+        var strphone = /^1(3[0-9]|4[57]|5[0-35-9]|8[0-9]|7[06-8])\d{8}$/;
+        if (!phone || phone.length <= 0 || !phone.match(strphone)) {
+            $('#Name').blur();
+            return;
+        }
+
+        $.post("/Ui/GetCode", { Phone: phone }, function (data) {
+            layer.msg('发送成功', { time: 2000 });
+        });
+    }
+</script>
+ 

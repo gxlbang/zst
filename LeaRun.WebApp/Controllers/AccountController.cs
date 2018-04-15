@@ -19,6 +19,7 @@ namespace LeaRun.WebApp.Controllers
         private static readonly string LoginReturnUrlCookieName = "longin_return_url";
         public ActionResult Register()
         {
+           
             return View();
         }
         [HttpPost]
@@ -32,12 +33,13 @@ namespace LeaRun.WebApp.Controllers
                 {
                     return Json(new { res = "On", msg = "验证码错误！" });
                 }
-                var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Mobile=" + model.Name);
-                if (account != null)
+                var account = database.FindEntity<Ho_PartnerUser>(" and Mobile=" + model.Name);
+                if (account != null&&account.Number!=null )
                 {
                     return Json(new { res = "On", msg = "已存在用户！" });
                 }
                 var insertModel = new Ho_PartnerUser();
+                insertModel.Number = CommonHelper.GetGuid;
                 insertModel.Password = PasswordHash.CreateHash(model.Password);
                 insertModel.Mobile = model.Name;
                 insertModel.CreatTime = DateTime.Now;
@@ -46,13 +48,21 @@ namespace LeaRun.WebApp.Controllers
                 insertModel.Money = 0.00;
                 insertModel.FreezeMoney = 0.00;
                 insertModel.Status = 0;
-
-                var num = database.Insert<Ho_PartnerUser>(insertModel);
-                if (num > 0)
+                insertModel.StatusStr = "新注册";
+                insertModel.Birthday = DateTime.Now;
+                var role = database.FindEntityByWhere<Am_UserRole>(" and RoleName='普通会员'");
+                if (role!=null &&role.Number !=null)
                 {
-                    CookieHelper.WriteCookie("WebCode", null);
-                    return Json(new { res = "Ok", msg = "注册成功" });
+                    insertModel.UserRole = role.RoleName;
+                    insertModel.UserRoleNumber = role.Number;
+                    var num = database.Insert<Ho_PartnerUser>(insertModel);
+                    if (num > 0)
+                    {
+                        CookieHelper.WriteCookie("WebCode", null);
+                        return Json(new { res = "Ok", msg = "注册成功" });
+                    }
                 }
+                
             }
             return Json(new { res = "On", msg = "注册失败！" });
         }

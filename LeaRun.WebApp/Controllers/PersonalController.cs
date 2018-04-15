@@ -72,6 +72,19 @@ namespace LeaRun.WebApp.Controllers
             }
             return View();
         }
-
+        /// <summary>
+        /// 我的余额
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult MyBalance()
+        {
+            var user = wbll.GetUserInfo(Request);
+            var account = database.FindEntityByWhere<Ho_HouseInfo>(" and Number='" + user.Number + "'");
+            if (account!=null &&account.Number!=null)
+            {
+                ViewBag.Balance = account.Money;
+            }
+            return View();
+        }
     }
 }
