@@ -142,47 +142,6 @@ namespace LeaRun.WebApp.Controllers
             return "支付失败!";
         }
 
-        /// <summary>
-        /// 微信扫码支付异步通知接口
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost]
-        public async System.Threading.Tasks.Task<ActionResult> WepayWebNotify()
-        {
-            //var _logger = ObjectContainer.Resolve<ILoggerFactory>().Create(GetType().FullName);
-            WePayReturnModel payResult = new WePayReturnModel();
-            var result = this._wePay.VerifyNotify(Request, out payResult);
-
-            // _logger.Info("resultXml:" + payResult.RequestForm);
-
-
-            if (result)
-            {
-                var order = _orderQueryService.FindOrderInfo(payResult.OutTradeNo, 0);
-                if (order != null)
-                {
-                    if (payResult.TotalFee == order.Fare)
-                    {
-                        var orderCommand = new Commands.TradeCenter.UpdateOrderStatusCommand(order.OrderId, 1);
-                        var status = await _commandService.SendAsync(orderCommand);
-                        if (status.Status == ECommon.IO.AsyncTaskStatus.Success)
-                        {
-                            return Content(payResult.ReturnXml);
-                        }
-                    }
-                }
-                //long payOrderId = 0;
-                //if (long.TryParse(payResult.OutTradeNo, out payOrderId))
-                //{
-                //    //if (SavePayResult(payOrderId, payResult.TradeNo, payResult.TotalFee, PayType.WechatPay, payResult.ReturnXml))
-                //    return Content(payResult.ReturnXml);
-                //}
-                //交易成功
-
-            }
-            return Content(BuildWepayReturnXml("FAIL", ""));
-        }
-
-
+         
     }
 }
