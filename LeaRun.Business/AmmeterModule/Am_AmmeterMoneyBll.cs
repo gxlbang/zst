@@ -50,5 +50,24 @@ namespace LeaRun.Business
             }
             return Repository().FindListPageBySql(strSql.ToString(), parameter.ToArray(), ref jqgridparam);
         }
+        /// <summary>
+        /// 获取列表
+        /// </summary>
+        /// <param name="jqgridparam">分页条件</param>
+        /// <returns></returns>
+        public IList<Am_AmmeterMoney> GetPageList(string keyword)
+        {
+            StringBuilder strSql = new StringBuilder();
+            List<DbParameter> parameter = new List<DbParameter>();
+            strSql.Append(@"SELECT  *
+                            FROM  Am_AmmeterMoney where 1=1 ");
+            //关键字
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                strSql.Append(@" AND (Name LIKE @keyword)");
+                parameter.Add(DbFactory.CreateDbParameter("@keyword", '%' + keyword + '%'));
+            }
+            return Repository().FindListBySql(strSql.ToString(), parameter.ToArray());
+        }
     }
 }

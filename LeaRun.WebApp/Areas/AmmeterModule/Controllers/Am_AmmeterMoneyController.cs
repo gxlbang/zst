@@ -100,5 +100,30 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
                 return Content(new JsonMessage { Success = false, Code = "-1", Message = "操作失败：" + ex.Message }.ToString());
             }
         }
+        /// <summary>
+        /// 数据导出
+        /// </summary>
+        public void ExportExcel(string Keyword)
+        {
+            Am_AmmeterMoneyBll bll = new Am_AmmeterMoneyBll();
+            var ListData = bll.GetPageList(Keyword);
+            var newlist = new List<Am_AmmeterMoneyNew>();
+            foreach (var item in ListData)
+            {
+                var model = new Am_AmmeterMoneyNew();
+                model.Classify = item.Classify.Value==0?"单费率电价":"其他";
+                model.FirstMoney = item.FirstMoney.Value.ToString("0.00");
+                model.Name = item.Name;
+                model.Remark = item.Remark;
+                model.UserName = item.UserName;
+                model.UserRealName = item.UserRealName;
+
+                newlist.Add(model);
+            }
+            string[] columns = new string[] { "名称:Name", "价格类型:Classify", "费率(元/kwh):FirstMoney", "业主姓名:UserRealName",
+                "业主帐号:UserName", "备注:Remark" };
+            DeriveExcel.ListToExcel<Am_AmmeterMoneyNew>(newlist, columns, "电价数据" + DateTime.Now.ToString("yyyyMMddHHmmss"));
+
+        }
     }
 }

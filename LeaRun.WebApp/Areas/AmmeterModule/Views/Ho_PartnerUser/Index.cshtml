@@ -108,6 +108,40 @@
             OpConfig('/AmmeterModule/Ho_PartnerUser/DisableUser', delparm, "确定要禁用此用户么?");
         }
     }
+    //要打印数据源，子页面调用的函数
+    function PrintDataSource() {
+        var columnModel = $("#gridTable").jqGrid('getGridParam', 'colModel');
+        var dataModel = $("#gridTable").jqGrid("getRowData");
+        //var footerData = $("#gridTable").jqGrid("footerData");
+        var JsonData = {
+            columnModel: columnModel,
+            dataModel: dataModel,
+            //footerData: footerData,
+        }
+        return JsonData;
+    }
+    //点击打印
+    function btn_Print() {
+        PrintDialog("/Utility/PrintPage", "PrintPage", "打印当前页", 1200, 500, function (iframe) {
+            top.frames[iframe].SubmitPrint()
+        });
+    }
+    //导出Excel
+    function btn_derive() {
+        //SetDeriveExcel("#gridTable", "订单信息");
+        //openDialog("/CommonModule/ExcelImport/DeriveDialog", "DeriveDialog", "订单信息", 600, 300, function (iframe) {
+        //    top.frames[iframe].AcceptClick();
+        //});
+        //var SelectedField = ""; $('#AccessView .selected a').each(function () { SelectedField += $(this).attr('id') + ","; });
+        Loading(true, "正在处理要导出数据...");
+        var keywords = $("#keywords").val();
+        var Stuts = $("#Stuts").val();
+        var Role = $("#Role").val();
+        window.setTimeout(function () {
+            location.href = "/AmmeterModule/Ho_PartnerUser/ExportExcel??Role=" + Role + '&Keyword=' + keywords + '&Stuts=' + Stuts;
+            Loading(false);
+        }, 200);
+    }
 </script>
 <!--工具栏-->
 <div class="tools_bar leftline rightline" style="margin: 1px; margin-bottom: 0px;">

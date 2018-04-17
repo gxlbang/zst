@@ -20,6 +20,7 @@ using LeaRun.Utilities.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
@@ -158,6 +159,35 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
                 default:
                     return "未知";
             }
+        }
+
+        /// <summary>
+        /// 数据导出
+        /// </summary>
+        public void ExportExcel(int Stuts, string Keyword, string Role)
+        {
+            Ho_PartnerUserBll bll = new Ho_PartnerUserBll();
+            var ListData = bll.GetPageList(Keyword, Role, Stuts);
+            var newlist = new List<Ho_PartnerUserNew>();
+            foreach (var item in ListData)
+            {
+                var model = new Ho_PartnerUserNew();
+                model.Address = item.Address;
+                model.CardCode = item.CardCode;
+                model.CreatTime = item.CreatTime.Value.ToString("yyyy-MM-dd HH:mm:ss");
+                model.Mobile = item.Mobile;
+                model.Money = item.Money.Value.ToString("0.00");
+                model.Name = item.Name;
+                model.Remark = item.Remark;
+                model.StatusStr = item.StatusStr;
+                model.UserRole = item.UserRole;
+
+                newlist.Add(model);
+            }
+            string[] columns = new string[] { "姓名:Name", "身份证号:CardCode", "手机号:Mobile", "角色:UserRole",
+                "余额:Money", "地址:Address", "创建时间:CreatTime", "状态:StatusStr", "备注:Remark" };
+            DeriveExcel.ListToExcel<Ho_PartnerUserNew>(newlist, columns, "会员数据" + DateTime.Now.ToString("yyyyMMddHHmmss"));
+
         }
     }
 }

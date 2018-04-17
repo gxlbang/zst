@@ -1,8 +1,8 @@
 /*
 * 姓名:gxlbang
-* 类名:Am_Charge
+* 类名:Am_Collector
 * CLR版本：
-* 创建时间:2018-04-17 10:13:57
+* 创建时间:2018-04-15 17:09:58
 * 功能描述:
 *
 * 修改历史：
@@ -21,15 +21,15 @@ using System.Text;
 namespace LeaRun.Entity
 {
     /// <summary>
-    /// Am_Charge
+    /// Am_Collector
     /// <author>
     ///		<name>she</name>
-    ///		<date>2018.04.17 10:13</date>
+    ///		<date>2018.04.15 17:09</date>
     /// </author>
     /// </summary>
-    [Description("Am_Charge")]
+    [Description("Am_Collector")]
     [PrimaryKey("Number")]
-    public class Am_Charge : BaseEntity
+    public class Am_Collector : BaseEntity
     {
         #region 获取/设置 字段值
         /// <summary>
@@ -39,23 +39,11 @@ namespace LeaRun.Entity
         [DisplayName("Number")]
         public string Number { get; set; }
         /// <summary>
-        /// OrderNumber
+        /// UNumber
         /// </summary>
         /// <returns></returns>
-        [DisplayName("OrderNumber")]
-        public string OrderNumber { get; set; }
-        /// <summary>
-        /// OutNumber
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("OutNumber")]
-        public string OutNumber { get; set; }
-        /// <summary>
-        /// U_Number
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("U_Number")]
-        public string U_Number { get; set; }
+        [DisplayName("UNumber")]
+        public string UNumber { get; set; }
         /// <summary>
         /// UserName
         /// </summary>
@@ -63,35 +51,47 @@ namespace LeaRun.Entity
         [DisplayName("UserName")]
         public string UserName { get; set; }
         /// <summary>
-        /// ChargeType
+        /// URealName
         /// </summary>
         /// <returns></returns>
-        [DisplayName("ChargeType")]
-        public int? ChargeType { get; set; }
+        [DisplayName("URealName")]
+        public string URealName { get; set; }
         /// <summary>
-        /// ChargeTypeStr
+        /// CollectorCode
         /// </summary>
         /// <returns></returns>
-        [DisplayName("ChargeTypeStr")]
-        public string ChargeTypeStr { get; set; }
+        [DisplayName("CollectorCode")]
+        public string CollectorCode { get; set; }
         /// <summary>
-        /// PayType
+        /// Province
         /// </summary>
         /// <returns></returns>
-        [DisplayName("PayType")]
-        public string PayType { get; set; }
+        [DisplayName("Province")]
+        public string Province { get; set; }
         /// <summary>
-        /// Moeny
+        /// City
         /// </summary>
         /// <returns></returns>
-        [DisplayName("Moeny")]
-        public double? Moeny { get; set; }
+        [DisplayName("City")]
+        public string City { get; set; }
         /// <summary>
-        /// CreateTime
+        /// County
         /// </summary>
         /// <returns></returns>
-        [DisplayName("CreateTime")]
-        public DateTime? CreateTime { get; set; }
+        [DisplayName("County")]
+        public string County { get; set; }
+        /// <summary>
+        /// Address
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("Address")]
+        public string Address { get; set; }
+        /// <summary>
+        /// AmCount
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("AmCount")]
+        public string AmCount { get; set; }
         /// <summary>
         /// STATUS
         /// </summary>
@@ -105,11 +105,17 @@ namespace LeaRun.Entity
         [DisplayName("StatusStr")]
         public string StatusStr { get; set; }
         /// <summary>
-        /// SucTime
+        /// CreateTime
         /// </summary>
         /// <returns></returns>
-        [DisplayName("SucTime")]
-        public DateTime? SucTime { get; set; }
+        [DisplayName("CreateTime")]
+        public DateTime? CreateTime { get; set; }
+        /// <summary>
+        /// LastConnectTime
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("LastConnectTime")]
+        public DateTime? LastConnectTime { get; set; }
         /// <summary>
         /// Remark
         /// </summary>

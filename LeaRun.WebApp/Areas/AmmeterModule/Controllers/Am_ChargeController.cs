@@ -11,23 +11,23 @@
 * ©§            Copyright(c) gxlbang ALL rights reserved                    ©§
 * ©»©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¿
 */
+using LeaRun.Business;
 using LeaRun.Entity;
-using LeaRun.Repository;
 using LeaRun.Utilities;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
+using System.Data;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
 
-namespace LeaRun.Business
+namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
 {
     /// <summary>
-    /// Am_Charge
-    /// <author>
-    ///		<name>she</name>
-    ///		<date>2018.04.17 10:13</date>
-    /// </author>
+    /// Am_Charge¿ØÖÆÆ÷
     /// </summary>
-    public class Am_ChargeBll : RepositoryFactory<Am_Charge>
+    public class Am_ChargeController : PublicController<Am_Charge>
     {
     }
 }
