@@ -318,6 +318,8 @@ namespace LeaRun.WebApp.Controllers
                     charge.ChargeType = 1;
                     charge.ChargeTypeStr = "电费充值";
                     charge.CreateTime = DateTime.Now;
+                    charge.AmmeterNumber = ammeter.Number;
+                    charge.AmmeterCode = ammeter.AM_Code;
 
                     if (type == 0)
                     {
@@ -357,7 +359,13 @@ namespace LeaRun.WebApp.Controllers
 
             return Json(new { res = "On", msg = "充值失败!" }).ToJson();
         }
-
+        /// <summary>
+        /// 缴费_微信支付
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="account"></param>
+        /// <param name="charge"></param>
+        /// <returns></returns>
         private string WePay(Ho_PartnerUser user, Ho_PartnerUser account, Am_Charge charge)
         {
             List<DbParameter> parameter2 = new List<DbParameter>();
@@ -390,15 +398,21 @@ namespace LeaRun.WebApp.Controllers
                 return Newtonsoft.Json.JsonConvert.SerializeObject(payUrl);
             }
         }
-
+        /// <summary>
+        /// 缴费记录
+        /// </summary>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
         public ActionResult AmmeterPayCost(int pageIndex = 1, int pageSize = 10)
         {
             var user = wbll.GetUserInfo(Request);
             int recordCount = 0;
             List<DbParameter> parameter = new List<DbParameter>();
             parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+            parameter.Add(DbFactory.CreateDbParameter("@STATUS", "1"));
 
-            var chargeList = database.FindListPage<Am_Charge>(" and U_Number=@U_Number", parameter.ToArray(), "Number", "desc", pageIndex, pageSize, ref recordCount);
+            var chargeList = database.FindListPage<Am_Charge>(" and U_Number=@U_Number and STATUS=@STATUS", parameter.ToArray(), "Number", "desc", pageIndex, pageSize, ref recordCount);
             ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize); ;
             if (Request.IsAjaxRequest())
             {
@@ -409,6 +423,13 @@ namespace LeaRun.WebApp.Controllers
                 return View();
             }
         }
+        public ActionResult MyNewBill()
+        {
+
+            return View();
+        }
+
+ 
 
     }
 }
