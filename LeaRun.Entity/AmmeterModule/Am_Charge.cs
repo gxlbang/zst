@@ -111,6 +111,18 @@ namespace LeaRun.Entity
         [DisplayName("SucTime")]
         public DateTime? SucTime { get; set; }
         /// <summary>
+        /// AmmeterNumber
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("AmmeterNumber")]
+        public string AmmeterNumber { get; set; }
+        /// <summary>
+        /// AmmeterCode
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("AmmeterCode")]
+        public string AmmeterCode { get; set; }
+        /// <summary>
         /// Remark
         /// </summary>
         /// <returns></returns>
