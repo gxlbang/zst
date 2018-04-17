@@ -9324,6 +9324,7 @@
     <Content Include="Views\Personal\Index.cshtml" />
     <Content Include="Views\Personal\Perfect.cshtml" />
     <Content Include="Views\Personal\MyBalanceDetail.cshtml" />
+    <Content Include="Views\Personal\BalanceRecharge.cshtml" />
     <None Include="Views\Utility\PrintPage.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

@@ -81,7 +81,8 @@ namespace LeaRun.WebApp.Controllers
             return View();
         }
         [Authorize]
-        public string WeChatJSAPI(long orderId)
+        [HttpPost]
+        public string WeChatJSAPI(double money)
         {
             var user = wbll.GetUserInfo(Request);
             var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Number=" + user.Number);
@@ -99,35 +100,41 @@ namespace LeaRun.WebApp.Controllers
                 charge.ChargeType = 0;
                 charge.ChargeTypeStr = "余额充值";
                 charge.CreateTime = DateTime.Now;
-                List<DbParameter> parameter = new List<DbParameter>();
-                parameter.Add(DbFactory.CreateDbParameter("@U_Number", account.Number));
-                parameter.Add(DbFactory.CreateDbParameter("@OrderNumber", orderId));
-
-
-                var payOrder = database.FindEntityByWhere<Am_Charge>(" and U_Number=@U_Number and @OrderNumber=OrderNumber", parameter.ToArray());
-                if (payOrder == null)
+                var statu = database.Update<Am_Charge>(charge);
+                if (statu>0)
                 {
-                    return "没有订单";
-                }
-                else if (payOrder.STATUS > 0)
-                {
-                    ///已经支付
-                    return "订单已支付";
+                    List<DbParameter> parameter = new List<DbParameter>();
+                    parameter.Add(DbFactory.CreateDbParameter("@U_Number", account.Number));
+                    parameter.Add(DbFactory.CreateDbParameter("@OrderNumber", charge.OrderNumber));
+
+
+                    var payOrder = database.FindEntityByWhere<Am_Charge>(" and U_Number=@U_Number and @OrderNumber=OrderNumber", parameter.ToArray());
+                    if (payOrder == null)
+                    {
+                        return "没有订单";
+                    }
+                    else if (payOrder.STATUS > 0)
+                    {
+                        ///已经支付
+                        return "订单已支付";
+                    }
+
+                    else
+                    {
+                        WePay _wePay = new WePay();
+                        AlipayAndWepaySDK.Model.TransmiParameterModel model = new AlipayAndWepaySDK.Model.TransmiParameterModel();
+                        model.orderNo = payOrder.OrderNumber;
+                        model.productName = "充值";
+                        model.totalFee = 10;
+                        model.customerIP = "180.136.144.49";
+                        model.openId = account.OpenId;
+                        var payUrl = _wePay.BuildWePay(model, AlipayAndWepaySDK.Enum.EnumWePayTradeType.JSAPI);
+
+                        return Newtonsoft.Json.JsonConvert.SerializeObject(payUrl);
+                    }
                 }
 
-                else
-                {
-                    WePay _wePay = new WePay();
-                    AlipayAndWepaySDK.Model.TransmiParameterModel model = new AlipayAndWepaySDK.Model.TransmiParameterModel();
-                    model.orderNo = payOrder.OrderNumber;
-                    model.productName = "充值";
-                    model.totalFee = 10;
-                    model.customerIP = "180.136.144.49";
-                    model.openId = account.OpenId;
-                    var payUrl = _wePay.BuildWePay(model, AlipayAndWepaySDK.Enum.EnumWePayTradeType.JSAPI);
-
-                     return Newtonsoft.Json.JsonConvert.SerializeObject(payUrl);
-                }
+                
             }
             return "支付失败!";
         }

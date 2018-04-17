@@ -1,0 +1,46 @@
+﻿@{
+    ViewBag.Title = "余额充值";
+    Layout = "~/Views/Shared/_Partial.cshtml";
+}
+<input  type="text" value="" name="money" id="money"/>
+<input  type="button" value="充值" onclick="jsApiCall()"/>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script>
+    function jsApiCall() {
+        var jsonParm = '';
+        var money = parseFloat($("#money").val());
+        if (!money>0) {
+            return;
+        }
+        $.ajax({
+            type: "Post",
+            url: "/Pay/WeChatJSAPI",
+            dataType: "json",
+            data: { money: money },
+            success: function (data) {
+                jsonParm = jQuery.parseJSON(data);
+                WeixinJSBridge.invoke(
+                'getBrandWCPayRequest',
+                 jsonParm,
+                    function (res) {
+                        WeixinJSBridge.log(res.err_msg);
+                        if (res.err_msg == "get_brand_wcpay_request:ok") {
+                            alert("支付成功");
+                        } else {
+                            if (res.err_msg == "get_brand_wcpay_request:cancel") {
+                                alert('支付取消!');
+                                return false;
+                            } else {
+                                alert('支付失败!');
+                                return false;
+                            }
+                        }
+                    }
+                );
+            }
+        });
+
+
+    }
+     
+</script>
