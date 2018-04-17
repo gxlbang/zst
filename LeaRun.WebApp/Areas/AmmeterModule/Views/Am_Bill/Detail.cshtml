@@ -1,0 +1,147 @@
+@{
+    ViewBag.Title = "Am_Bill》明细页面";
+    Layout = "~/Views/Shared/_LayoutForm.cshtml";
+}
+<script type="text/javascript">
+    $(function () {
+        InitControl();
+    })
+    //得到一个对象实体
+    function InitControl() {
+        if (!!GetQuery('KeyValue')) {
+            AjaxJson("/AmmeterModule/Am_Bill/SetForm", { KeyValue: GetQuery('KeyValue') }, function (data) {
+                SetWebControls(data);
+            });
+        }
+    }
+</script>
+<form id="form1" style="margin: 1px">
+    <table class="form">
+        <tr>
+            <th class='formTitle'>Number：</th>
+            <td class='formValue'>
+                <label id="Number" />
+            </td>
+            <th class='formTitle'>BillCode：</th>
+            <td class='formValue'>
+                <label id="BillCode" />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>AmmeterNumber：</th>
+            <td class='formValue'>
+                <label id="AmmeterNumber" />
+            </td>
+            <th class='formTitle'>AmmeterCode：</th>
+            <td class='formValue'>
+                <label id="AmmeterCode" />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>F_U_Number：</th>
+            <td class='formValue'>
+                <label id="F_U_Number" />
+            </td>
+            <th class='formTitle'>F_UserName：</th>
+            <td class='formValue'>
+                <label id="F_UserName" />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>F_U_Name：</th>
+            <td class='formValue'>
+                <label id="F_U_Name" />
+            </td>
+            <th class='formTitle'>T_U_Number：</th>
+            <td class='formValue'>
+                <label id="T_U_Number" />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>T_UserName：</th>
+            <td class='formValue'>
+                <label id="T_UserName" />
+            </td>
+            <th class='formTitle'>T_U_Name：</th>
+            <td class='formValue'>
+                <label id="T_U_Name" />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>CreateTime：</th>
+            <td class='formValue'>
+                <label id="CreateTime" />
+            </td>
+            <th class='formTitle'>Status：</th>
+            <td class='formValue'>
+                <label id="Status" />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>StatusStr：</th>
+            <td class='formValue'>
+                <label id="StatusStr" />
+            </td>
+            <th class='formTitle'>Money：</th>
+            <td class='formValue'>
+                <label id="Money" />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>OtherFees：</th>
+            <td class='formValue'>
+                <label id="OtherFees" />
+            </td>
+            <th class='formTitle'>SendTime：</th>
+            <td class='formValue'>
+                <label id="SendTime" />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>PayTime：</th>
+            <td class='formValue'>
+                <label id="PayTime" />
+            </td>
+            <th class='formTitle'>Province：</th>
+            <td class='formValue'>
+                <label id="Province" />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>City：</th>
+            <td class='formValue'>
+                <label id="City" />
+            </td>
+            <th class='formTitle'>County：</th>
+            <td class='formValue'>
+                <label id="County" />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>Cell：</th>
+            <td class='formValue'>
+                <label id="Cell" />
+            </td>
+            <th class='formTitle'>Floor：</th>
+            <td class='formValue'>
+                <label id="Floor" />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>Room：</th>
+            <td class='formValue'>
+                <label id="Room" />
+            </td>
+            <th class='formTitle'>Address：</th>
+            <td class='formValue'>
+                <label id="Address" />
+            </td>
+        </tr>
+        <tr>
+            <th class='formTitle'>Remark：</th>
+            <td class='formValue'>
+                <label id="Remark" />
+            </td>
+        </tr>
+    </table>
+</form>

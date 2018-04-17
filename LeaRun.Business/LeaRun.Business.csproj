@@ -43,14 +43,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AmmeterModule\Am_AmDepositBll.cs" />
+    <Compile Include="AmmeterModule\Am_AmDepositDetailBll.cs" />
     <Compile Include="AmmeterModule\Am_AmmeterBll.cs" />
     <Compile Include="AmmeterModule\Am_AmmeterMoneyBll.cs" />
     <Compile Include="AmmeterModule\Am_AmmeterOperateLogBll.cs" />
     <Compile Include="AmmeterModule\Am_AmmeterPermissionBll.cs" />
     <Compile Include="AmmeterModule\Am_BankInfoBll.cs" />
+    <Compile Include="AmmeterModule\Am_BillBll.cs" />
+    <Compile Include="AmmeterModule\Am_BillContentBll.cs" />
     <Compile Include="AmmeterModule\Am_ChargeBll.cs" />
+    <Compile Include="AmmeterModule\Am_ChargeItemBll.cs" />
     <Compile Include="AmmeterModule\Am_CollectorBll.cs" />
     <Compile Include="AmmeterModule\Am_MoneyDetailBll.cs" />
+    <Compile Include="AmmeterModule\Am_RepairAnswerBll.cs" />
+    <Compile Include="AmmeterModule\Am_RepairBll.cs" />
+    <Compile Include="AmmeterModule\Am_RepairImageBll.cs" />
+    <Compile Include="AmmeterModule\Am_TaskBll.cs" />
+    <Compile Include="AmmeterModule\Am_TemplateBll.cs" />
+    <Compile Include="AmmeterModule\Am_TemplateContentBll.cs" />
+    <Compile Include="AmmeterModule\Am_UserDepositBll.cs" />
+    <Compile Include="AmmeterModule\Am_UserGetMoneyToBankBll.cs" />
     <Compile Include="AmmeterModule\Am_UserRoleBll.cs" />
     <Compile Include="CommonModule\Base_FormAttributeBll.cs" />
     <Compile Include="CommonModule\Base_InterfaceManageBll.cs" />
