@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01 LeaRun.Framework", "01 LeaRun.Framework", "{03D8284A-A4BD-414A-995B-EC238B2294A3}"
 EndProject
@@ -38,6 +38,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deepleo.Weixin.SDK", "Deepleo.Weixin.SDK\Deepleo.Weixin.SDK.csproj", "{E7421A8D-6149-402A-82F8-F6D7728CEED1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeixinMpSdk", "WeixinMp\WeixinMpSdk.csproj", "{BC00E0C4-0664-4559-B514-1EEA7C6690D2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "07 Pay.SDK", "07 Pay.SDK", "{875E33B8-0196-4B5D-8C7C-CF11515128AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlipayAndWepaySDK", "AlipayAndWepaySDK\AlipayAndWepaySDK.csproj", "{3C998EE8-7F0B-4D26-A5B9-ABC15AD6298E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -93,6 +97,10 @@ Global
 		{BC00E0C4-0664-4559-B514-1EEA7C6690D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC00E0C4-0664-4559-B514-1EEA7C6690D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC00E0C4-0664-4559-B514-1EEA7C6690D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C998EE8-7F0B-4D26-A5B9-ABC15AD6298E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C998EE8-7F0B-4D26-A5B9-ABC15AD6298E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C998EE8-7F0B-4D26-A5B9-ABC15AD6298E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C998EE8-7F0B-4D26-A5B9-ABC15AD6298E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -110,5 +118,6 @@ Global
 		{6A7792DB-AAE4-413D-8721-1316C732E22B} = {F39F5F4A-9C46-4CEE-8C83-C99CE98767B0}
 		{E7421A8D-6149-402A-82F8-F6D7728CEED1} = {D6472F3C-FE4A-4C6F-93D1-F1B4D322E7E7}
 		{BC00E0C4-0664-4559-B514-1EEA7C6690D2} = {D6472F3C-FE4A-4C6F-93D1-F1B4D322E7E7}
+		{3C998EE8-7F0B-4D26-A5B9-ABC15AD6298E} = {875E33B8-0196-4B5D-8C7C-CF11515128AF}
 	EndGlobalSection
 EndGlobal

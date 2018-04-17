@@ -9,7 +9,7 @@ using System.Web.Mvc;
 
 namespace LeaRun.WebApp.Controllers
 {
-    [UserLoginFilters]
+    //[UserLoginFilters]
     public class PersonalController : Controller
     {
         IDatabase database = DataFactory.Database();
@@ -40,7 +40,7 @@ namespace LeaRun.WebApp.Controllers
         {
             var user = wbll.GetUserInfo(Request);
             var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Number=" + user.Number);
-            if (account!=null )
+            if (account!=null && account.Number !=null )
             {
                 account.Name = model.Name;
                 account.Sex = model.Sex;
@@ -66,7 +66,7 @@ namespace LeaRun.WebApp.Controllers
         {
             var user = wbll.GetUserInfo(Request);
             var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Number=" + user.Number);
-            if (account!=null )
+            if (account!=null &&account .Number!=null )
             {
                 return View(account);
             }
@@ -83,6 +83,47 @@ namespace LeaRun.WebApp.Controllers
             if (account!=null &&account.Number!=null)
             {
                 ViewBag.Balance = account.Money;
+            }
+            return View();
+        }
+        /// <summary>
+        /// 余额明细
+        /// </summary>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        public ActionResult MyBalanceDetail(int pageIndex = 1, int pageSize = 10)
+        {
+            var user = wbll.GetUserInfo(Request);
+            int recordCount = 0;
+            var balanDetailList = database.FindListPage<Am_MoneyDetail>("Number", "desc", pageIndex, pageSize,ref recordCount);
+            ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize); ;
+            if (Request.IsAjaxRequest())
+            {
+                return Json(balanDetailList);
+            }
+            else
+            {
+                return View();
+            }
+        }
+        /// <summary>
+        /// 余额充值
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult BalanceRecharge()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult BalanceRecharge(double money,int type )
+        {
+            var user = wbll.GetUserInfo(Request);
+            var account = database.FindEntityByWhere<Ho_HouseInfo>(" and Number='" + user.Number + "'");
+            if (account != null && account.Number != null)
+            {
+                 
+                 //Am_Charge
             }
             return View();
         }
