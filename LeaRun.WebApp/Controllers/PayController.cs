@@ -1,4 +1,5 @@
-﻿using AlipayAndWepaySDK;
+﻿
+using AlipayAndWepaySDK;
 using LeaRun.DataAccess;
 using LeaRun.Entity;
 using LeaRun.Repository;
@@ -13,6 +14,7 @@ namespace LeaRun.WebApp.Controllers
     {
         IDatabase database = DataFactory.Database();
         WebData wbll = new WebData();
+
         //
         // GET: /Pay/
 
