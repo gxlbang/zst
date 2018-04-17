@@ -102,6 +102,7 @@ namespace LeaRun.WebApp.Controllers
                 charge.ChargeType = 0;
                 charge.ChargeTypeStr = "余额充值";
                 charge.CreateTime = DateTime.Now;
+                charge.PayType = "微信支付";
                 var statu = database.Update<Am_Charge>(charge);
                 if (statu>0)
                 {
