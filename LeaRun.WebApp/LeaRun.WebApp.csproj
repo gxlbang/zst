@@ -156,6 +156,7 @@
     <Compile Include="Areas\AmmeterModule\Controllers\Am_AmmeterOperateLogController.cs" />
     <Compile Include="Areas\AmmeterModule\Controllers\Am_AmmeterPermissionController.cs" />
     <Compile Include="Areas\AmmeterModule\Controllers\Am_BankInfoController.cs" />
+    <Compile Include="Areas\AmmeterModule\Controllers\Am_ChargeController.cs" />
     <Compile Include="Areas\AmmeterModule\Controllers\Am_CollectorController.cs" />
     <Compile Include="Areas\AmmeterModule\Controllers\Am_MoneyDetailController.cs" />
     <Compile Include="Areas\AmmeterModule\Controllers\Am_UserRoleController.cs" />
@@ -9188,6 +9189,9 @@
     <Content Include="Areas\AmmeterModule\Views\Am_Collector\Detail.cshtml" />
     <Content Include="Areas\AmmeterModule\Views\Am_Collector\Form.cshtml" />
     <Content Include="Areas\AmmeterModule\Views\Am_Collector\Index.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_Charge\Detail.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_Charge\Form.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_Charge\Index.cshtml" />
     <None Include="Properties\PublishProfiles\House.pubxml" />
     <Content Include="Views\Home\SkinIndex.cshtml" />
     <Content Include="Views\Login\Default.cshtml" />

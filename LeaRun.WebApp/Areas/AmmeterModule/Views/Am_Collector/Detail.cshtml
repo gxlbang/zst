@@ -10,7 +10,7 @@
     function InitControl() {
         if (!!GetQuery('KeyValue')) {
             AjaxJson("/AmmeterModule/Am_Collector/SetForm", { KeyValue: GetQuery('KeyValue') }, function (data) {
-                SetWebControls(data);
+                SetWebLable(data);
             });
         }
     }
@@ -18,79 +18,69 @@
 <form id="form1" style="margin: 1px">
     <table class="form">
         <tr>
-            <th class='formTitle'>Number：</th>
-            <td class='formValue'>
-                <label id="Number" />
-            </td>
-            <th class='formTitle'>UNumber：</th>
-            <td class='formValue'>
-                <label id="UNumber" />
-            </td>
-        </tr>
-        <tr>
-            <th class='formTitle'>UserName：</th>
+            <th class='formTitle'>业主帐号：</th>
             <td class='formValue'>
                 <label id="UserName" />
             </td>
-            <th class='formTitle'>URealName：</th>
+        </tr>
+        <tr>
+            <th class='formTitle'>业主姓名：</th>
             <td class='formValue'>
                 <label id="URealName" />
             </td>
         </tr>
         <tr>
-            <th class='formTitle'>CollectorCode：</th>
+            <th class='formTitle'>采集器编号：</th>
             <td class='formValue'>
                 <label id="CollectorCode" />
             </td>
-            <th class='formTitle'>Province：</th>
+        </tr>
+        <tr>
+            <th class='formTitle'>省：</th>
             <td class='formValue'>
                 <label id="Province" />
             </td>
         </tr>
         <tr>
-            <th class='formTitle'>City：</th>
+            <th class='formTitle'>市：</th>
             <td class='formValue'>
                 <label id="City" />
             </td>
-            <th class='formTitle'>County：</th>
+        </tr>
+        <tr>
+            <th class='formTitle'>区：</th>
             <td class='formValue'>
                 <label id="County" />
             </td>
         </tr>
         <tr>
-            <th class='formTitle'>Address：</th>
+            <th class='formTitle'>地址：</th>
             <td class='formValue'>
                 <label id="Address" />
             </td>
-            <th class='formTitle'>AmCount：</th>
+        </tr>
+        <tr>
+            <th class='formTitle'>电表数：</th>
             <td class='formValue'>
                 <label id="AmCount" />
             </td>
         </tr>
         <tr>
-            <th class='formTitle'>STATUS：</th>
-            <td class='formValue'>
-                <label id="STATUS" />
-            </td>
-            <th class='formTitle'>StatusStr：</th>
+            <th class='formTitle'>状态：</th>
             <td class='formValue'>
                 <label id="StatusStr" />
             </td>
         </tr>
         <tr>
-            <th class='formTitle'>CreateTime：</th>
+            <th class='formTitle'>创建时间：</th>
             <td class='formValue'>
                 <label id="CreateTime" />
             </td>
-            <th class='formTitle'>LastConnectTime：</th>
-            <td class='formValue'>
-                <label id="LastConnectTime" />
-            </td>
         </tr>
         <tr>
-            <th class='formTitle'>Remark：</th>
+            <th class='formTitle'>最后连接时间：</th>
             <td class='formValue'>
-                <label id="Remark" />
+                <label id="LastConnectTime" />
             </td>
         </tr>
     </table>

@@ -2,7 +2,7 @@
 * 姓名:gxlbang
 * 类名:Am_Charge
 * CLR版本：
-* 创建时间:2018-04-15 14:52:49
+* 创建时间:2018-04-17 10:13:57
 * 功能描述:
 *
 * 修改历史：
@@ -24,7 +24,7 @@ namespace LeaRun.Entity
     /// Am_Charge
     /// <author>
     ///		<name>she</name>
-    ///		<date>2018.04.15 14:52</date>
+    ///		<date>2018.04.17 10:13</date>
     /// </author>
     /// </summary>
     [Description("Am_Charge")]
@@ -74,6 +74,18 @@ namespace LeaRun.Entity
         /// <returns></returns>
         [DisplayName("ChargeTypeStr")]
         public string ChargeTypeStr { get; set; }
+        /// <summary>
+        /// PayType
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("PayType")]
+        public string PayType { get; set; }
+        /// <summary>
+        /// Moeny
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("Moeny")]
+        public double? Moeny { get; set; }
         /// <summary>
         /// CreateTime
         /// </summary>
