@@ -66,6 +66,8 @@
     <Compile Include="AmmeterModule\Am_ChargeItem.cs" />
     <Compile Include="AmmeterModule\Am_CollectorNew.cs" />
     <Compile Include="AmmeterModule\Am_MoneyDetail.cs" />
+    <Compile Include="AmmeterModule\Am_Rent.cs" />
+    <Compile Include="AmmeterModule\Am_RentBill.cs" />
     <Compile Include="AmmeterModule\Am_Repair.cs" />
     <Compile Include="AmmeterModule\Am_RepairAnswer.cs" />
     <Compile Include="AmmeterModule\Am_RepairImage.cs" />

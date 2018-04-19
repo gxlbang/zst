@@ -164,6 +164,8 @@
     <Compile Include="Areas\AmmeterModule\Controllers\Am_ChargeItemController.cs" />
     <Compile Include="Areas\AmmeterModule\Controllers\Am_CollectorController.cs" />
     <Compile Include="Areas\AmmeterModule\Controllers\Am_MoneyDetailController.cs" />
+    <Compile Include="Areas\AmmeterModule\Controllers\Am_RentBillController.cs" />
+    <Compile Include="Areas\AmmeterModule\Controllers\Am_RentController.cs" />
     <Compile Include="Areas\AmmeterModule\Controllers\Am_RepairAnswerController.cs" />
     <Compile Include="Areas\AmmeterModule\Controllers\Am_RepairController.cs" />
     <Compile Include="Areas\AmmeterModule\Controllers\Am_RepairImageController.cs" />
@@ -9350,6 +9352,12 @@
     <Content Include="Areas\AmmeterModule\Views\Am_AmDepositDetail\Detail.cshtml" />
     <Content Include="Areas\AmmeterModule\Views\Am_AmDepositDetail\Form.cshtml" />
     <Content Include="Areas\AmmeterModule\Views\Am_AmDepositDetail\Index.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_Rent\Detail.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_Rent\Form.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_Rent\Index.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_RentBill\Detail.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_RentBill\Form.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_RentBill\Index.cshtml" />
     <None Include="Properties\PublishProfiles\House.pubxml" />
     <Content Include="Views\Home\SkinIndex.cshtml" />
     <Content Include="Views\Login\Default.cshtml" />
