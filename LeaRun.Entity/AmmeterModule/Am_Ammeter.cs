@@ -28,7 +28,7 @@ namespace LeaRun.Entity
     /// </author>
     /// </summary>
     [Description("Am_Ammeter")]
-    [PrimaryKey("AmmeterMoney_Number")]
+    [PrimaryKey("Number")]
     public class Am_Ammeter : BaseEntity
     {
         #region 获取/设置 字段值

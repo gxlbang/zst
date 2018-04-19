@@ -35,6 +35,9 @@
                 { label: '业主帐号', name: 'UY_UserName', index: 'UY_UserName', width: 0, align: 'left'  },
                 { label: '业主姓名', name: 'UY_Name', index: 'UY_Name', width: 0, align: 'left' },
         ],
+        viewrecords: true,
+        rowNum: 20,
+        rowList: [10, 15, 20, 30],
         pager: "#gridPager",
         sortname: 'CreateTime',
         sortorder: 'desc',
@@ -45,7 +48,7 @@
 }
     //删除
     function btn_delete() {
-        var KeyValue = GetJqGridRowValue("#gridTable", "AmmeterMoney_Number");
+        var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsDelData(KeyValue)) {
             var delparm = 'KeyValue=' + KeyValue;
             delConfig('/AmmeterModule/Am_Ammeter/Delete', delparm, KeyValue.split(",").length);
@@ -53,7 +56,7 @@
     }
     //明细
     function btn_detail() {
-        var KeyValue = GetJqGridRowValue("#gridTable", "AmmeterMoney_Number");
+        var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsChecked(KeyValue)) {
             var url = "/AmmeterModule/Am_Ammeter/Detail?KeyValue=" + KeyValue;
             Dialog(url, "Detail", "Am_Ammeter明细", 820, 500, function (iframe) {
@@ -135,7 +138,7 @@
     <div class="layoutPanel layout-west">
         <div class="btnbartitle">
             <div>
-                组织结构
+                采集器列表
             </div>
         </div>
         <div class="ScrollBar" id="ItemsTree"></div>
@@ -144,7 +147,7 @@
     <div class="layoutPanel layout-center">
         <div class="btnbartitle">
             <div>
-                用户列表 <span id="CenterTitle"></span>
+                电表列表 <span id="CenterTitle"></span>
             </div>
         </div>
         <!--工具栏-->
