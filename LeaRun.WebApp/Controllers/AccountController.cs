@@ -7,6 +7,7 @@ using LeaRun.Utilities;
 using LeaRun.WebApp.ViewsModel.Account;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -78,13 +79,20 @@ namespace LeaRun.WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Mobile=" + name);
-                if (account != null && PasswordHash.ValidatePassword(pwd, account?.Password))
+                List<DbParameter> parameter = new List<DbParameter>();
+                parameter.Add(DbFactory.CreateDbParameter("@Account", name));
+                var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Account=@Account" ,parameter.ToArray());
+                if (account != null 
+                    && account.Number != null 
+                    && account.Status == 3 
+                    && PasswordHash.ValidatePassword(pwd, account?.Password))
                 {
                     // 抽取用户信息
                     string Md5 = Md5Helper.MD5(account.Number + account.OpenId + Request.UserHostAddress + Request.Browser.Type + Request.Browser.ClrVersion.ToString() + "2017", 16);
+
                     string str = account.Number + "&" + account.OpenId + "&" + Request.UserHostAddress + "&" + Request.Browser.Type
                         + "&" + Request.Browser.ClrVersion.ToString() + "&" + Md5;
+
                     str = Utilities.DESEncrypt.Encrypt(str);
                     CookieHelper.WriteCookie("WebUserInfo", str);
                     //获取cookie并判断是否有跳转URL
@@ -117,8 +125,10 @@ namespace LeaRun.WebApp.Controllers
                 {
                     return Json(new { res = "On", msg = "验证码错误！" });
                 }
-                var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Mobile=" + name);
-                if (account != null)
+                List<DbParameter> parameter = new List<DbParameter>();
+                parameter.Add(DbFactory.CreateDbParameter("@Account", name));
+                var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Account=@Account", parameter.ToArray());
+                if (account != null&&account.Number !=null &&account.Status==3)
                 {
                     // 抽取用户信息
                     string Md5 = Md5Helper.MD5(account.Number + account.OpenId + Request.UserHostAddress + Request.Browser.Type + Request.Browser.ClrVersion.ToString() + "2017", 16);

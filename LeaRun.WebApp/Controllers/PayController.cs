@@ -1,5 +1,6 @@
 ﻿
 using AlipayAndWepaySDK;
+using AlipayAndWepaySDK.Model;
 using LeaRun.DataAccess;
 using LeaRun.Entity;
 using LeaRun.Repository;
@@ -142,6 +143,69 @@ namespace LeaRun.WebApp.Controllers
             return "支付失败!";
         }
 
-         
+        /// <summary>
+        /// 微信支付异步通知接口
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public  ActionResult WepayWebNotify()
+        {
+            //var _logger = ObjectContainer.Resolve<ILoggerFactory>().Create(GetType().FullName);
+            WePayReturnModel payResult = new WePayReturnModel();
+            WePay _wePay = new WePay();
+            var result = _wePay.VerifyNotify(Request, out payResult);
+
+            // _logger.Info("resultXml:" + payResult.RequestForm);
+
+
+            if (result)
+            {
+                List<DbParameter> parameter = new List<DbParameter>();
+                parameter.Add(DbFactory.CreateDbParameter("@OrderNumber", payResult.OutTradeNo));
+                parameter.Add(DbFactory.CreateDbParameter("@STATUS", "0"));
+                var order = database.FindEntityByWhere<Am_Charge>(" and OrderNumber=@OrderNumber and STATUS=@STATUS ", parameter.ToArray());
+                if (order != null&& order.Number !=null )
+                {
+                    if (payResult.TotalFee == Decimal.Parse(order.Moeny.ToString()))
+                    {
+                        //var orderCommand = new Commands.TradeCenter.UpdateOrderStatusCommand(order.OrderId, 1);
+                        //var status = await _commandService.SendAsync(orderCommand);
+                        //if (status.Status == ECommon.IO.AsyncTaskStatus.Success)
+                        //{
+                        //    return Content(payResult.ReturnXml);
+                        //}
+                        if (order.ChargeType==0)
+                        {
+                            List<DbParameter> par = new List<DbParameter>();
+                            par.Add(DbFactory.CreateDbParameter("@Number", order.U_Number));
+                            var accout = database.FindEntityByWhere<Ho_PartnerUser>(" and Number=@Number",par.ToArray());
+                            if (accout!=null && accout.Number!=null )
+                            {
+                                order.OutNumber = payResult.TradeNo;
+                                order.STATUS = 1;
+                                order.StatusStr = "充值成功";
+                                order.SucTime = DateTime.Now;
+                                database.Update<Am_Charge>(order);
+
+                                accout.Money = accout.Money + order.Moeny;
+                                var status = database.Update<Ho_PartnerUser>(accout);
+                                if (status>0)
+                                {
+                                    return Content(payResult.ReturnXml);
+                                }
+                            }
+                        }
+                    }
+                }
+               
+
+            }
+            return Content(BuildWepayReturnXml("FAIL", ""));
+        }
+
+        private string BuildWepayReturnXml(string code, string returnMsg)
+        {
+            return string.Format("<xml><return_code><![CDATA[{0}]]></return_code><return_msg><![CDATA[{1}]]></return_msg></xml>", code, returnMsg);
+        }
     }
 }

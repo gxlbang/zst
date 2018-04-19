@@ -135,6 +135,16 @@ namespace LeaRun.Entity
         [DisplayName("F_UserName")]
         public string F_UserName { get; set; }
         /// <summary>
+        /// AmmeterNumber
+        /// </summary>
+        [DisplayName("AmmeterNumber")]
+        public string AmmeterNumber { get; set; }
+        /// <summary>
+        /// AmmeterCode
+        /// </summary>
+        [DisplayName("AmmeterCode")]
+        public string AmmeterCode { get; set; }
+        /// <summary>
         /// Remark
         /// </summary>
         /// <returns></returns>
