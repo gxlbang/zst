@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="AmmeterModule\Am_AmDeposit.cs" />
     <Compile Include="AmmeterModule\Am_AmDepositDetail.cs" />
+    <Compile Include="AmmeterModule\Am_AmmeterNew.cs" />
     <Compile Include="AmmeterModule\Am_Ammeter.cs" />
     <Compile Include="AmmeterModule\Am_AmmeterMoneyNew.cs" />
     <Compile Include="AmmeterModule\Am_AmmeterMoney.cs" />

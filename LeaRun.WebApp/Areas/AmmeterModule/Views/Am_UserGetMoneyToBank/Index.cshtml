@@ -14,30 +14,49 @@
         height: $(window).height() - 149,
         autowidth: true,
         colModel: [
-                { label: 'Number', name: 'Number', index: 'Number', width: 0, align: 'left',sortable: true  },
-                { label: 'U_Number', name: 'U_Number', index: 'U_Number', width: 0, align: 'left',sortable: true  },
-                { label: 'UserName', name: 'UserName', index: 'UserName', width: 0, align: 'left',sortable: true  },
-                { label: 'U_Name', name: 'U_Name', index: 'U_Name', width: 0, align: 'left',sortable: true  },
-                { label: 'Money', name: 'Money', index: 'Money', width: 0, align: 'left',sortable: true  },
-                { label: 'CreateTime', name: 'CreateTime', index: 'CreateTime', width: 0, align: 'left',sortable: true  },
-                { label: 'PayTime', name: 'PayTime', index: 'PayTime', width: 0, align: 'left',sortable: true  },
-                { label: 'BankName', name: 'BankName', index: 'BankName', width: 0, align: 'left',sortable: true  },
-                { label: 'BankCode', name: 'BankCode', index: 'BankCode', width: 0, align: 'left',sortable: true  },
-                { label: 'BankAddress', name: 'BankAddress', index: 'BankAddress', width: 0, align: 'left',sortable: true  },
-                { label: 'BankCharge', name: 'BankCharge', index: 'BankCharge', width: 0, align: 'left',sortable: true  },
-                { label: 'RealMoney', name: 'RealMoney', index: 'RealMoney', width: 0, align: 'left',sortable: true  },
-                { label: 'Status', name: 'Status', index: 'Status', width: 0, align: 'left',sortable: true  },
-                { label: 'StatusStr', name: 'StatusStr', index: 'StatusStr', width: 0, align: 'left',sortable: true  },
-                { label: 'Remark', name: 'Remark', index: 'Remark', width: 0, align: 'left',sortable: true  },
+                { label: 'Number', name: 'Number', index: 'Number', width: 0, align: 'left', hidden: true },
+                { label: '用户名', name: 'UserName', index: 'UserName', width: 100, align: 'left' },
+                { label: '姓名', name: 'U_Name', index: 'U_Name', width: 80, align: 'left'  },
+                { label: '提现金额', name: 'Money', index: 'Money', width: 80, align: 'left'},
+                { label: '手续费', name: 'BankCharge', index: 'BankCharge', width: 60, align: 'left' },
+                { label: '实际到账', name: 'RealMoney', index: 'RealMoney', width: 80, align: 'left', cellattr: addCellAttr_red },
+                {
+                    label: "提现时间", name: "CreateTime", index: "CreateTime", width: 150,
+                    formatter: function (value, options, rowObject) {
+                        return formatDate(value, 'yyyy-MM-dd hh:mm:ss');
+                    }
+                },
+                {
+                    label: "支付时间", name: "PayTime", index: "PayTime", width: 150,
+                    formatter: function (value, options, rowObject) {
+                        return formatDate(value, 'yyyy-MM-dd hh:mm:ss');
+                    }
+                },
+                { label: '银行名称', name: 'BankName', index: 'BankName', width: 150, align: 'left' },
+                { label: '银行卡号', name: 'BankCode', index: 'BankCode', width: 180, align: 'left', cellattr: addCellAttr_blue },
+                { label: '开户行', name: 'BankAddress', index: 'BankAddress', width: 180, align: 'left'  },
+                { label: '状态', name: 'StatusStr', index: 'StatusStr', width: 60, align: 'left'  },
+                { label: '备注', name: 'Remark', index: 'Remark', width: 100, align: 'left' },
         ],
+        viewrecords: true,
         pager: "#gridPager",
-        sortname: '',
+        sortname: 'CreateTime',
         sortorder: 'desc',
         rownumbers: true,
         shrinkToFit: false,
         gridview: true,
     });
 }
+    function addCellAttr_red(rowId, val, rawObject, cm, rdata) {
+        if (rawObject.planId == null) {
+            return "style='color:red'";
+        }
+    }
+    function addCellAttr_blue(rowId, val, rawObject, cm, rdata) {
+        if (rawObject.planId == null) {
+            return "style='color:blue'";
+        }
+    }
     //新增
     function btn_add() {
         var url = "/AmmeterModule/Am_UserGetMoneyToBank/Form"
@@ -78,6 +97,72 @@
         $("#gridTable").trigger("reloadGrid"); //重新载入
         
     }
+    function PayToBank() {
+
+    }
+    //搜索
+    function btn_Search() {
+        var keywords = $("#keywords").val();
+        var Stuts = $("#Stuts").val();
+        var ProvinceId = "", CityId = "", CountyId = "";
+        if (IsNullOrEmpty($("#ProvinceId").val())) {
+            ProvinceId = $("#ProvinceId").find("option:selected").text();
+        }
+        if (IsNullOrEmpty($("#CityId").val())) {
+            CityId = $("#CityId").find("option:selected").text();
+        }
+        if (IsNullOrEmpty($("#CountyId").val())) {
+            CountyId = $("#CountyId").find("option:selected").text();
+        }
+        $("#gridTable").jqGrid('setGridParam', {
+            url: "@Url.Content("~/AmmeterModule/Am_Ammeter/GridPageListJson")?Stuts=" + Stuts + '&keywords=' + keywords +
+                '&ProvinceId=' + ProvinceId + '&CityId=' + CityId + '&CountyId=' + CountyId + '&Number=' + PNumber, page: 1
+    }).trigger('reloadGrid');
+    }
+    //要打印数据源，子页面调用的函数
+    function PrintDataSource() {
+        var columnModel = $("#gridTable").jqGrid('getGridParam', 'colModel');
+        var dataModel = $("#gridTable").jqGrid("getRowData");
+        //var footerData = $("#gridTable").jqGrid("footerData");
+        var JsonData = {
+            columnModel: columnModel,
+            dataModel: dataModel,
+            //footerData: footerData,
+        }
+        return JsonData;
+    }
+    //点击打印
+    function btn_Print() {
+        PrintDialog("/Utility/PrintPage", "PrintPage", "打印当前页", 1200, 500, function (iframe) {
+            top.frames[iframe].SubmitPrint()
+        });
+    }
+    //导出Excel
+    function btn_derive() {
+        //SetDeriveExcel("#gridTable", "订单信息");
+        //openDialog("/CommonModule/ExcelImport/DeriveDialog", "DeriveDialog", "订单信息", 600, 300, function (iframe) {
+        //    top.frames[iframe].AcceptClick();
+        //});
+        //var SelectedField = ""; $('#AccessView .selected a').each(function () { SelectedField += $(this).attr('id') + ","; });
+        Loading(true, "正在处理要导出数据...");
+        var keywords = $("#keywords").val();
+        var Stuts = $("#Stuts").val();
+        var ProvinceId = "", CityId = "", CountyId = "";
+        if (IsNullOrEmpty($("#ProvinceId").val())) {
+            ProvinceId = $("#ProvinceId").find("option:selected").text();
+        }
+        if (IsNullOrEmpty($("#CityId").val())) {
+            CityId = $("#CityId").find("option:selected").text();
+        }
+        if (IsNullOrEmpty($("#CountyId").val())) {
+            CountyId = $("#CountyId").find("option:selected").text();
+        }
+        window.setTimeout(function () {
+            location.href = "/AmmeterModule/Am_Ammeter/ExportExcel??keywords=" + keywords + '&Stuts=' + Stuts +
+                '&ProvinceId=' + ProvinceId + '&CityId=' + CityId + '&CountyId=' + CountyId + '&Number=' + PNumber;
+            Loading(false);
+        }, 200);
+    }
 </script>
 <!--工具栏-->
 <div class="tools_bar leftline rightline" style="margin: 1px; margin-bottom: 0px;">
@@ -91,6 +176,14 @@
             <th>关键字：</th>
             <td>
                 <input id="keywords" type="text" class="txt" style="width: 200px" />
+            </td>
+            <th>下单时间：</th>
+            <td>
+                <input id="StartTime" type="text" class="txt Wdate" value="@LeaRun.Utilities.DateTimeHelper.GetToday()" style="width: 120px" onfocus="var endDate=$dp.$('EndTime');WdatePicker({onpicked:function(){EndTime.focus();},maxDate:'#F{$dp.$D(\'EndTime\')}'})" />
+            </td>
+            <td>-</td>
+            <td>
+                <input id="EndTime" type="text" class="txt Wdate" value="@LeaRun.Utilities.DateTimeHelper.GetToday()" style="width: 120px" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'StartTime\')}'})" />
             </td>
             <td>
                 <input id="btnSearch" type="button" class="btnSearch" value="搜 索" onclick="btn_Search()" />

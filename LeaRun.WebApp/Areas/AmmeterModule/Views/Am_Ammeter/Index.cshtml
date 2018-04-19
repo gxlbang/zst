@@ -4,48 +4,110 @@
 }
 <script type="text/javascript">
     $(function () {
+        GetTree();
         GetGrid();
+        BindCombobox();
     })
+    var PNumber = "", PName = "";
+    //加载左边树
+    function GetTree() {
+        var itemtree = {
+            onnodeclick: function (item) {
+                PNumber = item.id;
+                PName = item.text;
+                btn_Search();
+                $("#CenterTitle").html(" - " + item.text);
+            },
+            url: "/AmmeterModule/Am_Ammeter/TreeJson"
+        };
+        $("#ItemsTree").treeview(itemtree);
+    }
+    //初始化绑定下拉框
+    function BindCombobox() {
+        //所在省
+        $("#ProvinceId").append("<option value=''>==请选择==</option>");
+        $("#CityId").append("<option value=''>==请选择==</option>");
+        $("#CountyId").append("<option value=''>==请选择==</option>");
+        AjaxJson("/Utility/GetProvinceCityListJson", { ParentId: 0 }, function (DataJson) {
+            $.each(DataJson, function (i) {
+                $("#ProvinceId").append($("<option></option>").val(DataJson[i].Code).html(DataJson[i].FullName));
+            });
+        })
+        //所在市
+        $("#ProvinceId").change(function () {
+            BindCityId();
+            BindCountyId();
+        });
+        //所在县区
+        $("#CityId").change(function () {
+            BindCountyId();
+        });
+    }
+    //所在市下拉框
+    function BindCityId() {
+        $("#CityId").html("");
+        $("#CityId").append("<option value=''>==请选择==</option>");
+        AjaxJson("/Utility/GetProvinceCityListJson", { ParentId: $("#ProvinceId").val() }, function (DataJson) {
+            $.each(DataJson, function (i) {
+                $("#CityId").append($("<option></option>").val(DataJson[i].Code).html(DataJson[i].FullName));
+            });
+        })
+    }
+    //所在县区
+    function BindCountyId() {
+        $("#CountyId").html("");
+        $("#CountyId").append("<option value=''>==请选择==</option>");
+        AjaxJson("/Utility/GetProvinceCityListJson", { ParentId: $("#CityId").val() }, function (DataJson) {
+            $.each(DataJson, function (i) {
+                $("#CountyId").append($("<option></option>").val(DataJson[i].Code).html(DataJson[i].FullName));
+            });
+        })
+    }
     //加载表格
     function GetGrid() {
         $("#gridTable").jqGrid({
-        url: "@Url.Content("~/AmmeterModule/Am_Ammeter/GridPageJson")",
-        datatype: "json",
-        height: $(window).height() - 149,
-        autowidth: true,
-        colModel: [
-                { label: 'Number', name: 'Number', index: 'Number', width: 0, align: 'left', hidden: true },
-                { label: '电表号', name: 'AM_Code', index: 'AM_Code', width: 0, align: 'left'  },
-                { label: '电表类型', name: 'AmmeterType_Name', index: 'AmmeterType_Name', width: 0, align: 'left'  },
-                { label: '价格', name: 'AmmeterMoney_Name', index: 'AmmeterMoney_Name', width: 0, align: 'left' },
-                { label: '采集器编号', name: 'Collector_Code', index: 'Collector_Code', width: 0, align: 'left'  },
-                { label: '租户帐号', name: 'UserName', index: 'UserName', width: 0, align: 'left' },
-                { label: '租户姓名', name: 'U_Name', index: 'U_Name', width: 0, align: 'left' },
-                { label: '省', name: 'Province', index: 'Province', width: 0, align: 'left',sortable: true  },
-                { label: '市', name: 'City', index: 'City', width: 0, align: 'left',sortable: true  },
-                { label: '区', name: 'County', index: 'County', width: 0, align: 'left',sortable: true  },
-                { label: '单元', name: 'Cell', index: 'Cell', width: 0, align: 'left',sortable: true  },
-                { label: '楼层', name: 'Floor', index: 'Floor', width: 0, align: 'left',sortable: true  },
-                { label: '房号', name: 'Room', index: 'Room', width: 0, align: 'left',sortable: true  },
-                { label: '地址', name: 'Address', index: 'Address', width: 0, align: 'left'  },
-                { label: '状态', name: 'StatusStr', index: 'StatusStr', width: 0, align: 'left',sortable: true  },
-                { label: '安装时间', name: 'CreateTime', index: 'CreateTime', width: 0, align: 'left',sortable: true  },
-                { label: '一级预警', name: 'FirstAlarm', index: 'FirstAlarm', width: 0, align: 'left'  },
-                { label: '电表余额', name: 'Money', index: 'Money', width: 0, align: 'left' },
-                { label: '业主帐号', name: 'UY_UserName', index: 'UY_UserName', width: 0, align: 'left'  },
-                { label: '业主姓名', name: 'UY_Name', index: 'UY_Name', width: 0, align: 'left' },
-        ],
-        viewrecords: true,
-        rowNum: 20,
-        rowList: [10, 15, 20, 30],
-        pager: "#gridPager",
-        sortname: 'CreateTime',
-        sortorder: 'desc',
-        rownumbers: true,
-        shrinkToFit: false,
-        gridview: true,
-    });
-}
+            url: "@Url.Content("~/AmmeterModule/Am_Ammeter/GridPageJson")",
+            datatype: "json",
+            height: $(window).height() - 179,
+            autowidth: true,
+            colModel: [
+                    { label: 'Number', name: 'Number', index: 'Number', width: 0, align: 'left', hidden: true },
+                    { label: '电表号', name: 'AM_Code', index: 'AM_Code', width: 120, align: 'left' },
+                    { label: '电表类型', name: 'AmmeterType_Name', index: 'AmmeterType_Name', width: 80, align: 'left' },
+                    { label: '价格', name: 'AmmeterMoney_Name', index: 'AmmeterMoney_Name', width: 80, align: 'left' },
+                    { label: '采集器编号', name: 'Collector_Code', index: 'Collector_Code', width: 120, align: 'left' },
+                    { label: '租户帐号', name: 'UserName', index: 'UserName', width: 100, align: 'left' },
+                    { label: '租户姓名', name: 'U_Name', index: 'U_Name', width: 60, align: 'left' },
+                    { label: '省', name: 'Province', index: 'Province', width: 60, align: 'left', sortable: true },
+                    { label: '市', name: 'City', index: 'City', width: 60, align: 'left', sortable: true },
+                    { label: '区', name: 'County', index: 'County', width: 60, align: 'left', sortable: true },
+                    { label: '单元', name: 'Cell', index: 'Cell', width: 60, align: 'left', sortable: true },
+                    { label: '楼层', name: 'Floor', index: 'Floor', width: 60, align: 'left', sortable: true },
+                    { label: '房号', name: 'Room', index: 'Room', width: 60, align: 'left', sortable: true },
+                    { label: '地址', name: 'Address', index: 'Address', width: 180, align: 'left' },
+                    { label: '状态', name: 'StatusStr', index: 'StatusStr', width: 60, align: 'left', sortable: true },
+                    {
+                        label: "安装时间", name: "CreateTime", index: "CreateTime", width: 150,
+                        formatter: function (value, options, rowObject) {
+                            return formatDate(value, 'yyyy-MM-dd hh:mm:ss');
+                        }
+                    },
+                    { label: '一级预警', name: 'FirstAlarm', index: 'FirstAlarm', width: 60, align: 'left' },
+                    { label: '电表余额', name: 'Money', index: 'Money', width: 60, align: 'left' },
+                    { label: '业主帐号', name: 'UY_UserName', index: 'UY_UserName', width: 120, align: 'left' },
+                    { label: '业主姓名', name: 'UY_Name', index: 'UY_Name', width: 60, align: 'left' },
+            ],
+            viewrecords: true,
+            rowNum: 25,
+            rowList: [25, 30, 35, 40, 50],
+            pager: "#gridPager",
+            sortname: 'CreateTime',
+            sortorder: 'desc',
+            rownumbers: true,
+            shrinkToFit: false,
+            gridview: true,
+        });
+    }
     //删除
     function btn_delete() {
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
@@ -84,9 +146,9 @@
             CountyId = $("#CountyId").find("option:selected").text();
         }
         $("#gridTable").jqGrid('setGridParam', {
-            url: "@Url.Content("~/AmmeterModule/Am_Ammeter/GridPageListJson")?Stuts=" + Stuts + '&Keyword=' + keywords +
-                '&ProvinceId=' + ProvinceId + '&CityId=' + CityId + '&CountyId=' + CountyId, page: 1
-    }).trigger('reloadGrid');
+            url: "@Url.Content("~/AmmeterModule/Am_Ammeter/GridPageListJson")?Stuts=" + Stuts + '&keywords=' + keywords +
+                '&ProvinceId=' + ProvinceId + '&CityId=' + CityId + '&CountyId=' + CountyId + '&Number=' + PNumber, page: 1
+        }).trigger('reloadGrid');
     }
     //要打印数据源，子页面调用的函数
     function PrintDataSource() {
@@ -116,7 +178,7 @@
         Loading(true, "正在处理要导出数据...");
         var keywords = $("#keywords").val();
         var Stuts = $("#Stuts").val();
-        var ProvinceId="", CityId="", CountyId="";
+        var ProvinceId = "", CityId = "", CountyId = "";
         if (IsNullOrEmpty($("#ProvinceId").val())) {
             ProvinceId = $("#ProvinceId").find("option:selected").text();
         }
@@ -127,8 +189,8 @@
             CountyId = $("#CountyId").find("option:selected").text();
         }
         window.setTimeout(function () {
-            location.href = "/AmmeterModule/Am_Collector/ExportExcel??Keyword=" + keywords + '&Stuts=' + Stuts +
-                '&ProvinceId=' + ProvinceId + '&CityId=' + CityId + '&CountyId=' + CountyId;
+            location.href = "/AmmeterModule/Am_Ammeter/ExportExcel??keywords=" + keywords + '&Stuts=' + Stuts +
+                '&ProvinceId=' + ProvinceId + '&CityId=' + CityId + '&CountyId=' + CountyId + '&Number=' + PNumber;
             Loading(false);
         }, 200);
     }
@@ -161,10 +223,29 @@
             <div class="bottomline QueryArea" style="margin: 1px; margin-top: 0px; margin-bottom: 0px;">
                 <table border="0" class="form-find" style="height: 45px;">
                     <tr>
-                        <th>关键字：
-                        </th>
+                        <th>关键字：</th>
                         <td>
                             <input id="keywords" type="text" class="txt" style="width: 200px" />
+                        </td>
+                        <th class="formTitle">所在省：</th>
+                        <td class="formValue">
+                            <select id="ProvinceId" class="txtselect"></select>
+                        </td>
+                        <th class="formTitle">所在市：</th>
+                        <td class="formValue">
+                            <select id="CityId" class="txtselect"></select>
+                        </td>
+                        <th class="formTitle">所在县区：</th>
+                        <td class="formValue">
+                            <select id="CountyId" class="txtselect"></select>
+                        </td>
+                        <th>状态：</th>
+                        <td>
+                            <select id="Stuts" class="txtselect" style="width: 100px">
+                                <option value="-1">请选择</option>
+                                <option value="0">已开户</option>
+                                <option value="1">未开户</option>
+                            </select>
                         </td>
                         <td>
                             <input id="btnSearch" type="button" class="btnSearch" value="搜 索" onclick="btn_Search()" />
