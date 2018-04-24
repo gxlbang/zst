@@ -129,11 +129,11 @@ namespace LeaRun.Entity
         [DisplayName("StatusStr")]
         public string StatusStr { get; set; }
         /// <summary>
-        /// Accout
+        /// Account
         /// </summary>
         /// <returns></returns>
-        [DisplayName("Accout")]
-        public string Accout { get; set; }
+        [DisplayName("Account")]
+        public string Account { get; set; }
         /// <summary>
         /// Password
         /// </summary>

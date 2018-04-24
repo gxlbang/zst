@@ -20,6 +20,10 @@
                 { label: '提现金额', name: 'Money', index: 'Money', width: 80, align: 'left'},
                 { label: '手续费', name: 'BankCharge', index: 'BankCharge', width: 60, align: 'left' },
                 { label: '实际到账', name: 'RealMoney', index: 'RealMoney', width: 80, align: 'left', cellattr: addCellAttr_red },
+                { label: '银行名称', name: 'BankName', index: 'BankName', width: 150, align: 'left' },
+                { label: '银行卡号', name: 'BankCode', index: 'BankCode', width: 180, align: 'left', cellattr: addCellAttr_blue },
+                { label: '开户行', name: 'BankAddress', index: 'BankAddress', width: 180, align: 'left'  },
+                { label: '状态', name: 'StatusStr', index: 'StatusStr', width: 60, align: 'left' },
                 {
                     label: "提现时间", name: "CreateTime", index: "CreateTime", width: 150,
                     formatter: function (value, options, rowObject) {
@@ -32,10 +36,6 @@
                         return formatDate(value, 'yyyy-MM-dd hh:mm:ss');
                     }
                 },
-                { label: '银行名称', name: 'BankName', index: 'BankName', width: 150, align: 'left' },
-                { label: '银行卡号', name: 'BankCode', index: 'BankCode', width: 180, align: 'left', cellattr: addCellAttr_blue },
-                { label: '开户行', name: 'BankAddress', index: 'BankAddress', width: 180, align: 'left'  },
-                { label: '状态', name: 'StatusStr', index: 'StatusStr', width: 60, align: 'left'  },
                 { label: '备注', name: 'Remark', index: 'Remark', width: 100, align: 'left' },
         ],
         viewrecords: true,
@@ -57,37 +57,12 @@
             return "style='color:blue'";
         }
     }
-    //新增
-    function btn_add() {
-        var url = "/AmmeterModule/Am_UserGetMoneyToBank/Form"
-        openDialog(url, "Form", "新增Am_UserGetMoneyToBank", 770, 395, function (iframe) {
-            top.frames[iframe].AcceptClick()
-        });
-    }
-    //编辑
-    function btn_edit() {
-        var KeyValue = GetJqGridRowValue("#gridTable", "Number");
-        if (IsChecked(KeyValue)) {
-            var url = "/AmmeterModule/Am_UserGetMoneyToBank/Form?KeyValue=" + KeyValue;
-            openDialog(url, "Form", "编辑Am_UserGetMoneyToBank", 770, 395, function (iframe) {
-                top.frames[iframe].AcceptClick();
-            });
-        }
-    }
-    //删除
-    function btn_delete() {
-        var KeyValue = GetJqGridRowValue("#gridTable", "Number");
-        if (IsDelData(KeyValue)) {
-            var delparm = 'KeyValue=' + KeyValue;
-            delConfig('/AmmeterModule/Am_UserGetMoneyToBank/Delete', delparm, KeyValue.split(",").length);
-        }
-    }
     //明细
     function btn_detail() {
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsChecked(KeyValue)) {
             var url = "/AmmeterModule/Am_UserGetMoneyToBank/Detail?KeyValue=" + KeyValue;
-            Dialog(url, "Detail", "Am_UserGetMoneyToBank明细", 820, 500, function (iframe) {
+            Dialog(url, "Detail", "明细", 650, 380, function (iframe) {
                 top.frames[iframe].AcceptClick();
             });
         }
@@ -97,26 +72,29 @@
         $("#gridTable").trigger("reloadGrid"); //重新载入
         
     }
+    //提现已支付
     function PayToBank() {
-
+        var KeyValue = GetJqGridRowValue("#gridTable", "Number");
+        if (IsChecked(KeyValue)) {
+            confirmDialog("确认提示", "确定已经付款给用户?确定后无法恢复!", function (data) {
+                if (data) {
+                    AjaxJson("/AmmeterModule/Am_UserGetMoneyToBank/PayToBank", { KeyValue: KeyValue }, function (data) {
+                        tipDialog(data.Message, 3, data.Code);
+                        windowload();
+                    });
+                }
+            });
+        }
     }
     //搜索
     function btn_Search() {
         var keywords = $("#keywords").val();
+        var StartTime = $("#StartTime").val();
+        var EndTime = $("#EndTime").val();
         var Stuts = $("#Stuts").val();
-        var ProvinceId = "", CityId = "", CountyId = "";
-        if (IsNullOrEmpty($("#ProvinceId").val())) {
-            ProvinceId = $("#ProvinceId").find("option:selected").text();
-        }
-        if (IsNullOrEmpty($("#CityId").val())) {
-            CityId = $("#CityId").find("option:selected").text();
-        }
-        if (IsNullOrEmpty($("#CountyId").val())) {
-            CountyId = $("#CountyId").find("option:selected").text();
-        }
         $("#gridTable").jqGrid('setGridParam', {
-            url: "@Url.Content("~/AmmeterModule/Am_Ammeter/GridPageListJson")?Stuts=" + Stuts + '&keywords=' + keywords +
-                '&ProvinceId=' + ProvinceId + '&CityId=' + CityId + '&CountyId=' + CountyId + '&Number=' + PNumber, page: 1
+            url: "@Url.Content("~/AmmeterModule/Am_UserGetMoneyToBank/GridPageListJson")?StartTime=" + StartTime + '&keywords=' + keywords +
+                '&EndTime=' + EndTime + '&Stuts=' + Stuts, page: 1
     }).trigger('reloadGrid');
     }
     //要打印数据源，子页面调用的函数
@@ -146,20 +124,12 @@
         //var SelectedField = ""; $('#AccessView .selected a').each(function () { SelectedField += $(this).attr('id') + ","; });
         Loading(true, "正在处理要导出数据...");
         var keywords = $("#keywords").val();
+        var StartTime = $("#StartTime").val();
+        var EndTime = $("#EndTime").val();
         var Stuts = $("#Stuts").val();
-        var ProvinceId = "", CityId = "", CountyId = "";
-        if (IsNullOrEmpty($("#ProvinceId").val())) {
-            ProvinceId = $("#ProvinceId").find("option:selected").text();
-        }
-        if (IsNullOrEmpty($("#CityId").val())) {
-            CityId = $("#CityId").find("option:selected").text();
-        }
-        if (IsNullOrEmpty($("#CountyId").val())) {
-            CountyId = $("#CountyId").find("option:selected").text();
-        }
         window.setTimeout(function () {
-            location.href = "/AmmeterModule/Am_Ammeter/ExportExcel??keywords=" + keywords + '&Stuts=' + Stuts +
-                '&ProvinceId=' + ProvinceId + '&CityId=' + CityId + '&CountyId=' + CountyId + '&Number=' + PNumber;
+            location.href = "/AmmeterModule/Am_UserGetMoneyToBank/ExportExcel??keywords=" + keywords + '&StartTime=' + StartTime +
+                '&EndTime=' + EndTime + '&Stuts=' + Stuts;
             Loading(false);
         }, 200);
     }
@@ -176,6 +146,14 @@
             <th>关键字：</th>
             <td>
                 <input id="keywords" type="text" class="txt" style="width: 200px" />
+            </td>
+            <th>状态：</th>
+            <td>
+                <select id="Stuts" class="select" style="width: 120px">
+                    <option value="-1">请选择</option>
+                    <option value="0">待支付</option>
+                    <option value="1">已支付</option>
+                </select>
             </td>
             <th>下单时间：</th>
             <td>

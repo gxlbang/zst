@@ -136,14 +136,6 @@ namespace LeaRun.WebApp.Areas.CommonModule.Controllers
                 var entityList = database.FindListBySql<Base_ModulePermission>("select * from Base_ModulePermission where ObjectId = '" + OldUserId + "'");
                 foreach (var entity in entityList)
                 {
-                    //特殊处理系统管理和用户管理菜单
-                    if (entity.ModuleId == "58e86c4c-8022-4d30-95d5-b3d0eedcc878" || entity.ModuleId == "545d2450-4dac-4377-afbe-d9aa451f795f")
-                    {
-                        if (ManageProvider.Provider.Current().InnerUser >= configbll.GetConfig().UserLevel)
-                        {
-                            continue;
-                        }
-                    }
                     entity.Create();
                     entity.ObjectId = ObjectId;
                     if (isOpenTrans != null)

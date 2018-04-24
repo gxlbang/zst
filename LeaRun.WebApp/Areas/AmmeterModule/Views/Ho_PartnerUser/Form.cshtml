@@ -30,7 +30,7 @@
             return false;
         }
         var postData = jQuery.parseJSON('{"Name":"' + $("#Name").val() +
-            '","Mobile":"' + $("#Mobile").val() + '","Password":"' + $("#Password").val() +
+            '","Accout":"' + $("#Accout").val() + '","Password":"' + $("#Password").val() +
             '","UserRoleNumber":"' + $("#UserRoleNumber").val() + '","UserRole":"' + $("#UserRoleNumber").find("option:selected").text() +
             '","CardCode":"' + $("#CardCode").val() + '","Remark":"' + $("#Remark").val() + '"}');
         AjaxJson("/AmmeterModule/Ho_PartnerUser/SubmitUserForm?KeyValue=" + KeyValue, postData, function (data) {
@@ -61,7 +61,7 @@
             <th class='formTitle'>手机号：</th>
             <td class='formValue'>
                 @*<label id="Mobile" />*@
-                <input id="Mobile" maxlength=11 type="text" class="txt required" datacol="yes" err="手机号" checkexpession="NotNull"  />
+                <input id="Account" maxlength=11 type="text" class="txt required" datacol="yes" err="手机号" checkexpession="NotNull"  />
             </td>
         </tr>
         <tr>

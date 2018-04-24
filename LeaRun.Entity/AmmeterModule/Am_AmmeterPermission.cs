@@ -93,6 +93,24 @@ namespace LeaRun.Entity
         [DisplayName("LeaveTime")]
         public DateTime? LeaveTime { get; set; }
         /// <summary>
+        /// UY_Number
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("UY_Number")]
+        public string UY_Number { get; set; }
+        /// <summary>
+        /// UY_UserName
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("UY_UserName")]
+        public string UY_UserName { get; set; }
+        /// <summary>
+        /// UY_Name
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("UY_Name")]
+        public string UY_Name { get; set; }
+        /// <summary>
         /// Remark
         /// </summary>
         /// <returns></returns>

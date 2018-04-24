@@ -83,15 +83,75 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
                 string Message = KeyValue == "" ? "新增成功。" : "编辑成功。";
                 if (!string.IsNullOrEmpty(KeyValue))
                 {
+                    if (model.UserRole == "运营商")//选择了运营商才添加
+                    {
+                        var usermodelNum = database.FindCount<Base_User>(" and Account = '" + model.Account + "'");
+                        if (usermodelNum < 1)
+                        {
+                            //如果添加运营商,则要往后台用户表添加一个帐号
+                            var user = new Base_User()
+                            {
+                                Account = model.Account,
+                                Password = model.Password,
+                                RealName=model.Name,
+                                Mobile=model.Account,
+                                SortCode = CommonHelper.GetInt(BaseFactory.BaseHelper().GetSortCode<Base_User>("SortCode")),
+                                InnerUser = 3,
+                                DepartmentId = "不能删除",
+                                CompanyId = "BaseUser",
+                                Code = "bd548d5b-1783-4582-9007-bb5c87803679"
+                            };
+                            user.Create();
+                            database.Insert(user, isOpenTrans);
+                            //权限分配-复制上级权限-bd548d5b-1783-4582-9007-bb5c87803679(此用户不能删除)
+                            CopyUserRight("bd548d5b-1783-4582-9007-bb5c87803679", user.UserId, isOpenTrans);
+                        }
+                    }
                     model.Modify(KeyValue);
+
                     var IsOk = database.Update(model, isOpenTrans);
                     Base_SysLogBll.Instance.WriteLog(KeyValue, OperationType.Update, IsOk > 0 ? "成功" : "失败", "用户" + Message);
                 }
                 else //新建
                 {
+                    //检测手机号和身份证号的唯一性
+                    var accountIsMobile = database.FindEntity<Ho_PartnerUser>(" and Account='" + model.Account + "'");
+                    if (accountIsMobile != null && accountIsMobile.Number != null)
+                    {
+                        return Content(new JsonMessage { Success = false, Code = "1", Message = "手机号码已存在" }.ToString());
+                    }
+                    if (!string.IsNullOrEmpty(model.CardCode))
+                    {
+                        var accountIsCardCode = database.FindEntity<Ho_PartnerUser>(" and CardCode='" + model.CardCode + "'");
+                        if (accountIsCardCode != null && accountIsCardCode.Number != null)
+                        {
+                            return Content(new JsonMessage { Success = false, Code = "1", Message = "身份证号码已存在" }.ToString());
+                        }
+                    }
+                    if (model.UserRole == "运营商")//选择了运营商才添加
+                    {
+                        //如果添加运营商,则要往后台用户表添加一个帐号
+                        var user = new Base_User()
+                        {
+                            Account = model.Account,
+                            Password = model.Password,
+                            RealName = model.Name,
+                            Mobile = model.Account,
+                            SortCode = CommonHelper.GetInt(BaseFactory.BaseHelper().GetSortCode<Base_User>("SortCode")),
+                            InnerUser = 2,
+                            DepartmentId = "不能删除",
+                            CompanyId = "BaseUser",
+                            Code = "bd548d5b-1783-4582-9007-bb5c87803679"
+                        };
+                        user.Create();
+                        database.Insert(user, isOpenTrans);
+                        //权限分配-复制上级权限-bd548d5b-1783-4582-9007-bb5c87803679(此用户不能删除)
+                        CopyUserRight("bd548d5b-1783-4582-9007-bb5c87803679", user.UserId, isOpenTrans);
+                    }
                     model.Password = PasswordHash.CreateHash(model.Password);
                     model.Create();
                     var IsOk = database.Insert(model, isOpenTrans);
+
                     Base_SysLogBll.Instance.WriteLog(KeyValue, OperationType.Update, IsOk > 0 ? "成功" : "失败", "用户" + Message);
                 }
                 database.Commit();
@@ -101,6 +161,68 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
             {
                 database.Rollback();
                 return Content(new JsonMessage { Success = false, Code = "-1", Message = "操作失败：" + ex.Message }.ToString());
+            }
+        }
+        /// <summary>
+        /// 复制上级权限给下级
+        /// </summary>
+        /// <param name="OldUserId">上级id</param>
+        /// <param name="ObjectId">用户id</param>
+        /// <param name="isOpenTrans"></param>
+        public void CopyUserRight(string OldUserId, string ObjectId, DbTransaction isOpenTrans = null)
+        {
+            IDatabase database = DataFactory.Database();
+            try
+            {
+                //模块权限
+                var entityList = database.FindListBySql<Base_ModulePermission>("select * from Base_ModulePermission where ObjectId = '" + OldUserId + "'");
+                foreach (var entity in entityList)
+                {
+                    entity.Create();
+                    entity.ObjectId = ObjectId;
+                    if (isOpenTrans != null)
+                    {
+                        database.Insert(entity, isOpenTrans);
+                    }
+                    else
+                    {
+                        database.Insert(entity);
+                    }
+                }
+                //按钮权限
+                var entityList1 = database.FindListBySql<Base_ButtonPermission>("select * from Base_ButtonPermission where ObjectId = '" + OldUserId + "'");
+                foreach (var entity1 in entityList1)
+                {
+                    entity1.Create();
+                    entity1.ObjectId = ObjectId;
+                    if (isOpenTrans != null)
+                    {
+                        database.Insert(entity1, isOpenTrans);
+                    }
+                    else
+                    {
+                        database.Insert(entity1);
+                    }
+                }
+                //视图权限
+                var entityList2 = database.FindListBySql<Base_ViewPermission>("select * from Base_ViewPermission where ObjectId = '" + OldUserId + "'");
+                foreach (var entity2 in entityList2)
+                {
+                    entity2.Create();
+                    entity2.ObjectId = ObjectId;
+                    if (isOpenTrans != null)
+                    {
+                        database.Insert(entity2, isOpenTrans);
+                    }
+                    else
+                    {
+                        database.Insert(entity2);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Base_SysLogBll.Instance.WriteLog("", OperationType.Query, "-1", "异常错误：" + ex.Message);
             }
         }
         /// <summary>
@@ -175,7 +297,7 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
                 model.Address = item.Address;
                 model.CardCode = item.CardCode;
                 model.CreatTime = item.CreatTime.Value.ToString("yyyy-MM-dd HH:mm:ss");
-                model.Mobile = item.Mobile;
+                model.Account = item.Account;
                 model.Money = item.Money.Value.ToString("0.00");
                 model.Name = item.Name;
                 model.Remark = item.Remark;
@@ -184,7 +306,7 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
 
                 newlist.Add(model);
             }
-            string[] columns = new string[] { "姓名:Name", "身份证号:CardCode", "手机号:Mobile", "角色:UserRole",
+            string[] columns = new string[] { "姓名:Name", "身份证号:CardCode", "手机号:Account", "角色:UserRole",
                 "余额:Money", "地址:Address", "创建时间:CreatTime", "状态:StatusStr", "备注:Remark" };
             DeriveExcel.ListToExcel<Ho_PartnerUserNew>(newlist, columns, "会员数据" + DateTime.Now.ToString("yyyyMMddHHmmss"));
 

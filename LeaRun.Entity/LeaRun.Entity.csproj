@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AmmeterModule\Am_AmDepositNew.cs" />
     <Compile Include="AmmeterModule\Am_AmDeposit.cs" />
     <Compile Include="AmmeterModule\Am_AmDepositDetail.cs" />
     <Compile Include="AmmeterModule\Am_AmmeterNew.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="AmmeterModule\Am_Template.cs" />
     <Compile Include="AmmeterModule\Am_TemplateContent.cs" />
     <Compile Include="AmmeterModule\Am_UserDeposit.cs" />
+    <Compile Include="AmmeterModule\Am_UserGetMoneyToBankNew.cs" />
     <Compile Include="AmmeterModule\Am_UserGetMoneyToBank.cs" />
     <Compile Include="AmmeterModule\Am_UserRole.cs" />
     <Compile Include="AmmeterModule\Ho_PartnerUserNew.cs" />
