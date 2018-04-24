@@ -32,13 +32,18 @@ namespace LeaRun.WebApp.Controllers
                 string realCode = Utilities.DESEncrypt.Decrypt(CookieHelper.GetCookie("WebCode"));
                 if (StringHelper.IsNullOrEmpty(model.ValidCode) || model.ValidCode != realCode)
                 {
-                    return Json(new { res = "On", msg = "验证码错误！" });
+                    return Json(new { res = "No", msg = "验证码错误" });
                 }
-                var account = database.FindEntity<Ho_PartnerUser>(" and Mobile=" + model.Name);
-                if (account != null&&account.Number!=null )
+                if (model.Password !=model .ConfirmPassword)
                 {
-                    return Json(new { res = "On", msg = "已存在用户！" });
+                    return Json(new { res = "No", msg = "两次密码不一致" });
                 }
+                var accountIsMobile = database.FindEntity<Ho_PartnerUser>(" and Accout='" + model.Name+"'");
+                if (accountIsMobile != null&&accountIsMobile.Number!=null )
+                {
+                    return Json(new { res = "No", msg = "已存在用户" });
+                }
+
                 var insertModel = new Ho_PartnerUser();
                 insertModel.Number = CommonHelper.GetGuid;
                 insertModel.Password = PasswordHash.CreateHash(model.Password);
@@ -49,6 +54,7 @@ namespace LeaRun.WebApp.Controllers
                 insertModel.Money = 0.00;
                 insertModel.FreezeMoney = 0.00;
                 insertModel.Status = 0;
+                insertModel.Mobile = model.Name;
                 insertModel.StatusStr = "新注册";
                 insertModel.Birthday = DateTime.Now;
                 var role = database.FindEntityByWhere<Am_UserRole>(" and RoleName='普通会员'");
@@ -65,7 +71,7 @@ namespace LeaRun.WebApp.Controllers
                 }
                 
             }
-            return Json(new { res = "On", msg = "注册失败！" });
+            return Json(new { res = "No", msg = "注册失败" });
         }
 
 
@@ -75,7 +81,7 @@ namespace LeaRun.WebApp.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Login(string name, string pwd, string code)
+        public ActionResult LoginPwd(string name, string pwd)
         {
             if (ModelState.IsValid)
             {
@@ -108,22 +114,22 @@ namespace LeaRun.WebApp.Controllers
                 }
                 else
                 {
-                    Json(new { res = "On", msg = "用户名或密码不对！" });
+                    Json(new { res = "No", msg = "用户名或密码不对" });
                 }
             }
-            return Json(new { res = "On", msg = "登录失败！" });
+            return Json(new { res = "No", msg = "登录失败" });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Login(string name, string validCode)
+        public ActionResult LoginCode(string name, string validCode)
         {
             if (ModelState.IsValid)
             {
                 string realCode = Utilities.DESEncrypt.Decrypt(CookieHelper.GetCookie("WebCode"));
                 if (StringHelper.IsNullOrEmpty(validCode) || validCode != realCode)
                 {
-                    return Json(new { res = "On", msg = "验证码错误！" });
+                    return Json(new { res = "No", msg = "验证码错误" });
                 }
                 List<DbParameter> parameter = new List<DbParameter>();
                 parameter.Add(DbFactory.CreateDbParameter("@Account", name));
@@ -149,10 +155,10 @@ namespace LeaRun.WebApp.Controllers
                 }
                 else
                 {
-                    Json(new { res = "On", msg = "用户名错误！" });
+                    Json(new { res = "No", msg = "用户名错误" });
                 }
             }
-            return Json(new { res = "On", msg = "登录失败！" });
+            return Json(new { res = "No", msg = "登录失败" });
         }
         public void DeleteCookie(string cookieName)
         {
@@ -160,6 +166,30 @@ namespace LeaRun.WebApp.Controllers
             HttpCookie cookie = new HttpCookie(cookieName, "") { Expires = new DateTime(1999, 1, 1) };
             System.Web.HttpContext.Current.Response.Cookies.Add(cookie);
             System.Web.HttpContext.Current.Request.Cookies.Remove(cookieName);
+        }
+
+        public ActionResult GetCode(string Phone)
+        {
+            if (StringHelper.IsNullOrEmpty(Phone) || Phone.Length < 11)
+            {
+                return Json(new { res = "No", msg = "手机号码错误" });
+            }
+            //发短信接口
+            Random r = new Random();
+            string rstr = r.Next(1010, 9999).ToString();
+            Qcloud.Sms.SmsSingleSender sendSms = new Qcloud.Sms.SmsSingleSender(1400035202, "8f01b47120a413a0c2315eca0a5c1ad3");
+            Qcloud.Sms.SmsSingleSenderResult sendResult = new Qcloud.Sms.SmsSingleSenderResult();
+            sendResult = sendSms.Send(0, "86", Phone, "您的验证码为：" + rstr + "，请于5分钟内填写。如非本人操作，请忽略本短信。", "", "");
+            if (sendResult.result.Equals(0))//到时换为判断是否发送成功
+            {
+                string str = Utilities.DESEncrypt.Encrypt(rstr);
+                CookieHelper.WriteCookie("WebCode", str);
+                return Json(new { res = "Ok", msg = "发送成功" });
+            }
+            else
+            {
+                return Json(new { res = "No", msg = "发送失败" });
+            }
         }
     }
 }
