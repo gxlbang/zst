@@ -45,6 +45,7 @@ namespace LeaRun.WebApp.Controllers
                 }
 
                 var insertModel = new Ho_PartnerUser();
+                insertModel.Account = model.Name;
                 insertModel.Number = CommonHelper.GetGuid;
                 insertModel.Password = PasswordHash.CreateHash(model.Password);
                 insertModel.Mobile = model.Name;

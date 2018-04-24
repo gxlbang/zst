@@ -116,7 +116,7 @@ namespace LeaRun.WebApp.Controllers
                     model.UpdateTime = DateTime.Now;
                     model.UY_Name = user.Name;
                     model.UY_Number = user.Number;
-                    model.UY_UserName = user.Accout;
+                    model.UY_UserName = user.Account;
 
                     var status = database.Insert<Am_Ammeter>(model);
                     if (status > 0)
@@ -183,7 +183,7 @@ namespace LeaRun.WebApp.Controllers
                 model.Number = Utilities.CommonHelper.GetGuid;
                 model.Status = 1;
                 model.CreateTime = DateTime.Now;
-                model.UserName = user.Accout;
+                model.UserName = user.Account;
                 model.UserNumber = user.Number;
                 model.UserRealName = user.Name;
                 var status = database.Insert<Am_AmmeterMoney>(model);
@@ -328,7 +328,7 @@ namespace LeaRun.WebApp.Controllers
                 model.StatusStr = "未连接";
                 model.UNumber = user.Number;
                 model.URealName = user.Name;
-                model.UserName = user.Accout;
+                model.UserName = user.Account;
 
                 var status = database.Insert<Am_Collector>(model);
                 if (status>0)
@@ -477,7 +477,7 @@ namespace LeaRun.WebApp.Controllers
                 template.CreateTime = DateTime.Now;
                 template.U_Number = user.Number;
                 template.U_Name = user.Name;
-                template.UserName = user.Accout;
+                template.UserName = user.Account;
 
                 var status = database.Insert<Am_Template>(template);
                 if (status>0)
@@ -571,7 +571,7 @@ namespace LeaRun.WebApp.Controllers
             if (isExistModel != null && isExistModel.Number != null)
             {
                 model.Number = Utilities.CommonHelper.GetGuid;
-                model.UserName = user.Accout;
+                model.UserName = user.Account;
                 model.U_Name = user.Name;
 
                 if (database.Insert<Am_ChargeItem>(model)>0)

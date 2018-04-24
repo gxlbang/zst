@@ -196,7 +196,7 @@ namespace LeaRun.WebApp.Controllers
                     BankCharge = 0,
                     CreateTime = DateTime.Now,
                     Remark = "",
-                    UserName = account.Accout
+                    UserName = account.Account
                 };
                 var status = database.Insert<Am_UserGetMoneyToBank>(moneyToBank);
                 if (status > 0)
@@ -915,7 +915,7 @@ namespace LeaRun.WebApp.Controllers
                     StatusStr = "申请退租",
                     SucTime = DateTime.Now,
                     UserMark = "",
-                    UserName = user.Accout,
+                    UserName = user.Account,
                     U_Name = user.Name,
                     U_Number = user.Number
                 };
