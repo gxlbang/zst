@@ -299,7 +299,10 @@ namespace LeaRun.WebApp.Controllers
         {
             var user = wbll.GetUserInfo(Request);
             int recordCount = 0;
-            var ammeterList = database.FindListPage<Am_Ammeter>("Number", "desc", pageIndex, pageSize, ref recordCount);
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+
+            var ammeterList = database.FindListPage<Am_Ammeter>(" and U_Number=@U_Number",parameter.ToArray(),"Number", "desc", pageIndex, pageSize, ref recordCount);
             ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize); ;
             if (Request.IsAjaxRequest())
             {
@@ -774,7 +777,7 @@ namespace LeaRun.WebApp.Controllers
                         };
                         repairImageList.Add(model);
                     }
-                     database.Insert<Am_RepairImage>(repairImageList);
+                    database.Insert<Am_RepairImage>(repairImageList);
                     return Json(new { res = "Ok", msg = "提交成功" });
                 }
             }
@@ -810,7 +813,7 @@ namespace LeaRun.WebApp.Controllers
         /// </summary>
         /// <param name="Number"></param>
         /// <returns></returns>
-        public ActionResult RepairInfo(string Number )
+        public ActionResult RepairInfo(string Number)
         {
             var user = wbll.GetUserInfo(Request);
             List<DbParameter> par = new List<DbParameter>();
@@ -836,7 +839,7 @@ namespace LeaRun.WebApp.Controllers
             par.Add(DbFactory.CreateDbParameter("@Status", "1"));
 
             var depositList = database.FindList<Am_UserDeposit>(" and Number=@Number and Status=@Status", par.ToArray());
-            if (depositList != null && depositList.Count()>0)
+            if (depositList != null && depositList.Count() > 0)
             {
                 return View(depositList);
             }
@@ -871,6 +874,105 @@ namespace LeaRun.WebApp.Controllers
                 }
             }
             return View(list);
+        }
+        /// <summary>
+        /// 提交退租
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult RentCreate(string number)
+        {
+            var user = wbll.GetUserInfo(Request);
+
+            List<DbParameter> par = new List<DbParameter>();
+            par.Add(DbFactory.CreateDbParameter("@Number", number));
+
+            var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number=@Number", par.ToArray());
+            if (ammeter != null && ammeter.Number != null)
+            {
+                var rent = new Am_Rent
+                {
+                    Address = ammeter.Address,
+                    AmmeterCode = ammeter.AM_Code,
+                    AmmeterNumber = ammeter.Number,
+                    Cell = ammeter.Cell,
+                    Number = Utilities.CommonHelper.GetGuid,
+                    City = ammeter.City,
+                    CollectorCode = ammeter.Collector_Code,
+                    CollectorNumber = ammeter.Collector_Number,
+                    County = ammeter.County,
+                    CreateTime = DateTime.Now,
+                    Floor = ammeter.Floor,
+                    FMark = "",
+                    F_Number = ammeter.UY_Number,
+                    F_UserName = ammeter.UY_UserName,
+                    Money = 0.00,
+                    Province = ammeter.Province,
+                    Remark = "",
+                    Room = ammeter.Room,
+                    Status = 0,
+                    StatusStr = "申请退租",
+                    SucTime = DateTime.Now,
+                    UserMark = "",
+                    UserName = user.Accout,
+                    U_Name = user.Name,
+                    U_Number = user.Number
+                };
+                var status = database.Insert<Am_Rent>(rent);
+                if (status>0)
+                {
+                    return Json(new { res = "Ok", msg = "提交成功" });
+                }
+            }
+
+            return Json(new { res = "No", msg = "提交失败" });
+        }
+        /// <summary>
+        /// 退租记录
+        /// </summary>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        public ActionResult RentList(int pageIndex = 1, int pageSize = 10)
+        {
+            var user = wbll.GetUserInfo(Request);
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+            parameter.Add(DbFactory.CreateDbParameter("@Status", "1"));
+
+            int recordCount = 0;
+            var rentList = database.FindListPage<Am_Rent>(" and U_Number=@U_Number and Status=@Status", parameter.ToArray(), "Number", "desc", pageIndex, pageSize, ref recordCount);
+            ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize);
+            if (Request.IsAjaxRequest())
+            {
+                return Json(rentList);
+            }
+            else
+            {
+                return View();
+            }
+        }
+        /// <summary>
+        ///退租详情 
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public ActionResult RentDetails(string number )
+        {
+            var user = wbll.GetUserInfo(Request);
+            List < DbParameter > par = new List<DbParameter>();
+            par.Add(DbFactory.CreateDbParameter("@Number", number));
+            par.Add(DbFactory.CreateDbParameter("@U_Number",user.Number));
+
+            var rent = database.FindEntityByWhere<Am_Rent>(" and Number=@Number and U_Number=@U_Number", par.ToArray());
+            if (rent != null && rent.Number != null)
+            {
+                List<DbParameter> par1 = new List<DbParameter>();
+                par1.Add(DbFactory.CreateDbParameter("@RentNumber", rent.Number));
+                var rentBillList = database.FindList<Am_RentBill>(" and RentNumber=@RentNumber",par1.ToArray());
+            }
+            return View(rent);
         }
     }
 }
