@@ -1,8 +1,16 @@
-//=====================================================================================
-// All Rights Reserved , Copyright @ Learun 2017
-// Software Developers @ Learun 2017
-//=====================================================================================
-
+/*
+* 姓名:gxlbang
+* 类名:Fx_WebConfig
+* CLR版本：
+* 创建时间:2018-04-22 13:50:29
+* 功能描述:
+*
+* 修改历史：
+*
+* ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+* ┃            Copyright(c) gxlbang ALL rights reserved                    ┃
+* ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+*/
 using LeaRun.DataAccess.Attributes;
 using LeaRun.Utilities;
 using System;
@@ -16,7 +24,7 @@ namespace LeaRun.Entity
     /// Fx_WebConfig
     /// <author>
     ///		<name>she</name>
-    ///		<date>2017.11.13 10:53</date>
+    ///		<date>2018.04.22 13:50</date>
     /// </author>
     /// </summary>
     [Description("Fx_WebConfig")]
@@ -103,24 +111,6 @@ namespace LeaRun.Entity
         [DisplayName("Email_Formart")]
         public string Email_Formart { get; set; }
         /// <summary>
-        /// UserLevel
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("UserLevel")]
-        public int? UserLevel { get; set; }
-        /// <summary>
-        /// GetOrderNum
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("GetOrderNum")]
-        public int? GetOrderNum { get; set; }
-        /// <summary>
-        /// TotleOrderNum
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("TotleOrderNum")]
-        public int? TotleOrderNum { get; set; }
-        /// <summary>
         /// AppID
         /// </summary>
         /// <returns></returns>
@@ -132,6 +122,30 @@ namespace LeaRun.Entity
         /// <returns></returns>
         [DisplayName("AppSecret")]
         public string AppSecret { get; set; }
+        /// <summary>
+        /// BillDate
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("BillDate")]
+        public int? BillDate { get; set; }
+        /// <summary>
+        /// ChargeFee
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("ChargeFee")]
+        public double? ChargeFee { get; set; }
+        /// <summary>
+        /// AmCharge
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("AmCharge")]
+        public double? AmCharge { get; set; }
+        /// <summary>
+        /// AmDeposit
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("AmDeposit")]
+        public double? AmDeposit { get; set; }
         /// <summary>
         /// Remark
         /// </summary>

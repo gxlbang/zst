@@ -30,6 +30,7 @@
     <script>
         /**初始化**/
         $(document).ready(function () {
+            SetSystemColor();
             ServerCurrentTime(); //服务器时间
             AddTabMenu('Imain', '@Url.Content("~/Home/TreePage")', '欢迎首页', "house.png", 'false');
             //AddTabMenu('3015aec6-3b63-4dff-9c4b-a3c4a67e2148', '@Url.Content("~/HouseModule/Ho_MySubscribe/Index")', '订单管理', "phone_vintage.png", 'false');
@@ -45,6 +46,18 @@
                 //linkAddTabMenu()
             })
         });
+        //设置系统颜色
+        function SetSystemColor() {
+            var color = "#1C86EE";
+            top.$(".header").css('background', color);
+            top.$("#footer").css('background', color);
+            top.$(".ui_title").css('background', color);
+            top.$(".ui_lt,.ui_rt,.ui_l,.ui_r,.ui_lb,.ui_b,.ui_t,.ui_rb").css('background', color);
+            top.$(".popup ul").css('background', color);
+            top.$(".popup i").css('border-color', "transparent transparent " + color);
+            top.$(".submenu .action").css('background', color);
+        }
+
         //点击菜单连接（隐藏导航菜单）
         function linkAddTabMenu() {
             $('.btn-nav-toggle').removeAttr('disabled');
@@ -182,6 +195,11 @@
                         <span class="c5"></span>修改密码
                     </a>
                 </li>
+                @*<li id="metnav_2" class="list" onclick="SkinIndex()">
+                    <a id="nav_2">
+                        <span class="c2"></span>切换皮肤
+                    </a>
+                </li>*@
                 <li id="metnav_4" class="list" onclick="IndexOut();">
                     <a id="nav_4">
                         <span class="c4"></span>

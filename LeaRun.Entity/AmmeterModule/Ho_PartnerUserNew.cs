@@ -47,8 +47,8 @@ namespace LeaRun.Entity
         /// Mobile
         /// </summary>
         /// <returns></returns>
-        [DisplayName("Mobile")]
-        public string Mobile { get; set; }
+        [DisplayName("Account")]
+        public string Account { get; set; }
         /// <summary>
         /// UserRole
         /// </summary>

@@ -18,11 +18,21 @@
                 { label: '网站名称', name: 'Web_Name', index: 'Web_Name', width: 180, align: 'left'  },
                 { label: '网站地址', name: 'Web_Url', index: 'Web_Url', width: 220, align: 'left' },
                 { label: '备案号', name: 'Web_ICP', index: 'Web_ICP', width: 120, align: 'left'},
-                { label: '是否开启邮件', name: 'IsEmail', index: 'IsEmail', width: 100, align: 'left'  },
+                {
+                    label: '是否开启邮件', name: 'IsEmail', index: 'IsEmail', width: 100, align: 'left',
+                    formatter: function (cellvalue, options, rowObject) {
+                        if (cellvalue == '1') return "<img src='/Content/Images/checkokmark.gif'/>";
+                        if (cellvalue == '0') return "<img src='/Content/Images/checknomark.gif'/>";
+                    }
+                },
                 { label: '邮箱地址', name: 'Email', index: 'Email', width: 150, align: 'left' },
                 //{ label: '用户层级', name: 'UserLevel', index: 'UserLevel', width: 80, align: 'left' },
-                { label: 'AppID', name: 'AppID', index: 'AppID', width: 150, align: 'left' },
-                { label: 'AppSecret', name: 'AppSecret', index: 'AppSecret', width: 300, align: 'left' },
+                //{ label: 'AppID', name: 'AppID', index: 'AppID', width: 150, align: 'left' },
+                //{ label: 'AppSecret', name: 'AppSecret', index: 'AppSecret', width: 300, align: 'left' },
+                { label: '账单日', name: 'BillDate', index: 'BillDate', width: 80, align: 'left', sortable: true },
+                { label: '提现费率', name: 'ChargeFee', index: 'ChargeFee', width: 80, align: 'left', sortable: true },
+                { label: '电表首充', name: 'AmCharge', index: 'AmCharge', width: 80, align: 'left', sortable: true },
+                { label: '电表押金', name: 'AmDeposit', index: 'AmDeposit', width: 80, align: 'left', sortable: true },
                 { label: '备注', name: 'Remark', index: 'Remark', width: 100, align: 'left' },
         ],
         viewrecords: true,

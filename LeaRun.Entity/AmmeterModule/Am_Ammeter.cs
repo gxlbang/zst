@@ -165,6 +165,12 @@ namespace LeaRun.Entity
         [DisplayName("UpdateTime")]
         public DateTime? UpdateTime { get; set; }
         /// <summary>
+        /// UserTime
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("UserTime")]
+        public DateTime? UserTime { get; set; }
+        /// <summary>
         /// HGQBB
         /// </summary>
         /// <returns></returns>

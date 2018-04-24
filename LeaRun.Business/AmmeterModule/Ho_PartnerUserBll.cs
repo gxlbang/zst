@@ -54,7 +54,7 @@ namespace LeaRun.Business
             {
                 strSql.Append(@" AND (Name LIKE @keyword
                                     OR CardCode LIKE @keyword
-                                    OR Mobile LIKE @keyword
+                                    OR Account LIKE @keyword
                                     OR WeiXin LIKE @keyword
                                     OR InnerCode LIKE @keyword)");
                 parameter.Add(DbFactory.CreateDbParameter("@keyword", '%' + keyword + '%'));
@@ -89,7 +89,7 @@ namespace LeaRun.Business
             {
                 strSql.Append(@" AND (Name LIKE @keyword
                                     OR CardCode LIKE @keyword
-                                    OR Mobile LIKE @keyword
+                                    OR Account LIKE @keyword
                                     OR WeiXin LIKE @keyword
                                     OR InnerCode LIKE @keyword)");
                 parameter.Add(DbFactory.CreateDbParameter("@keyword", '%' + keyword + '%'));

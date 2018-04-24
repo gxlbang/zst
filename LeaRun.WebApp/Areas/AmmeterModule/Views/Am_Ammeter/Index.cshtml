@@ -72,7 +72,7 @@
             autowidth: true,
             colModel: [
                     { label: 'Number', name: 'Number', index: 'Number', width: 0, align: 'left', hidden: true },
-                    { label: '电表号', name: 'AM_Code', index: 'AM_Code', width: 120, align: 'left' },
+                    { label: '电表号', name: 'AM_Code', index: 'AM_Code', width: 150, align: 'left' },
                     { label: '电表类型', name: 'AmmeterType_Name', index: 'AmmeterType_Name', width: 80, align: 'left' },
                     { label: '价格', name: 'AmmeterMoney_Name', index: 'AmmeterMoney_Name', width: 80, align: 'left' },
                     { label: '采集器编号', name: 'Collector_Code', index: 'Collector_Code', width: 120, align: 'left' },
@@ -88,6 +88,12 @@
                     { label: '状态', name: 'StatusStr', index: 'StatusStr', width: 60, align: 'left', sortable: true },
                     {
                         label: "安装时间", name: "CreateTime", index: "CreateTime", width: 150,
+                        formatter: function (value, options, rowObject) {
+                            return formatDate(value, 'yyyy-MM-dd hh:mm:ss');
+                        }
+                    },
+                    {
+                        label: "入住时间", name: "UserTime", index: "UserTime", width: 150,
                         formatter: function (value, options, rowObject) {
                             return formatDate(value, 'yyyy-MM-dd hh:mm:ss');
                         }
@@ -121,7 +127,7 @@
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsChecked(KeyValue)) {
             var url = "/AmmeterModule/Am_Ammeter/Detail?KeyValue=" + KeyValue;
-            Dialog(url, "Detail", "Am_Ammeter明细", 820, 500, function (iframe) {
+            Dialog(url, "Detail", "电表明细", 750, 420, function (iframe) {
                 top.frames[iframe].AcceptClick();
             });
         }
@@ -229,19 +235,19 @@
                         </td>
                         <th class="formTitle">所在省：</th>
                         <td class="formValue">
-                            <select id="ProvinceId" class="txtselect"></select>
+                            <select id="ProvinceId" class="select" style="width: 120px"></select>
                         </td>
                         <th class="formTitle">所在市：</th>
                         <td class="formValue">
-                            <select id="CityId" class="txtselect"></select>
+                            <select id="CityId" class="select" style="width: 120px"></select>
                         </td>
                         <th class="formTitle">所在县区：</th>
                         <td class="formValue">
-                            <select id="CountyId" class="txtselect"></select>
+                            <select id="CountyId" class="select" style="width: 120px"></select>
                         </td>
                         <th>状态：</th>
                         <td>
-                            <select id="Stuts" class="txtselect" style="width: 100px">
+                            <select id="Stuts" class="select" style="width: 120px">
                                 <option value="-1">请选择</option>
                                 <option value="0">已开户</option>
                                 <option value="1">未开户</option>
