@@ -196,7 +196,7 @@ namespace LeaRun.WebApp.Controllers
                     BankCharge = 0,
                     CreateTime = DateTime.Now,
                     Remark = "",
-                    UserName = account.Accout
+                    UserName = account.Account
                 };
                 var status = database.Insert<Am_UserGetMoneyToBank>(moneyToBank);
                 if (status > 0)
