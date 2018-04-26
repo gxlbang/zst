@@ -130,7 +130,7 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
                     usermodel.Money += entity.Money;
                     usermodel.Modify(usermodel.Number);
                     database.Update(usermodel, isOpenTrans); //更新用户信息表
-                                                             //添加押金返还记录
+                                                             //添加押金返还记录1
                     var recordModel = new Am_MoneyDetail()
                     {
                         CreateTime = DateTime.Now,
@@ -145,7 +145,7 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
                         U_Number = entity.U_Number
                     };
                     recordModel.Create();
-                    database.Insert(recordModel, isOpenTrans); //添加返还记录
+                    database.Insert(recordModel, isOpenTrans); //添加返还记录1
                 }
                 else //提现成功
                 {
