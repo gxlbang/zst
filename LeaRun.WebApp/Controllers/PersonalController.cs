@@ -1,5 +1,6 @@
 ﻿using AlipayAndWepaySDK;
 using Extensions;
+using ImageResizer;
 using LeaRun.DataAccess;
 using LeaRun.Entity;
 using LeaRun.Repository;
@@ -7,6 +8,7 @@ using LeaRun.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web;
@@ -14,7 +16,7 @@ using System.Web.Mvc;
 
 namespace LeaRun.WebApp.Controllers
 {
-    //[UserLoginFilters]
+    [UserLoginFilters]
     public class PersonalController : Controller
     {
         IDatabase database = DataFactory.Database();
@@ -41,19 +43,26 @@ namespace LeaRun.WebApp.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult Perfect(Ho_PartnerUser model)
+        public ActionResult Perfect(Ho_PartnerUser model, string ConfirmPayPassword)
         {
             var user = wbll.GetUserInfo(Request);
-            var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Number=" + user.Number);
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@Number", user.Number));
+
+            var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Number=@Number", parameter.ToArray());
             if (account != null && account.Number != null)
             {
+                if (model.PayPassword != ConfirmPayPassword)
+                {
+                    return Json(new { res = "No", msg = "密码不一致" });
+                }
+                account.PayPassword = PasswordHash.CreateHash(model.PayPassword);
                 account.Name = model.Name;
                 account.Sex = model.Sex;
                 account.CardCode = model.CardCode;
                 account.CodeImg1 = model.CodeImg1;
                 account.CodeImg2 = model.CodeImg2;
                 account.Address = model.Address;
-                account.PayPassword = model.PayPassword;
                 account.Status = 1;
                 var statu = database.Update<Ho_PartnerUser>(account);
                 if (statu > 0)
@@ -63,6 +72,149 @@ namespace LeaRun.WebApp.Controllers
             }
             return Json(new { res = "No", msg = "提交失败" });
         }
+
+
+        #region 图片上传
+        //接收上传图片
+        [HttpPost]
+        public ActionResult UploadFile()
+        {
+            //允许的图片格式
+            var allowedExtensions = new[] { ".png", ".gif", ".jpg", ".jpeg" };
+
+            //返回给前台的结果，最终以json返回
+            List<UploadFileResult> results = new List<UploadFileResult>();
+
+            //遍历从前台传递而来的文件
+            foreach (string file in Request.Files)
+            {
+                //把每个文件转换成HttpPostedFileBase
+                HttpPostedFileBase hpf = Request.Files[file] as HttpPostedFileBase;
+
+                //如果前台传来的文件为null，继续遍历其它文件
+                if (hpf.ContentLength == 0 || hpf == null)
+                {
+                    continue;
+                }
+                else
+                {
+                    if (hpf.ContentLength > 1024 * 1024 * 2) //如果大于规定最大尺寸
+                    {
+                        results.Add(new UploadFileResult()
+                        {
+                            FileName = "",
+                            FilePath = "",
+                            IsValid = false,
+                            Length = hpf.ContentLength,
+                            Message = "图片尺寸不能超过2048KB",
+                            Type = hpf.ContentType
+                        });
+                    }
+                    else
+                    {
+                        var extension = Path.GetExtension(hpf.FileName);
+
+                        if (!allowedExtensions.Contains(extension))//如果文件的后缀名不包含在规定的后缀数组中
+                        {
+                            results.Add(new UploadFileResult()
+                            {
+                                FileName = "",
+                                FilePath = "",
+                                IsValid = false,
+                                Length = hpf.ContentLength,
+                                Message = "图片格式必须是png、gif、jpg或jpeg",
+                                Type = hpf.ContentType
+                            });
+                        }
+                        else
+                        {
+                            //给上传文件改名
+                            string date = DateTime.Now.ToString("yyyyMMddhhmmss");
+                            //目标文件夹的相对路径 ImageSize需要的格式
+                            string pathForSaving = Server.MapPath("~/UpLoads/IdCard/");
+                            //目标文件夹的相对路径 统计文件夹大小需要的格式
+                            string pathForSaving1 = Server.MapPath("~/UpLoads/IdCard");
+
+                            //在根目录下创建目标文件夹AjaxUpload
+                            if (this.CreateFolderIfNeeded(pathForSaving))
+                            {
+                                //保存小图
+                                var versions = new Dictionary<string, string>();
+                                versions.Add("_small", "maxwidth=1024&maxheight=800&format=jpg");
+                                //versions.Add("_medium", "maxwidth=200&maxheight=200&format=jpg");
+                                //versions.Add("_large", "maxwidth=600&maxheight=600&format=jpg");
+
+                                //保存各个版本的缩略图
+                                foreach (var key in versions.Keys)
+                                {
+                                    hpf.InputStream.Seek(0, SeekOrigin.Begin);
+                                    ImageBuilder.Current.Build(new ImageJob(
+                                        hpf.InputStream,
+                                        pathForSaving + date + key, //不带后缀名的图片名称
+                                        new Instructions(versions[key]),
+                                        false,//是否保留原图
+                                        true));//是否增加后缀
+                                }
+
+                                results.Add(new UploadFileResult()
+                                {
+                                    FileName = date + "_small" + ".jpg",
+                                    FilePath = Url.Content(String.Format("~/UpLoads/IdCard/{0}", date + "_small" + ".jpg")),
+                                    IsValid = true,
+                                    Length = hpf.ContentLength,
+                                    Message = "上传成功",
+                                    Type = hpf.ContentType
+                                });
+                            }
+
+                        }
+                    }
+                }
+            }
+
+            return Json(new
+            {
+                filename = results[0].FileName,
+                filepath = results[0].FilePath,
+                isvalid = results[0].IsValid,
+                length = results[0].Length,
+                message = results[0].Message,
+                type = results[0].Type
+            });
+        }
+
+        //根据文件名删除文件
+        [HttpPost]
+        public ActionResult DeleteFileByName(string smallname)
+        {
+            string pathForSaving = Server.MapPath("~/UpLoads/IdCard");
+            System.IO.File.Delete(Path.Combine(pathForSaving, smallname));
+            return Json(new
+            {
+                msg = true
+            });
+        }
+
+        //根据相对路径在项目根路径下创建文件夹
+        private bool CreateFolderIfNeeded(string path)
+        {
+            bool result = true;
+            if (!Directory.Exists(path))
+            {
+                try
+                {
+                    Directory.CreateDirectory(path);
+                }
+                catch (Exception)
+                {
+                    result = false;
+                }
+            }
+            return result;
+        }
+        #endregion
+
+
         /// <summary>
         /// 个人信息
         /// </summary>
@@ -70,12 +222,60 @@ namespace LeaRun.WebApp.Controllers
         public ActionResult Information()
         {
             var user = wbll.GetUserInfo(Request);
-            var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Number=" + user.Number);
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@Number", user.Number));
+
+            var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Number=@Number", parameter.ToArray());
             if (account != null && account.Number != null)
             {
                 return View(account);
             }
             return View();
+        }
+
+        /// <summary>
+        /// 绑定银行卡
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Bindings()
+        {
+            var user = wbll.GetUserInfo(Request);
+            var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Number='" + user.Number + "'");
+            if (account != null && account.Number != null)
+            {
+                ViewBag.Mobile = account.Account;
+            }
+            return View();
+        }
+        /// <summary>
+        /// 添加银行卡绑定
+        /// </summary>
+        /// <param name="mobile"></param>
+        /// <param name="validCode"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult Bindings(string mobile, string validCode)
+        {
+            var user = wbll.GetUserInfo(Request);
+            var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Number='" + user.Number + "'");
+            if (account != null && account.Number != null)
+            {
+                string realCode = Utilities.DESEncrypt.Decrypt(CookieHelper.GetCookie("WebCode"));
+                if (StringHelper.IsNullOrEmpty(validCode) || validCode != realCode)
+                {
+                    return Json(new { res = "No", msg = "验证码错误" });
+                }
+                else
+                {
+                    CookieHelper.WriteCookie("WebCode", null);
+                }
+                account.Account = mobile;
+                if (database.Update<Ho_PartnerUser>(account) > 0)
+                {
+                    return Json(new { res = "Ok", msg = "绑定成功" });
+                }
+            }
+            return Json(new { res = "No", msg = "绑定失败" });
         }
         /// <summary>
         /// 我的余额
@@ -83,11 +283,12 @@ namespace LeaRun.WebApp.Controllers
         /// <returns></returns>
         public ActionResult MyBalance()
         {
+            
             var user = wbll.GetUserInfo(Request);
             var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Number='" + user.Number + "'");
             if (account != null && account.Number != null)
             {
-                ViewBag.Balance = account.Money;
+                ViewBag.Balance = account.Money.Value.ToString("0.00");
             }
             return View();
         }
@@ -101,10 +302,11 @@ namespace LeaRun.WebApp.Controllers
         {
             var user = wbll.GetUserInfo(Request);
             int recordCount = 0;
-            var balanDetailList = database.FindListPage<Am_MoneyDetail>("Number", "desc", pageIndex, pageSize, ref recordCount);
-            ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize); ;
+            ViewBag.recordCount = 0;
             if (Request.IsAjaxRequest())
             {
+                var balanDetailList = database.FindListPage<Am_MoneyDetail>("Number", "desc", pageIndex, pageSize, ref recordCount);
+                ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize); ;
                 return Json(balanDetailList);
             }
             else
@@ -133,6 +335,88 @@ namespace LeaRun.WebApp.Controllers
             return View();
         }
         /// <summary>
+        /// 微信余额充值
+        /// </summary>
+        /// <param name="money"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult WeChatJSAPI(double money)
+        {
+            var user = wbll.GetUserInfo(Request);
+            List<DbParameter> par = new List<DbParameter>();
+            par.Add(DbFactory.CreateDbParameter("@Number", user.Number));
+
+            var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Number=@Number", par.ToArray());
+
+            if (account != null && account.Number != null)
+            {
+                var charge = new Am_Charge();
+                charge.Number = Utilities.CommonHelper.GetGuid;
+                charge.OrderNumber = Guid.NewGuid().ToString().Replace("-", "");
+                charge.OutNumber = "";
+                charge.STATUS = 0;
+                charge.StatusStr = "待支付";
+                charge.SucTime = DateTime.Now;
+                charge.UserName = account.Name;
+                charge.U_Number = account.Number;
+                charge.ChargeType = 0;
+                charge.ChargeTypeStr = "余额充值";
+                charge.CreateTime = DateTime.Now;
+                charge.PayType = "微信支付";
+                charge.Moeny = money;
+                var statu = database.Insert <Am_Charge>(charge);
+                if (statu > 0)
+                {
+                    List<DbParameter> parameter = new List<DbParameter>();
+                    parameter.Add(DbFactory.CreateDbParameter("@U_Number", account.Number));
+                    parameter.Add(DbFactory.CreateDbParameter("@OrderNumber", charge.OrderNumber));
+
+
+                    var payOrder = database.FindEntityByWhere<Am_Charge>(" and U_Number=@U_Number and @OrderNumber=OrderNumber", parameter.ToArray());
+                    if (payOrder == null)
+                    {
+                        return Json(new { res = "No", msg = "支付失败，没有订单" });
+
+                    }
+                    else if (payOrder.STATUS > 0)
+                    {
+                        return Json(new { res = "No", msg = "支付失败，订单已支付" });
+                    }
+
+                    else
+                    {
+                        if (account.OpenId!=null )
+                        {
+                            WePay _wePay = new WePay();
+                            AlipayAndWepaySDK.Model.TransmiParameterModel model = new AlipayAndWepaySDK.Model.TransmiParameterModel();
+                            model.orderNo = payOrder.OrderNumber;
+                            model.productName = "充值";
+                            model.totalFee = int.Parse((money * 100).ToString());
+                            model.customerIP = "180.136.145.118";
+                            model.openId = account.OpenId;
+                            var payUrl = _wePay.BuildWePay(model, AlipayAndWepaySDK.Enum.EnumWePayTradeType.JSAPI);
+
+                            return Json(new { res = "Ok", msg = "生成订单", json = Newtonsoft.Json.JsonConvert.SerializeObject(payUrl) });
+                        }
+                        else
+                        {
+                            return Json(new { res = "No", msg = "支付失败，请先关注公众号" });
+                        }
+                        
+
+                    }
+                }
+                else
+                {
+                    return Json(new { res = "No", msg = "支付失败,订单生成失败" });
+                }
+
+
+            }
+            return Json(new { res = "No", msg = "支付失败" });
+        }
+
+        /// <summary>
         /// 我的提现
         /// </summary>
         /// <returns></returns>
@@ -143,6 +427,10 @@ namespace LeaRun.WebApp.Controllers
             if (account != null && account.Number != null)
             {
                 ViewBag.Balance = account.Money;
+                List<DbParameter> parameter = new List<DbParameter>();
+                parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+                var bank = database.FindEntityByWhere<Am_BankInfo>(" and U_Number=@U_Number",parameter .ToArray());
+                ViewBag.Bank = bank;
             }
             return View();
         }
@@ -157,7 +445,7 @@ namespace LeaRun.WebApp.Controllers
         {
             var user = wbll.GetUserInfo(Request);
             var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Number='" + user.Number + "'");
-            if (account != null && account.Number != null && account.Status == 3)
+            if (account != null && account.Number != null /*&& account.Status == 3*/)
             {
                 if (account.PayPassword == null || account.PayPassword == "")
                 {
@@ -179,29 +467,42 @@ namespace LeaRun.WebApp.Controllers
                 {
                     return Json(new { res = "No", msg = "请先绑定银行卡" });
                 }
+                var config = database.FindEntityByWhere<Fx_WebConfig>("");
+                if (config != null && config.Number != null)
+                {
+                    var moneyToBank = new Am_UserGetMoneyToBank
+                    {
+                        Number = CommonHelper.GetGuid,
+                        Money = money,
+                        PayTime = DateTime.Now,
+                        RealMoney = money - money * config.ChargeFee,
+                        Status = 0,
+                        StatusStr = "提现申请",
+                        U_Number = account.Number,
+                        U_Name = account.Name,
+                        BankAddress = bank.BankAddress,
+                        BankCode = bank.BankCode,
+                        BankName = bank.BankName,
+                        BankCharge = money * config.ChargeFee,
+                        CreateTime = DateTime.Now,
+                        Remark = "",
+                        UserName = account.Account
+                    };
+                    account.Money = account.Money - money;
+                    if (database.Update<Ho_PartnerUser>(account)>0)
+                    {
+                        var moneyDetail = new Am_MoneyDetail {
+                             Number= CommonHelper.GetGuid, CreateTime =DateTime .Now, CreateUserId=user.Number, CreateUserName=user.Name, CurrMoney= account.Money, Money =money , OperateType=2, OperateTypeStr="提现", Remark ="", UserName =user .Account, U_Number=user.Number
+                        };
+                        database.Insert<Am_MoneyDetail>(moneyDetail);
 
-                var moneyToBank = new Am_UserGetMoneyToBank
-                {
-                    Number = CommonHelper.GetGuid,
-                    Money = money,
-                    PayTime = DateTime.Now,
-                    RealMoney = account.Money,
-                    Status = 0,
-                    StatusStr = "提现申请",
-                    U_Number = account.Number,
-                    U_Name = account.Name,
-                    BankAddress = bank.BankAddress,
-                    BankCode = bank.BankCode,
-                    BankName = bank.BankName,
-                    BankCharge = 0,
-                    CreateTime = DateTime.Now,
-                    Remark = "",
-                    UserName = account.Account
-                };
-                var status = database.Insert<Am_UserGetMoneyToBank>(moneyToBank);
-                if (status > 0)
-                {
-                    return Json(new { res = "Ok", msg = "成功提交申请" });
+                        var status = database.Insert<Am_UserGetMoneyToBank>(moneyToBank);
+                        if (status > 0)
+                        {
+                            return Json(new { res = "Ok", msg = "成功提交申请" });
+                        }
+                    }
+                    
                 }
             }
             return Json(new { res = "No", msg = "提交失败" });
@@ -234,7 +535,7 @@ namespace LeaRun.WebApp.Controllers
         public ActionResult BankCard()
         {
             var user = wbll.GetUserInfo(Request);
-            var bank = database.FindEntityByWhere<Am_BankInfo>(" and Number='" + user.Number + "'");
+            var bank = database.FindEntityByWhere<Am_BankInfo>(" and U_Number='" + user.Number + "'");
             if (bank != null && bank.Number != null)
             {
                 return View(bank);
@@ -259,19 +560,23 @@ namespace LeaRun.WebApp.Controllers
         public ActionResult AddBandCard(Am_BankInfo model, string validCode)
         {
             var user = wbll.GetUserInfo(Request);
-            string realCode = Utilities.DESEncrypt.Decrypt(CookieHelper.GetCookie("WebCode"));
+            string realCode = Utilities.DESEncrypt.Decrypt(CookieHelper.GetCookie("UserCode"));
             if (StringHelper.IsNullOrEmpty(validCode) || validCode != realCode)
             {
                 return Json(new { res = "No", msg = "验证码错误" });
             }
-            var account = database.FindEntityByWhere<Ho_HouseInfo>(" and Number='" + user.Number + "'");
+            else
+            {
+                CookieHelper.WriteCookie("UserCode", null);
+            }
+            var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Number='" + user.Number + "'");
             if (account != null && account.Number != null)
             {
                 var bank = new Am_BankInfo();
                 bank.Number = CommonHelper.GetGuid;
                 bank.Remark = "";
                 bank.UserName = "";
-                bank.U_Name = account.Name;
+                bank.U_Name = model.U_Name;
                 bank.U_Number = account.Number;
                 bank.BankAddress = model.BankAddress;
                 bank.BankCode = model.BankCode;
@@ -288,6 +593,58 @@ namespace LeaRun.WebApp.Controllers
 
             return Json(new { res = "No", msg = "绑定失败" });
         }
+        /// <summary>
+        /// 删除银行卡
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public ActionResult BandCardDel(string number)
+        {
+            var user = wbll.GetUserInfo(Request);
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@Number", number));
+            parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+
+            var bank = database.FindEntityByWhere<Am_BankInfo>(" and U_Number=@U_Number and Number=@Number",parameter.ToArray());
+            if (bank != null && bank.Number != null)
+            {
+                if (database.Delete<Am_BankInfo>(bank)>0)
+                {
+                    return Json(new { res = "No", msg = "删除成功" });
+                }
+                
+            }
+            return Json(new { res = "No", msg = "删除失败" });
+        }
+        [HttpPost]
+        public ActionResult GetCode()
+        {
+            var user = wbll.GetUserInfo(Request);
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@Number", user.Number));
+
+            var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Number=@Number", parameter.ToArray());
+            if (account != null && account.Number != null)
+            {
+                //发短信接口
+                Random r = new Random();
+                string rstr = r.Next(1010, 9999).ToString();
+                Qcloud.Sms.SmsSingleSender sendSms = new Qcloud.Sms.SmsSingleSender(1400035202, "8f01b47120a413a0c2315eca0a5c1ad3");
+                Qcloud.Sms.SmsSingleSenderResult sendResult = new Qcloud.Sms.SmsSingleSenderResult();
+                sendResult = sendSms.Send(0, "86", account.Account, "您的验证码为：" + rstr + "，请于5分钟内填写。如非本人操作，请忽略本短信。", "", "");
+                if (sendResult.result.Equals(0))//到时换为判断是否发送成功
+                {
+                    string str = Utilities.DESEncrypt.Encrypt(rstr);
+                    CookieHelper.WriteCookie("UserCode", str, 5);
+                    return Json(new { res = "Ok", msg = "发送成功" });
+                }
+                else
+                {
+                    return Json(new { res = "No", msg = "发送失败" });
+                }
+            }
+            return Json(new { res = "No", msg = "发送失败" });
+        }
 
         /// <summary>
         /// 我的电表
@@ -295,23 +652,27 @@ namespace LeaRun.WebApp.Controllers
         /// <param name="pageIndex"></param>
         /// <param name="pageSize"></param>
         /// <returns></returns>
-        public ActionResult MyAmmeter(int pageIndex = 1, int pageSize = 10)
+        public ActionResult MyAmmeter()
         {
             var user = wbll.GetUserInfo(Request);
-            int recordCount = 0;
             List<DbParameter> parameter = new List<DbParameter>();
             parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+            parameter.Add(DbFactory.CreateDbParameter("@Status", "1"));
 
-            var ammeterList = database.FindListPage<Am_Ammeter>(" and U_Number=@U_Number",parameter.ToArray(),"Number", "desc", pageIndex, pageSize, ref recordCount);
-            ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize); ;
-            if (Request.IsAjaxRequest())
+            var ammeterPermissionList = database.FindList<Am_AmmeterPermission>(" and U_Number=@U_Number and Status=@Status ",parameter.ToArray());
+            List<Am_Ammeter> list = new List<Am_Ammeter>();
+            foreach (var item in ammeterPermissionList)
             {
-                return Json(ammeterList);
+                List<DbParameter> par = new List<DbParameter>();
+                par.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+                par.Add(DbFactory.CreateDbParameter("@Number", item.Ammeter_Number));
+                var model = database.FindEntityByWhere<Am_Ammeter>(" and U_Number=@U_Number and  Number=@Number", par.ToArray());
+                if (model!=null && model.Number !=null )
+                {
+                    list.Add(model);
+                }
             }
-            else
-            {
-                return View();
-            }
+            return View(list);
         }
         /// <summary>
         /// 电表详情
@@ -344,7 +705,7 @@ namespace LeaRun.WebApp.Controllers
             parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
             parameter.Add(DbFactory.CreateDbParameter("@Number", number));
 
-            var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number=@Number and U_Number=@U_Number", parameter.ToArray());
+            var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number=@Number and U_Number=@U_Number ", parameter.ToArray());
             if (ammeter != null && ammeter.Number != null)
             {
                 return View(ammeter);
@@ -360,7 +721,7 @@ namespace LeaRun.WebApp.Controllers
         /// <param name="pwd"></param>
         /// <returns></returns>
         [HttpPost]
-        public string AmmeterRecharge(string number, double money, int type, string pwd)
+        public ActionResult AmmeterRecharge(string number, double money, int type, string pwd)
         {
             var user = wbll.GetUserInfo(Request);
 
@@ -377,11 +738,11 @@ namespace LeaRun.WebApp.Controllers
                     {
                         if (account.PayPassword == null || account.PayPassword == "")
                         {
-                            return Json(new { res = "No", msg = "请先设置支付密码" }).ToJson();
+                            return Json(new { res = "No", msg = "请先设置支付密码" });
                         }
                         if (!PasswordHash.ValidatePassword(pwd, account?.PayPassword))
                         {
-                            return Json(new { res = "No", msg = "支付密码错误" }).ToJson();
+                            return Json(new { res = "No", msg = "支付密码错误" });
                         }
                     }
                     var charge = new Am_Charge();
@@ -406,7 +767,35 @@ namespace LeaRun.WebApp.Controllers
                         var status = database.Insert<Am_Charge>(charge);
                         if (status > 0)
                         {
-                            return WePay(user, account, charge, "充值");
+                            List<DbParameter> parameter2 = new List<DbParameter>();
+                            parameter2.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+                            parameter2.Add(DbFactory.CreateDbParameter("@OrderNumber", charge.OrderNumber));
+
+
+                            var payOrder = database.FindEntityByWhere<Am_Charge>(" and U_Number=@U_Number and @OrderNumber=OrderNumber", parameter2.ToArray());
+                            if (payOrder == null)
+                            {
+                                return Json(new { res = "No", msg = "没有订单" });
+                            }
+                            else if (payOrder.STATUS > 0)
+                            {
+                                ///已经支付
+                                return Json(new { res = "No", msg = "充值失败,订单已支付" });
+                            }
+
+                            else
+                            {
+                                WePay _wePay = new WePay();
+                                AlipayAndWepaySDK.Model.TransmiParameterModel model = new AlipayAndWepaySDK.Model.TransmiParameterModel();
+                                model.orderNo = payOrder.OrderNumber;
+                                model.productName = "充值";
+                                model.totalFee = int.Parse((charge.Moeny * 100).ToString());
+                                model.customerIP = "180.136.144.49";
+                                model.openId = account.OpenId;
+                                var payUrl = _wePay.BuildWePay(model, AlipayAndWepaySDK.Enum.EnumWePayTradeType.JSAPI);
+
+                                return Json(new { res = "No", msg = "充值失败,订单已支付",json= Newtonsoft.Json.JsonConvert.SerializeObject(payUrl) });
+                            }
                         }
                     }
                     else if (type == 1)
@@ -414,7 +803,7 @@ namespace LeaRun.WebApp.Controllers
                         charge.PayType = "余额支付";
                         if (money > account.Money)
                         {
-                            return Json(new { res = "No", msg = "余额不足，请先充值" }).ToJson();
+                            return Json(new { res = "No", msg = "余额不足，请先充值" });
                         }
                         var status = database.Insert<Am_Charge>(charge);
                         if (status > 0)
@@ -428,7 +817,7 @@ namespace LeaRun.WebApp.Controllers
                                 var st = database.Update<Am_Charge>(charge);
                                 if (st > 0)
                                 {
-                                    return Json(new { res = "Ok", msg = "充值成功" }).ToJson();
+                                    return Json(new { res = "Ok", msg = "充值成功" });
                                 }
                             }
                         }
@@ -436,46 +825,7 @@ namespace LeaRun.WebApp.Controllers
                 }
             }
 
-            return Json(new { res = "No", msg = "充值失败" }).ToJson();
-        }
-        /// <summary>
-        /// 缴费_微信支付
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="account"></param>
-        /// <param name="charge"></param>
-        /// <returns></returns>
-        private string WePay(Ho_PartnerUser user, Ho_PartnerUser account, Am_Charge charge, string title)
-        {
-            List<DbParameter> parameter2 = new List<DbParameter>();
-            parameter2.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
-            parameter2.Add(DbFactory.CreateDbParameter("@OrderNumber", charge.OrderNumber));
-
-
-            var payOrder = database.FindEntityByWhere<Am_Charge>(" and U_Number=@U_Number and @OrderNumber=OrderNumber", parameter2.ToArray());
-            if (payOrder == null)
-            {
-                return "没有订单";
-            }
-            else if (payOrder.STATUS > 0)
-            {
-                ///已经支付
-                return "订单已支付";
-            }
-
-            else
-            {
-                WePay _wePay = new WePay();
-                AlipayAndWepaySDK.Model.TransmiParameterModel model = new AlipayAndWepaySDK.Model.TransmiParameterModel();
-                model.orderNo = payOrder.OrderNumber;
-                model.productName = title;
-                model.totalFee = int.Parse((charge.Moeny * 100).ToString());
-                model.customerIP = "180.136.144.49";
-                model.openId = account.OpenId;
-                var payUrl = _wePay.BuildWePay(model, AlipayAndWepaySDK.Enum.EnumWePayTradeType.JSAPI);
-
-                return Newtonsoft.Json.JsonConvert.SerializeObject(payUrl);
-            }
+            return Json(new { res = "No", msg = "充值失败" });
         }
         /// <summary>
         /// 缴费记录
@@ -483,18 +833,21 @@ namespace LeaRun.WebApp.Controllers
         /// <param name="pageIndex"></param>
         /// <param name="pageSize"></param>
         /// <returns></returns>
-        public ActionResult AmmeterPayCost(int pageIndex = 1, int pageSize = 10)
+        public ActionResult AmmeterPayCost(string number, int pageIndex = 1, int pageSize = 10)
         {
             var user = wbll.GetUserInfo(Request);
             int recordCount = 0;
-            List<DbParameter> parameter = new List<DbParameter>();
-            parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
-            parameter.Add(DbFactory.CreateDbParameter("@STATUS", "1"));
-
-            var chargeList = database.FindListPage<Am_Charge>(" and U_Number=@U_Number and STATUS=@STATUS", parameter.ToArray(), "Number", "desc", pageIndex, pageSize, ref recordCount);
-            ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize); ;
+            ViewBag.recordCount = 0;
+            
             if (Request.IsAjaxRequest())
             {
+                List<DbParameter> parameter = new List<DbParameter>();
+                parameter.Add(DbFactory.CreateDbParameter("@AmmeterNumber", user.Number));
+                parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+                parameter.Add(DbFactory.CreateDbParameter("@STATUS", "1"));
+
+                var chargeList = database.FindListPage<Am_Charge>(" and U_Number=@U_Number and STATUS=@STATUS and AmmeterNumber=@AmmeterNumber", parameter.ToArray(), "Number", "desc", pageIndex, pageSize, ref recordCount);
+                ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize); 
                 return Json(chargeList);
             }
             else
@@ -606,7 +959,7 @@ namespace LeaRun.WebApp.Controllers
                         var status = database.Insert<Am_Charge>(charge);
                         if (status > 0)
                         {
-                            return WePay(user, account, charge, "账单缴费");
+                            //return WePay(user, account, charge, "账单缴费");
                         }
                     }
                     else if (type == 1)
@@ -920,7 +1273,7 @@ namespace LeaRun.WebApp.Controllers
                     U_Number = user.Number
                 };
                 var status = database.Insert<Am_Rent>(rent);
-                if (status>0)
+                if (status > 0)
                 {
                     return Json(new { res = "Ok", msg = "提交成功" });
                 }
@@ -958,19 +1311,19 @@ namespace LeaRun.WebApp.Controllers
         /// </summary>
         /// <param name="number"></param>
         /// <returns></returns>
-        public ActionResult RentDetails(string number )
+        public ActionResult RentDetails(string number)
         {
             var user = wbll.GetUserInfo(Request);
-            List < DbParameter > par = new List<DbParameter>();
+            List<DbParameter> par = new List<DbParameter>();
             par.Add(DbFactory.CreateDbParameter("@Number", number));
-            par.Add(DbFactory.CreateDbParameter("@U_Number",user.Number));
+            par.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
 
             var rent = database.FindEntityByWhere<Am_Rent>(" and Number=@Number and U_Number=@U_Number", par.ToArray());
             if (rent != null && rent.Number != null)
             {
                 List<DbParameter> par1 = new List<DbParameter>();
                 par1.Add(DbFactory.CreateDbParameter("@RentNumber", rent.Number));
-                var rentBillList = database.FindList<Am_RentBill>(" and RentNumber=@RentNumber",par1.ToArray());
+                var rentBillList = database.FindList<Am_RentBill>(" and RentNumber=@RentNumber", par1.ToArray());
             }
             return View(rent);
         }

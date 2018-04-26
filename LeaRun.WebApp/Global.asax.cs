@@ -29,6 +29,7 @@ namespace LeaRun.WebApp
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             WeixinConfig.Register();
+          
         }
         /// <summary>
         /// 离开应用程序启动这件事会发生

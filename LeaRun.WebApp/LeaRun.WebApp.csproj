@@ -36,6 +36,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -73,9 +74,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\rdlc报表要引用的dll\Microsoft.ReportViewer.WebForms.resources.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.SqlServer.Types, Version=10.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\rdlc报表要引用的dll\Microsoft.SqlServer.Types.dll</HintPath>
+    <Reference Include="Microsoft.SqlServer.Types, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.SqlServer.Types.14.0.314.76\lib\net40\Microsoft.SqlServer.Types.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
@@ -9445,6 +9446,18 @@
     <Content Include="Views\Personal\BalanceRecharge.cshtml" />
     <Content Include="Views\Proprietor\ChargeItem.cshtml" />
     <Content Include="Views\Proprietor\TemplateEidt.cshtml" />
+    <Content Include="Views\Account\ForgetPwd.cshtml" />
+    <Content Include="Views\Personal\Information.cshtml" />
+    <Content Include="Views\Personal\Bindings.cshtml" />
+    <Content Include="Views\Personal\MyBalance.cshtml" />
+    <Content Include="Views\Personal\Withdraw.cshtml" />
+    <Content Include="Views\Personal\BankCard.cshtml" />
+    <Content Include="Views\Personal\AddBandCard.cshtml" />
+    <Content Include="Views\Personal\WithdrawList.cshtml" />
+    <Content Include="Views\Personal\MyAmmeter.cshtml" />
+    <Content Include="Views\Personal\AmmeterDetails.cshtml" />
+    <Content Include="Views\Personal\AmmeterRecharge.cshtml" />
+    <Content Include="Views\Personal\AmmeterPayCost.cshtml" />
     <None Include="Views\Utility\PrintPage.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

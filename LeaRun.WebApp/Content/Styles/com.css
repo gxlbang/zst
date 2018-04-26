@@ -156,9 +156,10 @@ select,button { cursor: pointer; }
 .re-fu .l-ch label:before { content: ""; position: absolute; left: 0rem; top: 50%; margin-top: -0.2rem; width: 0.4rem; height: 0.4rem; background:url(../images/right.png) center center no-repeat; background-size: 0.6rem 0.6rem; }
 .re-fu .l-ch input:checked ~ label:before { width: 0.4rem; height: 0.4rem; background: url(../images/error.png) center center no-repeat; background-size: 0.6rem 0.6rem; }
 .re-oth { padding-top: 0; }
-.re-pt { display: block; width: 100%; border-radius: 0.1rem; height: 0.84rem; line-height: 0.8rem; border: 0.02rem solid #e0e0e0; padding-left: 0.4rem; }
+.re-pt { display: block; width: 100%; border-radius: 0.1rem; line-height: 0.8rem; border: 0.02rem solid #e0e0e0; padding-left: 0.4rem; background: #fff; }
 .re-y { display: block; width: 0.5rem; height: 0.8rem; margin-left: -0.4rem; font-size: 0.32rem; text-align: right; }
 .re-pt .l-input { padding-left: 0.1rem; font-size: 0.32rem; }
+.re-whe { display: block; width: auto; padding-left: 0.5rem; background: url(../images/WeChat.png) center left no-repeat; background-size: 0.46rem 0.46rem; }
 
 /*recharge 充值*/
 /*details-account 待出账详情*/
@@ -320,7 +321,7 @@ select,button { cursor: pointer; }
 .dere-re { padding-bottom: 0.2rem; }
 /*check-out-details-review 退房详情审核*/
 /*withdrawals 提现*/
-.w-explain { display: block; width: 100%; line-height: 0.6rem; color: #999; text-align: right; }
+.w-explain {  display: block; width: auto; line-height: 0.8rem; color: #999; text-align: right; }
 .w-recharge { width: 100%; padding-right: 0; height: auto; }
 .w-recharge .l-ch { position: absolute; top: 50%; left: 0; margin-top: -0.4rem;}
 .w-recharge .l-ch .btn-xuan { height: 2.84rem; margin-top: -1.42rem; }

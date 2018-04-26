@@ -20,7 +20,6 @@ namespace LeaRun.WebApp.Controllers
         private static readonly string LoginReturnUrlCookieName = "longin_return_url";
         public ActionResult Register()
         {
-           
             return View();
         }
         [HttpPost]
@@ -33,6 +32,10 @@ namespace LeaRun.WebApp.Controllers
                 if (StringHelper.IsNullOrEmpty(model.ValidCode) || model.ValidCode != realCode)
                 {
                     return Json(new { res = "No", msg = "验证码错误" });
+                }
+                else
+                {
+                    CookieHelper.WriteCookie("WebCode", null);
                 }
                 if (model.Password !=model .ConfirmPassword)
                 {
@@ -66,13 +69,60 @@ namespace LeaRun.WebApp.Controllers
                     var num = database.Insert<Ho_PartnerUser>(insertModel);
                     if (num > 0)
                     {
-                        CookieHelper.WriteCookie("WebCode", null);
+                       
                         return Json(new { res = "Ok", msg = "注册成功" });
                     }
                 }
                 
             }
             return Json(new { res = "No", msg = "注册失败" });
+        }
+
+        public ActionResult ForgetPwd(string phone)
+        {
+            ViewBag.phone = phone;
+            return View();
+        }
+        /// <summary>
+        /// 忘记密码
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ForgetPwd(Register model)
+        {
+            if (ModelState.IsValid)
+            {
+                string realCode = Utilities.DESEncrypt.Decrypt(CookieHelper.GetCookie("WebCode"));
+                if (StringHelper.IsNullOrEmpty(model.ValidCode) || model.ValidCode != realCode)
+                {
+                    return Json(new { res = "No", msg = "验证码错误" });
+                }
+                else
+                {
+                    CookieHelper.WriteCookie("WebCode", null);
+                }
+                if (model.Password != model.ConfirmPassword)
+                {
+                    return Json(new { res = "No", msg = "两次密码不一致" });
+                }
+                var accountIsMobile = database.FindEntity<Ho_PartnerUser>(" and Accout='" + model.Name + "'");
+                if (accountIsMobile != null && accountIsMobile.Number != null)
+                {
+                    accountIsMobile.Password = PasswordHash.CreateHash(model.Password);
+                    if (database.Update<Ho_PartnerUser>(accountIsMobile)>0)
+                    {
+                        return Json(new { res = "Ok", msg = "修改密码成功" });
+                    }
+                    
+                }
+                else
+                {
+                    return Json(new { res = "No", msg = "手机号码部存在" });
+                }
+            }
+            return Json(new { res = "No", msg = "修改失败" });
         }
 
 
@@ -91,7 +141,7 @@ namespace LeaRun.WebApp.Controllers
                 var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Account=@Account" ,parameter.ToArray());
                 if (account != null 
                     && account.Number != null 
-                    && account.Status == 3 
+                    && account.Status !=9
                     && PasswordHash.ValidatePassword(pwd, account?.Password))
                 {
                     // 抽取用户信息
@@ -115,7 +165,7 @@ namespace LeaRun.WebApp.Controllers
                 }
                 else
                 {
-                    Json(new { res = "No", msg = "用户名或密码不对" });
+                   return  Json(new { res = "No", msg = "登录失败" });
                 }
             }
             return Json(new { res = "No", msg = "登录失败" });
@@ -132,10 +182,14 @@ namespace LeaRun.WebApp.Controllers
                 {
                     return Json(new { res = "No", msg = "验证码错误" });
                 }
+                else
+                {
+                    CookieHelper.WriteCookie("WebCode", null);
+                }
                 List<DbParameter> parameter = new List<DbParameter>();
                 parameter.Add(DbFactory.CreateDbParameter("@Account", name));
                 var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Account=@Account", parameter.ToArray());
-                if (account != null&&account.Number !=null &&account.Status==3)
+                if (account != null&&account.Number !=null &&account.Status!=9)
                 {
                     // 抽取用户信息
                     string Md5 = Md5Helper.MD5(account.Number + account.OpenId + Request.UserHostAddress + Request.Browser.Type + Request.Browser.ClrVersion.ToString() + "2017", 16);
@@ -184,7 +238,7 @@ namespace LeaRun.WebApp.Controllers
             if (sendResult.result.Equals(0))//到时换为判断是否发送成功
             {
                 string str = Utilities.DESEncrypt.Encrypt(rstr);
-                CookieHelper.WriteCookie("WebCode", str);
+                CookieHelper.WriteCookie("WebCode", str,5);
                 return Json(new { res = "Ok", msg = "发送成功" });
             }
             else

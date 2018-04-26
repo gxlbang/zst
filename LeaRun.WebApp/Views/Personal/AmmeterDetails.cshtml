@@ -1,0 +1,35 @@
+﻿@model LeaRun.Entity.Am_Ammeter
+@{
+    ViewBag.Title = "电表详情";
+    Layout = "~/Views/Shared/_Partial.cshtml";
+}
+
+<div class="all">
+    <header class="header clear">
+        <a href="javascript:history.go(-1);" class="return fl"></a>
+        <h1 class="title">我的电表详情</h1>
+    </header>
+    <div class="tab-news">
+        <div class="con list-index op-none">
+            <div class="op-padd">
+                @if (Model!=null )
+                {
+                    <span class="op-ju">表号：@Model.AM_Code</span>
+                    <span class="op-ju clear">姓名：@Model.U_Name</span>
+                    <span class="op-ju">区域：@Model.Province @Model.City @Model.County</span>
+                    <span class="op-ju clear">单元：@Model.Cell 单元</span>
+                    <span class="op-ju">楼层：@Model.Floor 层</span>
+                    <span class="op-ju">房号：@Model.Room 号</span>
+                    <span class="op-ju">手机号：@Model.UserName</span>
+                    <span class="op-ju">电费：1.5元/度</span>
+                    <span class="op-ju clear">当前总电量：@Model.CurrPower kwh<a href="" class="my-meter fr">电量查询</a></span>
+                    <span class="op-ju">电量同步时间：@Model.CP_Time.Value.ToString("yyyy-MM-dd HH:mm:ss") </span>
+                    <span class="op-ju clear">当前余额：@Model.CurrMoney.Value.ToString("0.00")元<a href="/Personal/AmmeterRecharge?number=@Model.Number" class="my-meter fr">充值</a><a href="" class="my-meter my-m fr">查询</a></span>
+                    <span class="op-ju">累计充值金额：@Model.AllMoney.Value.ToString("0.00")元<a href="payment-inquiry.html" class="my-meter fr">缴费查询</a></span>
+                    <span class="op-ju">余额同步时间：@Model.CM_Time.Value.ToString("yyyy-MM-dd HH:mm:ss")</span>
+                }
+                
+            </div>
+        </div>
+    </div>
+</div>

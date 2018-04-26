@@ -2,8 +2,30 @@
     ViewBag.Title = "余额充值";
     Layout = "~/Views/Shared/_Partial.cshtml";
 }
-<input  type="text" value="" name="money" id="money"/>
-<input  type="button" value="充值" onclick="jsApiCall()"/>
+<div class="all">
+    <header class="header clear">
+        <a href="javascript:history.go(-1);" class="return fl"></a>
+        <h1 class="title">充值</h1>
+    </header>
+    <div class="re-all clear">
+        <span class="re-span">充值方式：</span>
+        <div class="re-fu fl clear">
+            <span class="l-ch fl">
+                <input type="checkbox" id="checkbox-3-2" class="btn-xuan" checked name="choose" />
+                <label for="checkbox-3-2"></label>
+                <span class="re-t">微信</span>
+            </span>
+
+        </div>
+    </div>
+    <div class="re-all re-oth clear">
+        <span class="re-span">充值金额：</span>
+        <div class="re-pt clear"><span class="re-y fl">￥</span>
+        <input type="text" class="l-input"  name="money" id="money" value="" placeholder="0.00" /></div>
+        <a href="javascript:;" onclick="jsApiCall()" class="btn-all">充值</a>
+    </div>
+</div>
+
 <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 <script>
     function jsApiCall() {
@@ -14,29 +36,35 @@
         }
         $.ajax({
             type: "Post",
-            url: "/Pay/WeChatJSAPI",
+            url: "/Personal/WeChatJSAPI",
             dataType: "json",
             data: { money: money },
             success: function (data) {
-                jsonParm = jQuery.parseJSON(data);
-                WeixinJSBridge.invoke(
-                'getBrandWCPayRequest',
-                 jsonParm,
-                    function (res) {
-                        WeixinJSBridge.log(res.err_msg);
-                        if (res.err_msg == "get_brand_wcpay_request:ok") {
-                            alert("支付成功");
-                        } else {
-                            if (res.err_msg == "get_brand_wcpay_request:cancel") {
-                                alert('支付取消!');
-                                return false;
+                if (data.res=="Ok") {
+                    jsonParm = jQuery.parseJSON(data.json);
+                    WeixinJSBridge.invoke(
+                    'getBrandWCPayRequest',
+                     jsonParm,
+                        function (res) {
+                            WeixinJSBridge.log(res.err_msg);
+                            if (res.err_msg == "get_brand_wcpay_request:ok") {
+                                alert("支付成功");
                             } else {
-                                alert('支付失败!');
-                                return false;
+                                if (res.err_msg == "get_brand_wcpay_request:cancel") {
+                                    alert('支付取消!');
+                                    return false;
+                                } else {
+                                    alert('支付失败!');
+                                    return false;
+                                }
                             }
                         }
-                    }
-                );
+                    );
+                }
+                else {
+                    layer.msg(data.msg, { time: 2000 });
+                }
+                
             }
         });
 

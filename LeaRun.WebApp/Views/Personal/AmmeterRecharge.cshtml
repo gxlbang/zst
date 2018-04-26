@@ -1,0 +1,132 @@
+﻿@model LeaRun.Entity.Am_Ammeter
+@{
+    ViewBag.Title = "电表充值";
+    Layout = "~/Views/Shared/_Partial.cshtml";
+}
+<div class="all">
+    <header class="header clear">
+        <a href="javascript:history.go(-1);" class="return fl"></a>
+        <h1 class="title">充值页面</h1>
+    </header>
+    @if (Model != null)
+    {
+        <div class="re-all bbot">
+            <span class="re-span"><span class="re-name">表号：</span>@Model.AM_Code</span>
+            <span class="re-span"><span class="re-name">当前余额：</span>@Model.CurrMoney.Value.ToString("0.00") 元</span>
+            <span class="re-span"><span class="re-name">累计充值金额：</span>@Model.AllMoney.Value.ToString("0.00")元</span>
+            <span class="re-span"><span class="re-name">余额同步时间：</span>@Model.CM_Time.Value.ToString("yyyy-MM-dd HH:mm:ss")</span>
+        </div>
+ 
+        <div class="re-all clear">
+            <div class="re-fu fl clear">
+                <span class="l-ch fl">
+                    <input type="radio" id="checkbox-3-1" class="btn-xuan"   name="radio" value="0" />
+                    <label for="checkbox-3-1"></label>
+                    <span class="re-t">微信</span>
+                </span>
+
+            </div>
+            <div class="re-fu fl clear">
+                <span class="l-ch fl">
+                    <input type="radio" id="checkbox-3-2" class="btn-xuan"   name="radio" value="1" />
+                    <label for="checkbox-3-2"></label>
+                    <span class="re-t">余额</span>
+                </span>
+
+            </div>
+        </div>
+
+        <div class="re-all re-oth clear">
+            <span class="re-span">充值金额：</span>
+            <div class="re-pt clear"><span class="re-y fl">￥</span>
+            <input type="text" name="money" id="money" class="l-input" value="" placeholder="0.00" /></div>
+            <a href="javascript:;" onclick="jsApiCall()" class="btn-all">充值</a>
+        </div>
+        <input type="hidden" name="number" value="@Model.Number" />
+    }
+
+</div>
+ 
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script>   
+    function jsApiCall() {
+        var jsonParm = '';
+        var money = parseFloat($("#money").val());
+        if (!money > 0) {
+            layer.msg("请输入正确的金额", { time: 2000 });
+            return;
+        }
+        var number = $("#number").val();
+        var type = $("input[name='radio']:checked").val();
+        var pwd = "";
+         
+        if (type == 1) {
+            layer.prompt({
+                title: '',
+                formType: 1
+            }, function (pass,index) {
+                pwd = pass;
+            });
+            if (pwd == "") {
+                alert("11");
+                return;
+            }
+        }
+        alert("222");
+        $.ajax({
+            type: "Post",
+            url: "/Personal/AmmeterRecharge",
+            dataType: "json",
+            data: {number:number, money: money ,type:type,pwd:pwd},
+            success: function (data) {
+                if (data.res == "Ok") {
+                    jsonParm = jQuery.parseJSON(data.json);
+                    WeixinJSBridge.invoke(
+                    'getBrandWCPayRequest',
+                     jsonParm,
+                        function (res) {
+                            WeixinJSBridge.log(res.err_msg);
+                            if (res.err_msg == "get_brand_wcpay_request:ok") {
+                                layer.msg("支付成功", { time: 2000 });
+                                
+                            } else {
+                                if (res.err_msg == "get_brand_wcpay_request:cancel") {
+                                    layer.msg("支付取消", { time: 2000 });
+                                    return false;
+                                } else {
+                                    layer.msg("支付失败", { time: 2000 });
+                                    return false;
+                                }
+                            }
+                        }
+                    );
+                }
+                else {
+                    layer.msg(data.msg, { time: 2000 });
+                }
+
+            }
+        });
+
+
+    }
+
+</script>
+
+<script>
+    //Check
+
+    function DoCheck() {
+        //var ch = document.getElementsByName("choose");
+        //if (document.getElementsByName("allChecked")[0].checked == true) {
+        //    for (var i = 0; i < ch.length; i++) {
+        //        ch[i].checked = true;
+        //    }
+        //} else {
+        //    for (var i = 0; i < ch.length; i++) {
+        //        ch[i].checked = false;
+        //    }
+        //}
+    }
+
+</script>
