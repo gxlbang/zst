@@ -1,8 +1,8 @@
 /*
 * 姓名:gxlbang
-* 类名:Am_UserDeposit
+* 类名:Am_Repair
 * CLR版本：
-* 创建时间:2018-04-17 19:09:05
+* 创建时间:2018-04-17 19:07:29
 * 功能描述:
 *
 * 修改历史：
@@ -21,29 +21,16 @@ using System.Text;
 namespace LeaRun.Entity
 {
     /// <summary>
-    /// Am_UserDeposit
+    /// Am_Repair
     /// <author>
     ///		<name>she</name>
-    ///		<date>2018.04.17 19:09</date>
+    ///		<date>2018.04.17 19:07</date>
     /// </author>
     /// </summary>
-    [Description("Am_UserDeposit")]
-    [PrimaryKey("Number")]
-    public class Am_UserDeposit : BaseEntity
+    [Description("Am_RepairNew")]
+    public class Am_RepairNew : BaseEntity
     {
         #region 获取/设置 字段值
-        /// <summary>
-        /// Number
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Number")]
-        public string Number { get; set; }
-        /// <summary>
-        /// U_Number
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("U_Number")]
-        public string U_Number { get; set; }
         /// <summary>
         /// UserName
         /// </summary>
@@ -56,18 +43,6 @@ namespace LeaRun.Entity
         /// <returns></returns>
         [DisplayName("U_Name")]
         public string U_Name { get; set; }
-        /// <summary>
-        /// Ammeter_Number
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Ammeter_Number")]
-        public string Ammeter_Number { get; set; }
-        /// <summary>
-        /// Ammeter_Code
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Ammeter_Code")]
-        public string Ammeter_Code { get; set; }
         /// <summary>
         /// Province
         /// </summary>
@@ -111,59 +86,34 @@ namespace LeaRun.Entity
         [DisplayName("Room")]
         public string Room { get; set; }
         /// <summary>
-        /// CreateTime
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("CreateTime")]
-        public DateTime? CreateTime { get; set; }
-        /// <summary>
-        /// Status
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Status")]
-        public int? Status { get; set; }
-        /// <summary>
         /// StatusStr
         /// </summary>
         /// <returns></returns>
         [DisplayName("StatusStr")]
         public string StatusStr { get; set; }
         /// <summary>
-        /// Money
+        /// CreateTime
         /// </summary>
         /// <returns></returns>
-        [DisplayName("Money")]
-        public double? Money { get; set; }
+        [DisplayName("CreateTime")]
+        public string CreateTime { get; set; }
         /// <summary>
-        /// PayTime
+        /// F_UserName
         /// </summary>
         /// <returns></returns>
-        [DisplayName("PayTime")]
-        public DateTime? PayTime { get; set; }
+        [DisplayName("F_UserName")]
+        public string F_UserName { get; set; }
         /// <summary>
-        /// Remark
+        /// F_Name
         /// </summary>
         /// <returns></returns>
-        [DisplayName("Remark")]
-        public string Remark { get; set; }
-        #endregion
-
-        #region 扩展操作
+        [DisplayName("F_Name")]
+        public string F_Name { get; set; }
         /// <summary>
-        /// 新增调用
+        /// AmmeterCode
         /// </summary>
-        public override void Create()
-        {
-            this.Number = CommonHelper.GetGuid;
-                                            }
-        /// <summary>
-        /// 编辑调用
-        /// </summary>
-        /// <param name="KeyValue"></param>
-        public override void Modify(string KeyValue)
-        {
-            this.Number = KeyValue;
-                                            }
+        [DisplayName("AmmeterCode")]
+        public string AmmeterCode { get; set; }
         #endregion
     }
 }

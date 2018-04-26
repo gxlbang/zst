@@ -81,6 +81,12 @@ namespace LeaRun.Entity
         [DisplayName("UserName")]
         public string UserName { get; set; }
         /// <summary>
+        /// U_Name
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("U_Name")]
+        public string U_Name { get; set; }
+        /// <summary>
         /// Mobile
         /// </summary>
         /// <returns></returns>

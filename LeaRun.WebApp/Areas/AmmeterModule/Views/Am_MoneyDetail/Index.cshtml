@@ -14,65 +14,83 @@
         height: $(window).height() - 149,
         autowidth: true,
         colModel: [
-                { label: 'Number', name: 'Number', index: 'Number', width: 0, align: 'left',sortable: true  },
-                { label: 'U_Number', name: 'U_Number', index: 'U_Number', width: 0, align: 'left',sortable: true  },
-                { label: 'UserName', name: 'UserName', index: 'UserName', width: 0, align: 'left',sortable: true  },
-                { label: 'OperateType', name: 'OperateType', index: 'OperateType', width: 0, align: 'left',sortable: true  },
-                { label: 'OperateTypeStr', name: 'OperateTypeStr', index: 'OperateTypeStr', width: 0, align: 'left',sortable: true  },
-                { label: 'Money', name: 'Money', index: 'Money', width: 0, align: 'left',sortable: true  },
-                { label: 'CreateTime', name: 'CreateTime', index: 'CreateTime', width: 0, align: 'left',sortable: true  },
-                { label: 'CurrMoney', name: 'CurrMoney', index: 'CurrMoney', width: 0, align: 'left',sortable: true  },
-                { label: 'CreateUserId', name: 'CreateUserId', index: 'CreateUserId', width: 0, align: 'left',sortable: true  },
-                { label: 'CreateUserName', name: 'CreateUserName', index: 'CreateUserName', width: 0, align: 'left',sortable: true  },
-                { label: 'Remark', name: 'Remark', index: 'Remark', width: 0, align: 'left',sortable: true  },
+                { label: 'Number', name: 'Number', index: 'Number', width: 0, align: 'left', hidden: true },
+                { label: '用户', name: 'UserName', index: 'UserName', width: 120, align: 'left', sortable: true },
+                { label: '姓名', name: 'U_Name', index: 'U_Name', width: 120, align: 'left', sortable: true },
+                { label: '操作类型', name: 'OperateTypeStr', index: 'OperateTypeStr', width: 120, align: 'left', sortable: true },
+                { label: '变动金额', name: 'Money', index: 'Money', width: 100, align: 'left', sortable: true, cellattr: addCellAttr_red },
+                {
+                    label: "变动时间", name: "CreateTime", index: "CreateTime", width: 150,
+                    formatter: function (value, options, rowObject) {
+                        return formatDate(value, 'yyyy-MM-dd hh:mm:ss');
+                    }
+                },
+                { label: '变动后金额', name: 'CurrMoney', index: 'CurrMoney', width: 100, align: 'left', sortable: true },
+                { label: '备注', name: 'Remark', index: 'Remark', width: 300, align: 'left',sortable: true  },
         ],
+        viewrecords: true,
         pager: "#gridPager",
-        sortname: '',
+        sortname: 'CreateTime',
         sortorder: 'desc',
         rownumbers: true,
         shrinkToFit: false,
         gridview: true,
     });
 }
-    //新增
-    function btn_add() {
-        var url = "/AmmeterModule/Am_MoneyDetail/Form"
-        openDialog(url, "Form", "新增Am_MoneyDetail", 770, 395, function (iframe) {
-            top.frames[iframe].AcceptClick()
-        });
-    }
-    //编辑
-    function btn_edit() {
-        var KeyValue = GetJqGridRowValue("#gridTable", "Number");
-        if (IsChecked(KeyValue)) {
-            var url = "/AmmeterModule/Am_MoneyDetail/Form?KeyValue=" + KeyValue;
-            openDialog(url, "Form", "编辑Am_MoneyDetail", 770, 395, function (iframe) {
-                top.frames[iframe].AcceptClick();
-            });
+    function addCellAttr_red(rowId, val, rawObject, cm, rdata) {
+        if (rawObject.planId == null) {
+            return "style='color:red'";
         }
     }
-    //删除
-    function btn_delete() {
-        var KeyValue = GetJqGridRowValue("#gridTable", "Number");
-        if (IsDelData(KeyValue)) {
-            var delparm = 'KeyValue=' + KeyValue;
-            delConfig('/AmmeterModule/Am_MoneyDetail/Delete', delparm, KeyValue.split(",").length);
-        }
-    }
-    //明细
-    function btn_detail() {
-        var KeyValue = GetJqGridRowValue("#gridTable", "Number");
-        if (IsChecked(KeyValue)) {
-            var url = "/AmmeterModule/Am_MoneyDetail/Detail?KeyValue=" + KeyValue;
-            Dialog(url, "Detail", "Am_MoneyDetail明细", 820, 500, function (iframe) {
-                top.frames[iframe].AcceptClick();
-            });
+    function addCellAttr_blue(rowId, val, rawObject, cm, rdata) {
+        if (rawObject.planId == null) {
+            return "style='color:blue'";
         }
     }
     //刷新
     function windowload() {
         $("#gridTable").trigger("reloadGrid"); //重新载入
-        
+
+    }
+    //搜索
+    function btn_Search() {
+        var keywords = $("#keywords").val();
+        var BeginTime = $("#BeginTime").val();
+        var EndTime = $("#EndTime").val();
+        $("#gridTable").jqGrid('setGridParam', {
+            url: "@Url.Content("~/AmmeterModule/Am_MoneyDetail/GridPageListJson")?keywords=" + keywords + 
+                 '&BeginTime=' + BeginTime + '&EndTime=' + EndTime, page: 1
+    }).trigger('reloadGrid');
+    }
+    //要打印数据源，子页面调用的函数
+    function PrintDataSource() {
+        var columnModel = $("#gridTable").jqGrid('getGridParam', 'colModel');
+        var dataModel = $("#gridTable").jqGrid("getRowData");
+        //var footerData = $("#gridTable").jqGrid("footerData");
+        var JsonData = {
+            columnModel: columnModel,
+            dataModel: dataModel,
+            //footerData: footerData,
+        }
+        return JsonData;
+    }
+    //点击打印
+    function btn_Print() {
+        PrintDialog("/Utility/PrintPage", "PrintPage", "打印当前页", 1200, 500, function (iframe) {
+            top.frames[iframe].SubmitPrint()
+        });
+    }
+    //导出Excel
+    function btn_derive() {
+        Loading(true, "正在处理要导出数据...");
+        var keywords = $("#keywords").val();
+        var BeginTime = $("#BeginTime").val();
+        var EndTime = $("#EndTime").val();
+        window.setTimeout(function () {
+            location.href = "/AmmeterModule/Am_MoneyDetail/ExportExcel??keywords=" + keywords +
+                '&BeginTime=' + BeginTime + '&EndTime=' + EndTime;
+            Loading(false);
+        }, 200);
     }
 </script>
 <!--工具栏-->
@@ -87,6 +105,14 @@
             <th>关键字：</th>
             <td>
                 <input id="keywords" type="text" class="txt" style="width: 200px" />
+            </td>
+            <th>时间：</th>
+            <td>
+                <input id="BeginTime" type="text" class="txt Wdate" value="@LeaRun.Utilities.DateTimeHelper.GetToday()" style="width: 120px" onfocus="var endDate=$dp.$('EndTime');WdatePicker({onpicked:function(){EndTime.focus();},maxDate:'#F{$dp.$D(\'EndTime\')}'})" />
+            </td>
+            <td>-</td>
+            <td>
+                <input id="EndTime" type="text" class="txt Wdate" value="@LeaRun.Utilities.DateTimeHelper.GetToday()" style="width: 120px" onfocus="WdatePicker({ minDate: '#F{$dp.$D(\'BeginTime\')}' })" />
             </td>
             <td>
                 <input id="btnSearch" type="button" class="btnSearch" value="搜 索" onclick="btn_Search()" />

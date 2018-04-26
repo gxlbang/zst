@@ -19,6 +19,14 @@ namespace LeaRun.WebApp.Controllers
             return View();
         }
         /// <summary>
+        /// 通用错误页面
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult ErrorEx()
+        {
+            return View();
+        }
+        /// <summary>
         /// 错误页面404
         /// </summary>
         /// <returns></returns>

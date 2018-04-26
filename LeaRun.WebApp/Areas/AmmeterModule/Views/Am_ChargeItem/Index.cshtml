@@ -14,18 +14,24 @@
         height: $(window).height() - 149,
         autowidth: true,
         colModel: [
-                { label: 'Number', name: 'Number', index: 'Number', width: 0, align: 'left',sortable: true  },
-                { label: 'Title', name: 'Title', index: 'Title', width: 0, align: 'left',sortable: true  },
-                { label: 'Money', name: 'Money', index: 'Money', width: 0, align: 'left',sortable: true  },
-                { label: 'ChargeType', name: 'ChargeType', index: 'ChargeType', width: 0, align: 'left',sortable: true  },
-                { label: 'CreateTime', name: 'CreateTime', index: 'CreateTime', width: 0, align: 'left',sortable: true  },
-                { label: 'U_Number', name: 'U_Number', index: 'U_Number', width: 0, align: 'left',sortable: true  },
-                { label: 'UserName', name: 'UserName', index: 'UserName', width: 0, align: 'left',sortable: true  },
-                { label: 'U_Name', name: 'U_Name', index: 'U_Name', width: 0, align: 'left',sortable: true  },
-                { label: 'Remark', name: 'Remark', index: 'Remark', width: 0, align: 'left',sortable: true  },
+                { label: 'Number', name: 'Number', index: 'Number', width: 0, align: 'left', hidden: true },
+                { label: '收费项目', name: 'Title', index: 'Title', width: 300, align: 'left',sortable: true  },
+                { label: '默认金额', name: 'Money', index: 'Money', width: 120, align: 'left',sortable: true  },
+                {
+                    label: "类别", name: "ChargeType", index: "ChargeType", width: 150,
+                    formatter: function (value, options, rowObject) {
+                        if (parseInt(value) == 1) {
+                            return "<font color='green' style='font-weight:bolder'>首次缴费</font>";
+                        } else {
+                            return "<font color='red' style='font-weight:bolder'>账单周期</font>";
+                        }
+                    }
+                },
+                { label: '备注', name: 'Remark', index: 'Remark', width: 400, align: 'left',sortable: true  },
         ],
+        viewrecords: true,
         pager: "#gridPager",
-        sortname: '',
+        sortname: 'CreateTime',
         sortorder: 'desc',
         rownumbers: true,
         shrinkToFit: false,
@@ -35,7 +41,7 @@
     //新增
     function btn_add() {
         var url = "/AmmeterModule/Am_ChargeItem/Form"
-        openDialog(url, "Form", "新增Am_ChargeItem", 770, 395, function (iframe) {
+        openDialog(url, "Form", "新增收费项", 450, 200, function (iframe) {
             top.frames[iframe].AcceptClick()
         });
     }
@@ -44,7 +50,7 @@
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsChecked(KeyValue)) {
             var url = "/AmmeterModule/Am_ChargeItem/Form?KeyValue=" + KeyValue;
-            openDialog(url, "Form", "编辑Am_ChargeItem", 770, 395, function (iframe) {
+            openDialog(url, "Form", "编辑收费项", 450, 200, function (iframe) {
                 top.frames[iframe].AcceptClick();
             });
         }
@@ -62,7 +68,7 @@
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsChecked(KeyValue)) {
             var url = "/AmmeterModule/Am_ChargeItem/Detail?KeyValue=" + KeyValue;
-            Dialog(url, "Detail", "Am_ChargeItem明细", 820, 500, function (iframe) {
+            Dialog(url, "Detail", "收费项明细", 450, 200, function (iframe) {
                 top.frames[iframe].AcceptClick();
             });
         }
@@ -71,6 +77,13 @@
     function windowload() {
         $("#gridTable").trigger("reloadGrid"); //重新载入
         
+    }
+    //搜索
+    function btn_Search() {
+        var keywords = $("#keywords").val();
+        $("#gridTable").jqGrid('setGridParam', {
+            url: "@Url.Content("~/AmmeterModule/Am_ChargeItem/GridPageListJson")?Keyword=" + keywords, page: 1
+    }).trigger('reloadGrid');
     }
 </script>
 <!--工具栏-->

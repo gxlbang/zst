@@ -21,7 +21,7 @@
             return false;
         }
         var postData = GetWebControls("#form1");
-        AjaxJson("/AmmeterModule/Am_ChargeItem/SubmitForm?KeyValue=" + KeyValue, postData, function (data) {
+        AjaxJson("/AmmeterModule/Am_ChargeItem/SubmitUserForm?KeyValue=" + KeyValue, postData, function (data) {
             tipDialog(data.Message, 3, data.Code);
             top.frames[tabiframeId()].windowload();
             closeDialog();
@@ -32,57 +32,30 @@
     <div id="message" style="display: none"></div>
     <table class="form">
         <tr>
-            <th class='formTitle'>Number：</th>
+            <th class='formTitle'>收费项目：</th>
             <td class='formValue'>
-                <input id="Number" maxlength=50 type="text" class="txt"   />
+                <input id="Title" maxlength=128 type="text" class="txt required" datacol="yes" err="收费项目" checkexpession="NotNull"  />
             </td>
         </tr>
         <tr>
-            <th class='formTitle'>Title：</th>
+            <th class='formTitle'>默认金额：</th>
             <td class='formValue'>
-                <input id="Title" maxlength=128 type="text" class="txt"   />
+                <input id="Money" maxlength=19 type="text" value="0" class="txt required" datacol="yes" err="默认金额" checkexpession="NotNull"  />
             </td>
         </tr>
         <tr>
-            <th class='formTitle'>Money：</th>
+            <th class='formTitle'>收费类别：</th>
             <td class='formValue'>
-                <input id="Money" maxlength=19 type="text" class="txt"   />
+                <select id="ChargeType" class="txtselect">
+                    <option value="1">首次缴费</option>
+                    <option value="2">账单周期</option>
+                </select>
             </td>
         </tr>
         <tr>
-            <th class='formTitle'>ChargeType：</th>
+            <th class='formTitle'>备注：</th>
             <td class='formValue'>
-                <input id="ChargeType" maxlength=10 type="text" class="txt"   />
-            </td>
-        </tr>
-        <tr>
-            <th class='formTitle'>CreateTime：</th>
-            <td class='formValue'>
-                <input id="CreateTime" maxlength=23 type="text" class="txt"   />
-            </td>
-        </tr>
-        <tr>
-            <th class='formTitle'>U_Number：</th>
-            <td class='formValue'>
-                <input id="U_Number" maxlength=50 type="text" class="txt"   />
-            </td>
-        </tr>
-        <tr>
-            <th class='formTitle'>UserName：</th>
-            <td class='formValue'>
-                <input id="UserName" maxlength=50 type="text" class="txt"   />
-            </td>
-        </tr>
-        <tr>
-            <th class='formTitle'>U_Name：</th>
-            <td class='formValue'>
-                <input id="U_Name" maxlength=50 type="text" class="txt"   />
-            </td>
-        </tr>
-        <tr>
-            <th class='formTitle'>Remark：</th>
-            <td class='formValue'>
-                <input id="Remark" maxlength=50 type="text" class="txt"   />
+                <textarea id="Remark" name="Remark" maxlength="600" class="txtArea" rows="7"></textarea>
             </td>
         </tr>
         <tr>
