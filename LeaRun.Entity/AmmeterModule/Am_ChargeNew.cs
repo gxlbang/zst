@@ -1,8 +1,8 @@
 /*
 * 姓名:gxlbang
-* 类名:Am_AmmeterOperateLog
+* 类名:Am_Charge
 * CLR版本：
-* 创建时间:2018-04-15 14:54:26
+* 创建时间:2018-04-17 10:13:57
 * 功能描述:
 *
 * 修改历史：
@@ -21,29 +21,28 @@ using System.Text;
 namespace LeaRun.Entity
 {
     /// <summary>
-    /// Am_AmmeterOperateLog
+    /// Am_Charge
     /// <author>
     ///		<name>she</name>
-    ///		<date>2018.04.15 14:54</date>
+    ///		<date>2018.04.17 10:13</date>
     /// </author>
     /// </summary>
-    [Description("Am_AmmeterOperateLog")]
-    [PrimaryKey("Number")]
-    public class Am_AmmeterOperateLog : BaseEntity
+    [Description("Am_ChargeNew")]
+    public class Am_ChargeNew : BaseEntity
     {
         #region 获取/设置 字段值
         /// <summary>
-        /// Number
+        /// OrderNumber
         /// </summary>
         /// <returns></returns>
-        [DisplayName("Number")]
-        public string Number { get; set; }
+        [DisplayName("OrderNumber")]
+        public string OrderNumber { get; set; }
         /// <summary>
-        /// U_Number
+        /// OutNumber
         /// </summary>
         /// <returns></returns>
-        [DisplayName("U_Number")]
-        public string U_Number { get; set; }
+        [DisplayName("OutNumber")]
+        public string OutNumber { get; set; }
         /// <summary>
         /// UserName
         /// </summary>
@@ -57,59 +56,47 @@ namespace LeaRun.Entity
         [DisplayName("U_Name")]
         public string U_Name { get; set; }
         /// <summary>
-        /// TaskNumber
+        /// ChargeTypeStr
         /// </summary>
         /// <returns></returns>
-        [DisplayName("TaskNumber")]
-        public string TaskNumber { get; set; }
+        [DisplayName("ChargeTypeStr")]
+        public string ChargeTypeStr { get; set; }
         /// <summary>
-        /// OperateType
+        /// PayType
         /// </summary>
         /// <returns></returns>
-        [DisplayName("OperateType")]
-        public int? OperateType { get; set; }
+        [DisplayName("PayType")]
+        public string PayType { get; set; }
         /// <summary>
-        /// OperateTypeStr
+        /// Moeny
         /// </summary>
         /// <returns></returns>
-        [DisplayName("OperateTypeStr")]
-        public string OperateTypeStr { get; set; }
-        /// <summary>
-        /// Result
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("Result")]
-        public string Result { get; set; }
+        [DisplayName("Moeny")]
+        public string Moeny { get; set; }
         /// <summary>
         /// CreateTime
         /// </summary>
         /// <returns></returns>
         [DisplayName("CreateTime")]
-        public DateTime? CreateTime { get; set; }
+        public string CreateTime { get; set; }
         /// <summary>
-        /// Remark
+        /// StatusStr
         /// </summary>
         /// <returns></returns>
-        [DisplayName("Remark")]
-        public string Remark { get; set; }
-        #endregion
-
-        #region 扩展操作
+        [DisplayName("StatusStr")]
+        public string StatusStr { get; set; }
         /// <summary>
-        /// 新增调用
+        /// SucTime
         /// </summary>
-        public override void Create()
-        {
-            this.Number = CommonHelper.GetGuid;
-                                            }
+        /// <returns></returns>
+        [DisplayName("SucTime")]
+        public string SucTime { get; set; }
         /// <summary>
-        /// 编辑调用
+        /// AmmeterCode
         /// </summary>
-        /// <param name="KeyValue"></param>
-        public override void Modify(string KeyValue)
-        {
-            this.Number = KeyValue;
-                                            }
+        /// <returns></returns>
+        [DisplayName("AmmeterCode")]
+        public string AmmeterCode { get; set; }
         #endregion
     }
 }

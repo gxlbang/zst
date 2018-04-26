@@ -96,7 +96,7 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
         /// 更改提现状态
         /// </summary>
         /// <returns></returns>
-        public ActionResult PayToBank(string KeyValue)
+        public ActionResult PayToBank(string KeyValue, int Status, string StatusStr)
         {
             IDatabase database = DataFactory.Database();
             DbTransaction isOpenTrans = database.BeginTrans();
@@ -107,45 +107,74 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
                 {
                     return Content(new JsonMessage { Success = false, Code = "-1", Message = "数据异常" }.ToString());
                 }
+                if (entity.Status != 0)
+                {
+                    return Content(new JsonMessage { Success = false, Code = "-1", Message = "提现状态不正常" }.ToString());
+                }
                 entity.Modify(KeyValue);
-                entity.Status = 1;
-                entity.StatusStr = "已支付";
+                entity.Status = Status;
+                entity.StatusStr = StatusStr;
                 entity.PayTime = DateTime.Now;
 
                 int IsOk = database.Update(entity, isOpenTrans); //更新提现状态
                 Base_SysLogBll.Instance.WriteLog(KeyValue, OperationType.Update, IsOk > 0 ? "成功" : "失败", "提现操作");
-
                 //更新用户信息表的押金金额
                 var usermodel = database.FindEntity<Ho_PartnerUser>(entity.U_Number);
                 if (usermodel == null || string.IsNullOrEmpty(usermodel.Number))
                 {
+                    database.Rollback();
                     return Content(new JsonMessage { Success = false, Code = "-1", Message = "数据异常" }.ToString());
                 }
-                if (usermodel.FreezeMoney > 0) //首先要有押金
+                if (Status == 9) //退还
                 {
-                    var money = entity.BankCharge;
-                    //如果返还的金额大于
-                    if (entity.BankCharge > usermodel.FreezeMoney)
-                    {
-                        money = usermodel.FreezeMoney;
-                    }
-                    usermodel.FreezeMoney -= money; //扣除手续费1:1返还
-                    usermodel.Money += money;
+                    usermodel.Money += entity.Money;
                     usermodel.Modify(usermodel.Number);
-                    database.Update(usermodel); //更新用户信息表
-                                                //添加押金返还记录
-                    var recordModel = new Am_AmDepositDetail()
+                    database.Update(usermodel, isOpenTrans); //更新用户信息表
+                                                             //添加押金返还记录
+                    var recordModel = new Am_MoneyDetail()
                     {
                         CreateTime = DateTime.Now,
-                        CurrMoney = usermodel.FreezeMoney,
-                        Mark = "押金1:1返还",
-                        Money = money,
+                        CurrMoney = usermodel.Money,
+                        CreateUserId = ManageProvider.Provider.Current().UserId,
+                        CreateUserName = ManageProvider.Provider.Current().UserName,
+                        OperateType = 6,
+                        OperateTypeStr = "提现取消",
+                        Money = entity.Money,
                         UserName = entity.UserName,
                         U_Name = entity.U_Name,
                         U_Number = entity.U_Number
                     };
                     recordModel.Create();
-                    database.Insert(recordModel); //添加返还记录
+                    database.Insert(recordModel, isOpenTrans); //添加返还记录
+                }
+                else //提现成功
+                {
+                    if (usermodel.FreezeMoney > 0) //首先要有押金
+                    {
+                        var money = entity.BankCharge;
+                        //如果返还的金额大于
+                        if (entity.BankCharge > usermodel.FreezeMoney)
+                        {
+                            money = usermodel.FreezeMoney;
+                        }
+                        usermodel.FreezeMoney -= money; //扣除手续费1:1返还
+                        usermodel.Money += money;
+                        usermodel.Modify(usermodel.Number);
+                        database.Update(usermodel, isOpenTrans); //更新用户信息表
+                                                                 //添加押金返还记录
+                        var recordModel = new Am_AmDepositDetail()
+                        {
+                            CreateTime = DateTime.Now,
+                            CurrMoney = usermodel.FreezeMoney,
+                            Mark = "押金1:1返还",
+                            Money = money,
+                            UserName = entity.UserName,
+                            U_Name = entity.U_Name,
+                            U_Number = entity.U_Number
+                        };
+                        recordModel.Create();
+                        database.Insert(recordModel, isOpenTrans); //添加返还记录
+                    }
                 }
                 database.Commit();
                 return Content(new JsonMessage { Success = true, Code = "1", Message = "操作成功" }.ToString());

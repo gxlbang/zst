@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AmmeterModule\Am_AmDepositDetailNew.cs" />
     <Compile Include="AmmeterModule\Am_AmDepositNew.cs" />
     <Compile Include="AmmeterModule\Am_AmDeposit.cs" />
     <Compile Include="AmmeterModule\Am_AmDepositDetail.cs" />
@@ -62,14 +63,18 @@
     <Compile Include="AmmeterModule\Am_AmmeterOperateLog.cs" />
     <Compile Include="AmmeterModule\Am_AmmeterPermission.cs" />
     <Compile Include="AmmeterModule\Am_BankInfo.cs" />
+    <Compile Include="AmmeterModule\Am_BillNew.cs" />
     <Compile Include="AmmeterModule\Am_Bill.cs" />
     <Compile Include="AmmeterModule\Am_BillContent.cs" />
+    <Compile Include="AmmeterModule\Am_ChargeNew.cs" />
     <Compile Include="AmmeterModule\Am_Charge.cs" />
     <Compile Include="AmmeterModule\Am_ChargeItem.cs" />
     <Compile Include="AmmeterModule\Am_CollectorNew.cs" />
+    <Compile Include="AmmeterModule\Am_MoneyDetailNew.cs" />
     <Compile Include="AmmeterModule\Am_MoneyDetail.cs" />
     <Compile Include="AmmeterModule\Am_Rent.cs" />
     <Compile Include="AmmeterModule\Am_RentBill.cs" />
+    <Compile Include="AmmeterModule\Am_RepairNew.cs" />
     <Compile Include="AmmeterModule\Am_Repair.cs" />
     <Compile Include="AmmeterModule\Am_RepairAnswer.cs" />
     <Compile Include="AmmeterModule\Am_RepairImage.cs" />

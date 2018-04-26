@@ -48,29 +48,41 @@ namespace LeaRun.WebApp
         /// <param name="e"></param>
         protected void Application_Error(object sender, EventArgs e)
         {
-            Exception ex = this.Context.Server.GetLastError();
-            if (ex != null)
+            var isDebug = true;
+            if (isDebug)
             {
-                //登录是否过期
-                if (!ManageProvider.Provider.IsOverdue())
+                Exception ex = this.Context.Server.GetLastError();
+                //var httpException = ex as HttpException ?? new HttpException(500, "服务器内部错误", ex);
+                if (ex != null)
                 {
-                    //HttpContext.Current.Response.Redirect("~/Login/Default");
-                    const string url1 = "<script>window.location.href='/Login/Default'</script>";
+                    //登录是否过期
+                    if (!ManageProvider.Provider.IsOverdue())
+                    {
+                        //HttpContext.Current.Response.Redirect("~/Login/Default");
+                        const string url1 = "<script>window.location.href='/Login/Default'</script>";
 
-                    System.Web.HttpContext.Current.Response.Write(url1);
+                        System.Web.HttpContext.Current.Response.Write(url1);
+
+                        System.Web.HttpContext.Current.Response.End();
+                    }
+                    Dictionary<string, string> modulesError = new Dictionary<string, string>();
+                    modulesError.Add("发生时间", DateTime.Now.ToString());
+                    modulesError.Add("错误描述", ex.Message.Replace("\r\n", ""));
+                    modulesError.Add("错误对象", ex.Source);
+                    modulesError.Add("错误页面", "" + HttpContext.Current.Request.Url + "");
+                    modulesError.Add("浏览器IE", HttpContext.Current.Request.UserAgent);
+                    modulesError.Add("服务器IP", NetHelper.GetIPAddress());
+                    Application["error"] = modulesError;
+                    //HttpContext.Current.Response.Redirect("~/Error/Index");
+                    const string url = "<script>window.location.href='/Error/Index'</script>";
+
+                    System.Web.HttpContext.Current.Response.Write(url);
 
                     System.Web.HttpContext.Current.Response.End();
                 }
-                Dictionary<string, string> modulesError = new Dictionary<string, string>();
-                modulesError.Add("发生时间", DateTime.Now.ToString());
-                modulesError.Add("错误描述", ex.Message.Replace("\r\n", ""));
-                modulesError.Add("错误对象", ex.Source);
-                modulesError.Add("错误页面", "" + HttpContext.Current.Request.Url + "");
-                modulesError.Add("浏览器IE", HttpContext.Current.Request.UserAgent);
-                modulesError.Add("服务器IP", NetHelper.GetIPAddress());
-                Application["error"] = modulesError;
-                //HttpContext.Current.Response.Redirect("~/Error/Index");
-                const string url = "<script>window.location.href='/Error/Index'</script>";
+            }
+            else {
+                const string url = "<script>window.location.href='/Error/ErrorEx'</script>";
 
                 System.Web.HttpContext.Current.Response.Write(url);
 

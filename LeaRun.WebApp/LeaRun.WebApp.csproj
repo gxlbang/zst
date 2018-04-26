@@ -351,6 +351,7 @@
     <Content Include="Content\Images\dropdown-icon.png" />
     <Content Include="Content\Images\error-bg.png" />
     <Content Include="Content\Images\error.png" />
+    <Content Include="Content\Images\false.png" />
     <Content Include="Content\Images\fan.png" />
     <Content Include="Content\Images\favicon.ico" />
     <Content Include="Content\Images\fileType\css_24.png" />
@@ -9098,6 +9099,7 @@
     <Content Include="Content\Scripts\weixin\demo.js" />
     <Content Include="Content\skins\theme_red\theme_red.css" />
     <Content Include="Content\Styles\com.css" />
+    <Content Include="Content\Styles\Error.css" />
     <Content Include="Content\Styles\ui\com.css" />
     <Content Include="Content\Styles\ui\index_v5-648855bc5b.css" />
     <Content Include="Content\Styles\jssdk\style.css" />
@@ -9445,6 +9447,7 @@
     <Content Include="Views\Personal\BalanceRecharge.cshtml" />
     <Content Include="Views\Proprietor\ChargeItem.cshtml" />
     <Content Include="Views\Proprietor\TemplateEidt.cshtml" />
+    <Content Include="Views\Error\ErrorEx.cshtml" />
     <None Include="Views\Utility\PrintPage.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

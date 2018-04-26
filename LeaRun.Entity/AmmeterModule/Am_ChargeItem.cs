@@ -94,6 +94,7 @@ namespace LeaRun.Entity
         /// </summary>
         public override void Create()
         {
+            this.CreateTime = DateTime.Now;
             this.Number = CommonHelper.GetGuid;
                                             }
         /// <summary>

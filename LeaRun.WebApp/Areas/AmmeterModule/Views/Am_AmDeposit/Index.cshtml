@@ -91,7 +91,7 @@
 }
     //明细
     function btn_detail() {
-        var KeyValue = GetJqGridRowValue("#gridTable", "Ammeter_Number");
+        var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsChecked(KeyValue)) {
             var url = "/AmmeterModule/Am_AmDeposit/Detail?KeyValue=" + KeyValue;
             Dialog(url, "Detail", "设备押金明细", 820, 500, function (iframe) {

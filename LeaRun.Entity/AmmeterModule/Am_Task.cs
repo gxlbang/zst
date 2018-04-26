@@ -28,7 +28,7 @@ namespace LeaRun.Entity
     /// </author>
     /// </summary>
     [Description("Am_Task")]
-    [PrimaryKey("AmmeterNumber")]
+    [PrimaryKey("Number")]
     public class Am_Task : BaseEntity
     {
         #region 获取/设置 字段值
@@ -56,6 +56,12 @@ namespace LeaRun.Entity
         /// <returns></returns>
         [DisplayName("UserName")]
         public string UserName { get; set; }
+        /// <summary>
+        /// U_Name
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("U_Name")]
+        public string U_Name { get; set; }
         /// <summary>
         /// CollectorNumber
         /// </summary>

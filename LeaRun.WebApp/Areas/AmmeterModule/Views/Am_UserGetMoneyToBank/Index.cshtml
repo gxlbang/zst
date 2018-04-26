@@ -72,13 +72,27 @@
         $("#gridTable").trigger("reloadGrid"); //重新载入
         
     }
+    //提现取消
+    function btn_BankExit() {
+        var KeyValue = GetJqGridRowValue("#gridTable", "Number");
+        if (IsChecked(KeyValue)) {
+            confirmDialog("确认提示", "确定要取消提现么?确定后无法恢复!", function (data) {
+                if (data) {
+                    AjaxJson("/AmmeterModule/Am_UserGetMoneyToBank/PayToBank", { KeyValue: KeyValue, Status: 9, StatusStr:'提现取消' }, function (data) {
+                        tipDialog(data.Message, 3, data.Code);
+                        windowload();
+                    });
+                }
+            });
+        }
+    }
     //提现已支付
     function PayToBank() {
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsChecked(KeyValue)) {
             confirmDialog("确认提示", "确定已经付款给用户?确定后无法恢复!", function (data) {
                 if (data) {
-                    AjaxJson("/AmmeterModule/Am_UserGetMoneyToBank/PayToBank", { KeyValue: KeyValue }, function (data) {
+                    AjaxJson("/AmmeterModule/Am_UserGetMoneyToBank/PayToBank", { KeyValue: KeyValue, Status: 1, StatusStr: '提现完成' }, function (data) {
                         tipDialog(data.Message, 3, data.Code);
                         windowload();
                     });
@@ -151,8 +165,9 @@
             <td>
                 <select id="Stuts" class="select" style="width: 120px">
                     <option value="-1">请选择</option>
-                    <option value="0">待支付</option>
-                    <option value="1">已支付</option>
+                    <option value="0">提现申请</option>
+                    <option value="1">提现完成</option>
+                    <option value="9">提现取消</option>
                 </select>
             </td>
             <th>下单时间：</th>
