@@ -192,23 +192,23 @@
         <tr>
             <th>关键字：</th>
             <td>
-                <input id="keywords" type="text" class="txt" style="width: 200px" />
+                <input id="keywords" type="text" class="txt" style="width: 120px" />
             </td>
             <th class="formTitle">所在省：</th>
             <td class="formValue">
-                <select id="ProvinceId" class="select" style="width: 100px"></select>
+                <select id="ProvinceId" class="select" style="width: 80px"></select>
             </td>
             <th class="formTitle">所在市：</th>
             <td class="formValue">
-                <select id="CityId" class="select" style="width: 100px"></select>
+                <select id="CityId" class="select" style="width: 80px"></select>
             </td>
             <th class="formTitle">所在县区：</th>
             <td class="formValue">
-                <select id="CountyId" class="select" style="width: 100px"></select>
+                <select id="CountyId" class="select" style="width: 80px"></select>
             </td>
             <th>状态：</th>
             <td>
-                <select id="Status" class="select" style="width: 80px">
+                <select id="Status" class="select" style="width: 60px">
                     <option value="-1">请选择</option>
                     <option value="0">未处理</option>
                     <option value="1">已处理</option>
@@ -216,11 +216,11 @@
             </td>
             <th>账单日期：</th>
             <td>
-                <input id="BeginTime" type="text" class="txt Wdate" value="@LeaRun.Utilities.DateTimeHelper.GetToday()" style="width: 120px" onfocus="var endDate=$dp.$('EndTime');WdatePicker({onpicked:function(){EndTime.focus();},maxDate:'#F{$dp.$D(\'EndTime\')}'})" />
+                <input id="BeginTime" type="text" class="txt Wdate" value="@LeaRun.Utilities.DateTimeHelper.GetToday()" style="width: 100px" onfocus="var endDate=$dp.$('EndTime');WdatePicker({onpicked:function(){EndTime.focus();},maxDate:'#F{$dp.$D(\'EndTime\')}'})" />
             </td>
             <td>-</td>
             <td>
-                <input id="EndTime" type="text" class="txt Wdate" value="@LeaRun.Utilities.DateTimeHelper.GetToday()" style="width: 120px" onfocus="WdatePicker({ minDate: '#F{$dp.$D(\'BeginTime\')}' })" />
+                <input id="EndTime" type="text" class="txt Wdate" value="@LeaRun.Utilities.DateTimeHelper.GetToday()" style="width: 100px" onfocus="WdatePicker({ minDate: '#F{$dp.$D(\'BeginTime\')}' })" />
             </td>
             <td>
                 <input id="btnSearch" type="button" class="btnSearch" value="搜 索" onclick="btn_Search()" />

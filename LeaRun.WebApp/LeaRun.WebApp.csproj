@@ -8104,6 +8104,7 @@
     <Content Include="Content\Scripts\ckeditor\config.js" />
     <Content Include="Content\Scripts\ckeditor\plugins\image\dialogs\image - 复制.js" />
     <Content Include="Content\Scripts\diyUpload.js" />
+    <Content Include="Content\Scripts\image\demo.js" />
     <Content Include="Content\Scripts\jqthumb.min.js" />
     <Content Include="Content\Scripts\jquery.js" />
     <Content Include="Content\Scripts\jquery\jquery-1.4.1.min.js" />
@@ -9099,8 +9100,10 @@
     <Content Include="Content\Scripts\webuploader\webuploader.withoutimage.min.js" />
     <Content Include="Content\Scripts\weixin\demo.js" />
     <Content Include="Content\skins\theme_red\theme_red.css" />
+    <Content Include="Content\Styles\960.css" />
     <Content Include="Content\Styles\com.css" />
     <Content Include="Content\Styles\Error.css" />
+    <Content Include="Content\Styles\main.css" />
     <Content Include="Content\Styles\ui\com.css" />
     <Content Include="Content\Styles\ui\index_v5-648855bc5b.css" />
     <Content Include="Content\Styles\jssdk\style.css" />
@@ -9161,6 +9164,13 @@
     <Content Include="Content\UiImages\return.png" />
     <Content Include="Content\UiImages\shou.png" />
     <Content Include="Content\UiImages\Tech.png" />
+    <Content Include="Content\UiImages\testimages\bg.jpg" />
+    <Content Include="Content\UiImages\testimages\picture1.png" />
+    <Content Include="Content\UiImages\testimages\picture2.png" />
+    <Content Include="Content\UiImages\testimages\picture3.png" />
+    <Content Include="Content\UiImages\testimages\picture4.png" />
+    <Content Include="Content\UiImages\testimages\picture5.png" />
+    <Content Include="Content\UiImages\testimages\sidebar_bg.jpg" />
     <Content Include="Content\UiImages\up.png" />
     <Content Include="Content\UiImages\zheng.png" />
     <Content Include="Global.asax" />
