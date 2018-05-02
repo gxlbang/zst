@@ -101,7 +101,7 @@ namespace LeaRun.Business
         /// </summary>
         /// <param name="jqgridparam">分页条件</param>
         /// <returns></returns>
-        public IList<Am_RepairAnswer> GetPageList(string Number)
+        public Am_RepairAnswer GetPageModel(string Number)
         {
             IDatabase database = DataFactory.Database();
             StringBuilder strSql = new StringBuilder();
@@ -111,7 +111,7 @@ namespace LeaRun.Business
             //报修反馈
             strSql.Append(" AND Repair_Number = @Repair_Number");
             parameter.Add(DbFactory.CreateDbParameter("@Repair_Number", Number));
-            return database.FindList<Am_RepairAnswer>(strSql.ToString(), parameter.ToArray());
+            return database.FindEntityByWhere<Am_RepairAnswer>(strSql.ToString(), parameter.ToArray());
         }
         /// <summary>
         /// 获取列表-导出
@@ -128,7 +128,8 @@ namespace LeaRun.Business
             //报修图片
             strSql.Append(" AND Repair_Number = @Repair_Number");
             parameter.Add(DbFactory.CreateDbParameter("@Repair_Number", Number));
-            return database.FindList<Am_RepairImage>(strSql.ToString(), parameter.ToArray());
+            var list = database.FindList<Am_RepairImage>(strSql.ToString(), parameter.ToArray());
+            return list;
         }
         /// <summary>
         /// 获取列表-导出

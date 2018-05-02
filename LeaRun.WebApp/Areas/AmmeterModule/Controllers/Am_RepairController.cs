@@ -77,7 +77,7 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
         public ActionResult GetAm_RepairAnswer(string KeyValue)
         {
             Am_RepairBll bll = new Am_RepairBll();
-            return Json(bll.GetPageList(KeyValue));
+            return Json(bll.GetPageModel(KeyValue));
         }
         /// <summary>
         /// 数据导出
