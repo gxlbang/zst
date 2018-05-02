@@ -71,6 +71,10 @@
     <Compile Include="AmmeterModule\Am_Charge.cs" />
     <Compile Include="AmmeterModule\Am_ChargeItem.cs" />
     <Compile Include="AmmeterModule\Am_CollectorNew.cs" />
+    <Compile Include="AmmeterModule\Am_Contract.cs" />
+    <Compile Include="AmmeterModule\Am_ContractImage.cs" />
+    <Compile Include="AmmeterModule\Am_ContractTemplate.cs" />
+    <Compile Include="AmmeterModule\Am_ContractTemplateImage.cs" />
     <Compile Include="AmmeterModule\Am_MoneyDetailNew.cs" />
     <Compile Include="AmmeterModule\Am_MoneyDetail.cs" />
     <Compile Include="AmmeterModule\Am_Rent.cs" />

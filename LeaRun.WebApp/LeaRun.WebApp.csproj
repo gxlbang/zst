@@ -164,6 +164,10 @@
     <Compile Include="Areas\AmmeterModule\Controllers\Am_ChargeController.cs" />
     <Compile Include="Areas\AmmeterModule\Controllers\Am_ChargeItemController.cs" />
     <Compile Include="Areas\AmmeterModule\Controllers\Am_CollectorController.cs" />
+    <Compile Include="Areas\AmmeterModule\Controllers\Am_ContractController.cs" />
+    <Compile Include="Areas\AmmeterModule\Controllers\Am_ContractImageController.cs" />
+    <Compile Include="Areas\AmmeterModule\Controllers\Am_ContractTemplateController.cs" />
+    <Compile Include="Areas\AmmeterModule\Controllers\Am_ContractTemplateImageController.cs" />
     <Compile Include="Areas\AmmeterModule\Controllers\Am_MoneyDetailController.cs" />
     <Compile Include="Areas\AmmeterModule\Controllers\Am_RentBillController.cs" />
     <Compile Include="Areas\AmmeterModule\Controllers\Am_RentController.cs" />
@@ -9105,6 +9109,7 @@
     <Content Include="Content\Styles\Error.css" />
     <Content Include="Content\Styles\main.css" />
     <Content Include="Content\Styles\ui\com.css" />
+    <Content Include="Content\Styles\ui\ht.css" />
     <Content Include="Content\Styles\ui\index_v5-648855bc5b.css" />
     <Content Include="Content\Styles\jssdk\style.css" />
     <Content Include="Content\Styles\learunui-accordion.css" />
@@ -9420,6 +9425,18 @@
     <Content Include="Areas\AmmeterModule\Views\Am_RentBill\Detail.cshtml" />
     <Content Include="Areas\AmmeterModule\Views\Am_RentBill\Form.cshtml" />
     <Content Include="Areas\AmmeterModule\Views\Am_RentBill\Index.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_ContractTemplate\Detail.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_ContractTemplate\Form.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_ContractTemplate\Index.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_ContractTemplateImage\Detail.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_ContractTemplateImage\Form.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_ContractTemplateImage\Index.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_Contract\Detail.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_Contract\Form.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_Contract\Index.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_ContractImage\Detail.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_ContractImage\Form.cshtml" />
+    <Content Include="Areas\AmmeterModule\Views\Am_ContractImage\Index.cshtml" />
     <None Include="Properties\PublishProfiles\House.pubxml" />
     <Content Include="Views\Home\SkinIndex.cshtml" />
     <Content Include="Views\Login\Default.cshtml" />
@@ -9477,6 +9494,7 @@
     <Content Include="Views\Personal\MyDeposit.cshtml" />
     <Content Include="Views\Personal\Repair.cshtml" />
     <Content Include="Views\Personal\RepairAdd1.cshtml" />
+    <Content Include="Views\Shared\_Template.cshtml" />
     <Content Include="Views\Personal\RepairAdd2.cshtml" />
     <None Include="Views\Utility\PrintPage.cshtml" />
     <Content Include="Web.config">
