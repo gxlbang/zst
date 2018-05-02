@@ -9477,6 +9477,7 @@
     <Content Include="Views\Personal\MyDeposit.cshtml" />
     <Content Include="Views\Personal\Repair.cshtml" />
     <Content Include="Views\Personal\RepairAdd1.cshtml" />
+    <Content Include="Views\Personal\RepairAdd2.cshtml" />
     <None Include="Views\Utility\PrintPage.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

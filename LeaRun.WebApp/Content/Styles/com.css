@@ -108,7 +108,7 @@ select,button { cursor: pointer; }
 .re-re .icon-next { position: absolute; top: 50%; right: 0rem; margin-top: -0.4rem; }
 /*repair-page 报修页面*/
 .upload-ul{ position: relative;  display: inline-block; padding: 0.2rem;}
-.upload-ul li{ position: relative; float: left; display: inline-block; width: 1.5rem; height: 1.5rem; margin: 0 0.2rem 0.2rem 0; overflow: hidden; }
+.upload-ul li{ position: relative; float: left; display: inline-block; width: 1.5rem; height: 1.5rem; margin: 0 0.1rem 0.1rem 0; overflow: hidden; }
 .upload-pick{ background: url(../images/upload-bj1.png) center center no-repeat; background-size: 1.5rem 1.5rem; }
 .upload-pick:hover{ background: url(../images/upload-bj2.png) center center no-repeat; background-size: 1.5rem 1.5rem; }
 .webuploader-pick{position: relative;display: inline-block;vertical-align: top; width: 100%; height: 100%;}
