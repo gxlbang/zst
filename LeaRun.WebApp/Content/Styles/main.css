@@ -11,7 +11,7 @@
     #pictures { position: relative; height: 208px; }
     #pictures img { position: absolute; top: 0; left: 0; }
     
-    #prev, #next { margin-top: 30px; text-align: center; font-size: 2.0em; }
+    #prev, #next { font-size: 2.0em; }
   /* relevant for the tutorial - end */
   
 #footer { text-align: center; margin: 50px 0 20px 0; }

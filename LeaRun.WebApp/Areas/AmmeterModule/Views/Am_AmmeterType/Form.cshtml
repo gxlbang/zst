@@ -45,7 +45,6 @@
         }
     }
     function InitSelect(s) {
-        //获取用户角色
         AjaxJson("/AmmeterModule/Am_AmmeterType/GetAmmeterType", { Dic_Code: s }, function (data) {
             $.each(data, function (i) {
                 $("#" + s).append($("<option></option>").val(data[i].Dic_Value).html(data[i].Dic_Name));

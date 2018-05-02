@@ -128,7 +128,8 @@ namespace LeaRun.Business
             //报修图片
             strSql.Append(" AND Repair_Number = @Repair_Number");
             parameter.Add(DbFactory.CreateDbParameter("@Repair_Number", Number));
-            return database.FindList<Am_RepairImage>(strSql.ToString(), parameter.ToArray());
+            var list = database.FindList<Am_RepairImage>(strSql.ToString(), parameter.ToArray());
+            return list;
         }
         /// <summary>
         /// 获取列表-导出
