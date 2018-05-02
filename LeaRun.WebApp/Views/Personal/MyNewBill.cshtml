@@ -1,24 +1,16 @@
 ﻿@{
-    ViewBag.Title = "电表缴费记录";
+    ViewBag.Title = "我的新账单";
     Layout = "~/Views/Shared/_Partial.cshtml";
 }
 
-<div class="all">
+<div class="all pro-all">
     <header class="header clear">
         <a href="javascript:history.go(-1);" class="return fl"></a>
-        <h1 class="title">缴费查询</h1>
+        <h1 class="title">我的账单</h1>
     </header>
-    <div id="containerList">
-        <div class="pen-li pay-in bbot clear">
-            <span class="pen-span fl">金额</span>
-            <span class="pen-span fl">方式</span>
-            <span class="pen-span fl">状态</span>
-            <span class="pen-span fl">时间</span>
-        </div>
-
-
+    <div class="list-index" id="containerList">
+        
     </div>
-
 </div>
 
 <link href="~/Content/Scripts/layui/css/layui.css" rel="stylesheet" />
@@ -31,7 +23,7 @@
         if (@ViewBag.recordCount!=null) {
             count=@ViewBag.recordCount;
         }
-        
+
         flow.load({
             elem: '#containerList', //流加载容器
             scrollElem: '',
@@ -46,21 +38,23 @@
                         if (arr.length>0) {
                             parList[arr[0]]=arr[1];
                         }
-                    } 
+                    }
                     parList["pageIndex"]=page;
                     var data='';
                     for (var i in parList) {
                         data+=i+"="+parList[i]+"&";
                     }
-                    $.post("/Personal/AmmeterPayCost",data, function (data) {
+                    $.post("/Personal/MyNewBill",data, function (data) {
                         var lis = [];
                         for (var i in data) {
-                            lis.push("<div class=\"pro pay-in pay-a bbot clear\">");
-                            lis.push("<span class=\"pen-span fl\">"+parseFloat(data[i].Moeny).toFixed(2)+"</span>");
-                            lis.push("<span class=\"pen-span fl\">"+data[i].PayType+"</span>");
-                            lis.push("<span class=\"pen-span fl\">"+data[i].StatusStr+"</span>");
-                            lis.push("<span class=\"pen-span fl\">"+formatDate(data[i].CreateTime,"yyyy-MM-dd hh:mm:ss") +"</span>");
+                            lis.push("<a class=\"pro repair-m mt15\" href=\"/Personal/NewBillDetails?number="+data[i].Number+"\">");
+                            lis.push("<div class=\"my-bill clear\">");
+                            lis.push("<span class=\"bill-span fl\">账单号："+data[i].BillCode+"</span>");
+                            lis.push("<span class=\"bill-span fr\">"+parseFloat(data[i].Moeny).toFixed(2)+"元</span>");
                             lis.push("</div>");
+                            lis.push("<span class=\"bill-span\">"+data[i].Province+data[i].City+data[i].County+data[i].Address+"</span>");
+                            lis.push("<span class=\"bill-span\">"+data[i].Cell+"单元"+data[i].Floor+"楼层"+data[i].Room+"号</span>");
+                            lis.push("<i class=\"icon-next\"></i></a>");
                         }
                         next(lis.join(''), page < count);
                     });
@@ -70,4 +64,3 @@
         });
     });
 </script>
-

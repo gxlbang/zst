@@ -42,7 +42,7 @@
             <input type="text" name="money" id="money" class="l-input" value="" placeholder="0.00" /></div>
             <a href="javascript:;" onclick="jsApiCall()" class="btn-all">充值</a>
         </div>
-        <input type="hidden" name="number" value="@Model.Number" />
+        <input type="hidden" id="number" name="number" value="@Model.Number" />
     }
 
 </div>
@@ -66,40 +66,50 @@
                 formType: 1
             }, function (pass,index) {
                 pwd = pass;
+                myfunction(number, money, type, pwd);
             });
-            if (pwd == "") {
-                alert("11");
-                return;
-            }
+
+        } else {
+            myfunction(number, money, type, pwd);
         }
-        alert("222");
+       
+
+
+    }
+    function myfunction(number, money, type, pwd) {
         $.ajax({
             type: "Post",
             url: "/Personal/AmmeterRecharge",
             dataType: "json",
-            data: {number:number, money: money ,type:type,pwd:pwd},
+            data: { number: number, money: money, type: type, pwd: pwd },
             success: function (data) {
                 if (data.res == "Ok") {
-                    jsonParm = jQuery.parseJSON(data.json);
-                    WeixinJSBridge.invoke(
-                    'getBrandWCPayRequest',
-                     jsonParm,
-                        function (res) {
-                            WeixinJSBridge.log(res.err_msg);
-                            if (res.err_msg == "get_brand_wcpay_request:ok") {
-                                layer.msg("支付成功", { time: 2000 });
-                                
-                            } else {
-                                if (res.err_msg == "get_brand_wcpay_request:cancel") {
-                                    layer.msg("支付取消", { time: 2000 });
-                                    return false;
+                    if (type==1) {
+                        layer.msg("支付成功", { time: 2000 });
+                    }
+                    else {
+                        jsonParm = jQuery.parseJSON(data.json);
+                        WeixinJSBridge.invoke(
+                        'getBrandWCPayRequest',
+                         jsonParm,
+                            function (res) {
+                                WeixinJSBridge.log(res.err_msg);
+                                if (res.err_msg == "get_brand_wcpay_request:ok") {
+                                    layer.msg("支付成功", { time: 2000 });
+
                                 } else {
-                                    layer.msg("支付失败", { time: 2000 });
-                                    return false;
+                                    if (res.err_msg == "get_brand_wcpay_request:cancel") {
+                                        layer.msg("支付取消", { time: 2000 });
+                                        return false;
+                                    } else {
+                                        layer.msg("支付失败", { time: 2000 });
+                                        return false;
+                                    }
                                 }
                             }
-                        }
-                    );
+                        );
+                    }
+                    
                 }
                 else {
                     layer.msg(data.msg, { time: 2000 });
@@ -107,8 +117,6 @@
 
             }
         });
-
-
     }
 
 </script>

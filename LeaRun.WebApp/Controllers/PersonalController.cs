@@ -575,7 +575,7 @@ namespace LeaRun.WebApp.Controllers
                 var bank = new Am_BankInfo();
                 bank.Number = CommonHelper.GetGuid;
                 bank.Remark = "";
-                bank.UserName = "";
+                bank.UserName =user.Account;
                 bank.U_Name = model.U_Name;
                 bank.U_Number = account.Number;
                 bank.BankAddress = model.BankAddress;
@@ -726,7 +726,7 @@ namespace LeaRun.WebApp.Controllers
             var user = wbll.GetUserInfo(Request);
 
             var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Number='" + user.Number + "'");
-            if (account != null && account.Number != null && account.Status == 3)
+            if (account != null && account.Number != null /*&& account.Status == 3*/)
             {
                 List<DbParameter> parameter = new List<DbParameter>();
                 parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
@@ -812,6 +812,22 @@ namespace LeaRun.WebApp.Controllers
                             var accStatus = database.Update<Ho_PartnerUser>(account);
                             if (accStatus > 0)
                             {
+                                var moneyDetail = new Am_MoneyDetail
+                                {
+                                    Number = CommonHelper.GetGuid,
+                                    CreateTime = DateTime.Now,
+                                    CreateUserId = user.Number,
+                                    CreateUserName = user.Name,
+                                    CurrMoney = account.Money,
+                                    Money = money,
+                                    OperateType = 4,
+                                    OperateTypeStr = "电费充值",
+                                    Remark = "",
+                                    UserName = user.Account,
+                                    U_Number = user.Number
+                                };
+                                database.Insert<Am_MoneyDetail>(moneyDetail);
+
                                 charge.STATUS = 1;
                                 charge.StatusStr = "支付成功";
                                 var st = database.Update<Am_Charge>(charge);
@@ -838,16 +854,18 @@ namespace LeaRun.WebApp.Controllers
             var user = wbll.GetUserInfo(Request);
             int recordCount = 0;
             ViewBag.recordCount = 0;
-            
+
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@AmmeterNumber", number));
+            parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+            parameter.Add(DbFactory.CreateDbParameter("@STATUS", "1"));
+
+            var chargeList = database.FindListPage<Am_Charge>(" and U_Number=@U_Number and STATUS=@STATUS and AmmeterNumber=@AmmeterNumber", parameter.ToArray(), "CreateTime", "desc", pageIndex, pageSize, ref recordCount);
+            ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize);
+
             if (Request.IsAjaxRequest())
             {
-                List<DbParameter> parameter = new List<DbParameter>();
-                parameter.Add(DbFactory.CreateDbParameter("@AmmeterNumber", user.Number));
-                parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
-                parameter.Add(DbFactory.CreateDbParameter("@STATUS", "1"));
-
-                var chargeList = database.FindListPage<Am_Charge>(" and U_Number=@U_Number and STATUS=@STATUS and AmmeterNumber=@AmmeterNumber", parameter.ToArray(), "Number", "desc", pageIndex, pageSize, ref recordCount);
-                ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize); 
+                
                 return Json(chargeList);
             }
             else
@@ -861,7 +879,7 @@ namespace LeaRun.WebApp.Controllers
         /// <param name="pageIndex"></param>
         /// <param name="pageSize"></param>
         /// <returns></returns>
-        public ActionResult MyNewBill(int pageIndex = 1, int pageSize = 10)
+        public ActionResult MyNewBill(int pageIndex = 1, int pageSize = 20)
         {
             var user = wbll.GetUserInfo(Request);
             int recordCount = 0;
@@ -912,7 +930,7 @@ namespace LeaRun.WebApp.Controllers
         /// <param name="pwd"></param>
         /// <returns></returns>
         [HttpPost]
-        public string PayNewBill(string number, int type, string pwd)
+        public ActionResult PayNewBill(string number, int type, string pwd)
         {
             var user = wbll.GetUserInfo(Request);
             var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Number='" + user.Number + "'");
@@ -922,11 +940,11 @@ namespace LeaRun.WebApp.Controllers
                 {
                     if (account.PayPassword == null || account.PayPassword == "")
                     {
-                        return Json(new { res = "No", msg = "请先设置支付密码" }).ToJson();
+                        return Json(new { res = "No", msg = "请先设置支付密码" });
                     }
                     if (!PasswordHash.ValidatePassword(pwd, account?.PayPassword))
                     {
-                        return Json(new { res = "No", msg = "支付密码错误" }).ToJson();
+                        return Json(new { res = "No", msg = "支付密码错误" });
                     }
                 }
                 List<DbParameter> parameter = new List<DbParameter>();
@@ -944,7 +962,8 @@ namespace LeaRun.WebApp.Controllers
                     charge.STATUS = 0;
                     charge.StatusStr = "待支付";
                     charge.SucTime = DateTime.Now;
-                    charge.UserName = user.Name;
+                    charge.U_Name = user.Name;
+                    charge.UserName = user.Account;
                     charge.U_Number = user.Number;
                     charge.ChargeType = 3;
                     charge.ChargeTypeStr = "账单支付";
@@ -960,6 +979,36 @@ namespace LeaRun.WebApp.Controllers
                         if (status > 0)
                         {
                             //return WePay(user, account, charge, "账单缴费");
+                            List<DbParameter> parameter2 = new List<DbParameter>();
+                            parameter2.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+                            parameter2.Add(DbFactory.CreateDbParameter("@OrderNumber", charge.OrderNumber));
+
+
+                            var payOrder = database.FindEntityByWhere<Am_Charge>(" and U_Number=@U_Number and @OrderNumber=OrderNumber", parameter2.ToArray());
+                            if (payOrder == null)
+                            {
+                                return Json(new { res = "No", msg = "没有订单" });
+                            }
+                            else if (payOrder.STATUS > 0)
+                            {
+                                ///已经支付
+                                return Json(new { res = "No", msg = "充值失败,订单已支付" });
+                            }
+
+                            else
+                            {
+                                WePay _wePay = new WePay();
+                                AlipayAndWepaySDK.Model.TransmiParameterModel model = new AlipayAndWepaySDK.Model.TransmiParameterModel();
+                                model.orderNo = payOrder.OrderNumber;
+                                model.productName = "账单缴费";
+                                model.totalFee = int.Parse((charge.Moeny * 100).ToString());
+                                model.customerIP = "180.136.144.49";
+                                model.openId = account.OpenId;
+                                var payUrl = _wePay.BuildWePay(model, AlipayAndWepaySDK.Enum.EnumWePayTradeType.JSAPI);
+
+                                return Json(new { res = "No", msg = "充值失败,订单已支付", json = Newtonsoft.Json.JsonConvert.SerializeObject(payUrl) });
+                            }
+
                         }
                     }
                     else if (type == 1)
@@ -967,7 +1016,7 @@ namespace LeaRun.WebApp.Controllers
                         charge.PayType = "余额缴费";
                         if (bill.Money > account.Money)
                         {
-                            return Json(new { res = "No", msg = "余额不足，请先充值" }).ToJson();
+                            return Json(new { res = "No", msg = "余额不足，请先充值" });
                         }
                         var status = database.Insert<Am_Charge>(charge);
                         if (status > 0)
@@ -981,14 +1030,14 @@ namespace LeaRun.WebApp.Controllers
                                 var st = database.Update<Am_Charge>(charge);
                                 if (st > 0)
                                 {
-                                    return Json(new { res = "Ok", msg = "缴费成功" }).ToJson();
+                                    return Json(new { res = "Ok", msg = "缴费成功" });
                                 }
                             }
                         }
                     }
                 }
             }
-            return Json(new { res = "No", msg = "缴费失败" }).ToJson();
+            return Json(new { res = "No", msg = "缴费失败" });
         }
         /// <summary>
         /// 历史账单查询
@@ -999,23 +1048,36 @@ namespace LeaRun.WebApp.Controllers
         /// <param name="pageIndex"></param>
         /// <param name="pageSize"></param>
         /// <returns></returns>
-        public ActionResult OldBill(string ammeterNumber, DateTime star, DateTime end, int pageIndex = 1, int pageSize = 10)
+        public ActionResult OldBill(string billCode, DateTime? star, DateTime? end, int pageIndex = 1, int pageSize = 10)
         {
             var user = wbll.GetUserInfo(Request);
             int recordCount = 0;
-            List<DbParameter> parameter = new List<DbParameter>();
-            parameter.Add(DbFactory.CreateDbParameter("@F_U_Number", user.Number));
-            parameter.Add(DbFactory.CreateDbParameter("@StarTime", star));
-            parameter.Add(DbFactory.CreateDbParameter("@EndTime", end));
+           
 
             StringBuilder whereSb = new StringBuilder();
-            if (ammeterNumber != null || ammeterNumber != "")
+
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@T_U_Number", user.Number));
+            whereSb.Append(" and T_U_Number=@T_U_Number");
+            whereSb.Append(" and Status>1");
+
+            if (billCode != null && billCode != "")
             {
-                whereSb.Append(" and AmmeterNumber=@AmmeterNumber");
-                parameter.Add(DbFactory.CreateDbParameter("@AmmeterNumber", ammeterNumber));
+                whereSb.Append(" and BillCode=@BillCode");
+                parameter.Add(DbFactory.CreateDbParameter("@BillCode", billCode));
             }
-            whereSb.Append(" and SendTime>=@StarTime");
-            whereSb.Append(" and SendTime<=@EndTime");
+            if (star!=null )
+            {
+                whereSb.Append(" and SendTime>=@StarTime");
+                parameter.Add(DbFactory.CreateDbParameter("@StarTime", star));
+            }
+            if (end!=null )
+            {
+                whereSb.Append(" and SendTime<=@EndTime");
+                parameter.Add(DbFactory.CreateDbParameter("@EndTime", end));
+            }
+          
+            
 
 
             var billList = database.FindListPage<Am_Bill>(whereSb.ToString(), parameter.ToArray(), "Number", "desc", pageIndex, pageSize, ref recordCount);
@@ -1028,6 +1090,30 @@ namespace LeaRun.WebApp.Controllers
             {
                 return View();
             }
+        }
+
+        /// <summary>
+        /// 历史账单详情
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public ActionResult OldBillDetails(string number)
+        {
+            var user = wbll.GetUserInfo(Request);
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@T_U_Number", user.Number));
+            parameter.Add(DbFactory.CreateDbParameter("@Number", number));
+
+            var bill = database.FindEntityByWhere<Am_Bill>(" and T_U_Number=@T_U_Number and Status>1 and Number=@Number", parameter.ToArray());
+            if (bill != null && bill.Number != null)
+            {
+                List<DbParameter> par1 = new List<DbParameter>();
+                par1.Add(DbFactory.CreateDbParameter("@Bill_Number", bill.Number));
+
+                var billContentList = database.FindList<Am_BillContent>(" and Bill_Number=@Bill_Number ", par1.ToArray());
+                ViewBag.content = billContentList;
+            }
+            return View(bill);
         }
 
         public ActionResult Repair()
@@ -1064,12 +1150,34 @@ namespace LeaRun.WebApp.Controllers
             }
             return View(list);
         }
+        public ActionResult RepairAdd1()
+        {
+            var user = wbll.GetUserInfo(Request);
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+            parameter.Add(DbFactory.CreateDbParameter("@Status", "1"));
+
+            var ammeterPermissionList = database.FindList<Am_AmmeterPermission>(" and U_Number=@U_Number and Status=@Status ", parameter.ToArray());
+            List<Am_Ammeter> list = new List<Am_Ammeter>();
+            foreach (var item in ammeterPermissionList)
+            {
+                List<DbParameter> par = new List<DbParameter>();
+                par.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+                par.Add(DbFactory.CreateDbParameter("@Number", item.Ammeter_Number));
+                var model = database.FindEntityByWhere<Am_Ammeter>(" and U_Number=@U_Number and  Number=@Number", par.ToArray());
+                if (model != null && model.Number != null)
+                {
+                    list.Add(model);
+                }
+            }
+            return View(list);
+        }
         /// <summary>
         /// 报修添加页面
         /// </summary>
         /// <param name="ammeterNumber"></param>
         /// <returns></returns>
-        public ActionResult RepairAdd(string ammeterNumber)
+        public ActionResult RepairAdd2(string ammeterNumber)
         {
             var user = wbll.GetUserInfo(Request);
             List<DbParameter> par = new List<DbParameter>();
@@ -1191,7 +1299,7 @@ namespace LeaRun.WebApp.Controllers
             par.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
             par.Add(DbFactory.CreateDbParameter("@Status", "1"));
 
-            var depositList = database.FindList<Am_UserDeposit>(" and Number=@Number and Status=@Status", par.ToArray());
+            var depositList = database.FindList<Am_UserDeposit>(" and U_Number=@U_Number and Status=@Status", par.ToArray());
             if (depositList != null && depositList.Count() > 0)
             {
                 return View(depositList);

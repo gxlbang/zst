@@ -9460,6 +9460,13 @@
     <Content Include="Views\Personal\AmmeterDetails.cshtml" />
     <Content Include="Views\Personal\AmmeterRecharge.cshtml" />
     <Content Include="Views\Personal\AmmeterPayCost.cshtml" />
+    <Content Include="Views\Personal\MyNewBill.cshtml" />
+    <Content Include="Views\Personal\NewBillDetails.cshtml" />
+    <Content Include="Views\Personal\OldBill.cshtml" />
+    <Content Include="Views\Personal\OldBillDetails.cshtml" />
+    <Content Include="Views\Personal\MyDeposit.cshtml" />
+    <Content Include="Views\Personal\Repair.cshtml" />
+    <Content Include="Views\Personal\RepairAdd1.cshtml" />
     <None Include="Views\Utility\PrintPage.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
