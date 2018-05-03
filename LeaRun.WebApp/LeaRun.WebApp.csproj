@@ -9495,6 +9495,7 @@
     <Content Include="Views\Personal\Repair.cshtml" />
     <Content Include="Views\Personal\RepairAdd1.cshtml" />
     <Content Include="Views\Shared\_Template.cshtml" />
+    <Content Include="Views\Error\ErrorEx.cshtml" />
     <None Include="Views\Utility\PrintPage.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

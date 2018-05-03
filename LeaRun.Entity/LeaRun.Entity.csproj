@@ -61,6 +61,7 @@
     <Compile Include="AmmeterModule\Am_Ammeter.cs" />
     <Compile Include="AmmeterModule\Am_AmmeterMoneyNew.cs" />
     <Compile Include="AmmeterModule\Am_AmmeterMoney.cs" />
+    <Compile Include="AmmeterModule\Am_AmmeterOperateLogNew.cs" />
     <Compile Include="AmmeterModule\Am_AmmeterOperateLog.cs" />
     <Compile Include="AmmeterModule\Am_AmmeterPermission.cs" />
     <Compile Include="AmmeterModule\Am_BankInfo.cs" />

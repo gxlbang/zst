@@ -6,56 +6,41 @@
     $(function () {
         GetGrid();
     })
+    var AmNumber = GetQuery('Number');//传递过来的电表编号
     //加载表格
     function GetGrid() {
         $("#gridTable").jqGrid({
-        url: "@Url.Content("~/AmmeterModule/Am_AmmeterOperateLog/GridPageJson")",
+            url: "@Url.Content("~/AmmeterModule/Am_AmmeterOperateLog/GridPageListJson")?Number=" + AmNumber,
         datatype: "json",
         height: $(window).height() - 149,
         autowidth: true,
         colModel: [
-                { label: 'Number', name: 'Number', index: 'Number', width: 0, align: 'left',sortable: true  },
-                { label: 'U_Number', name: 'U_Number', index: 'U_Number', width: 0, align: 'left',sortable: true  },
-                { label: 'UserName', name: 'UserName', index: 'UserName', width: 0, align: 'left',sortable: true  },
-                { label: 'TaskNumber', name: 'TaskNumber', index: 'TaskNumber', width: 0, align: 'left',sortable: true  },
-                { label: 'OperateType', name: 'OperateType', index: 'OperateType', width: 0, align: 'left',sortable: true  },
-                { label: 'OperateTypeStr', name: 'OperateTypeStr', index: 'OperateTypeStr', width: 0, align: 'left',sortable: true  },
-                { label: 'Result', name: 'Result', index: 'Result', width: 0, align: 'left',sortable: true  },
-                { label: 'CreateTime', name: 'CreateTime', index: 'CreateTime', width: 0, align: 'left',sortable: true  },
-                { label: 'Remark', name: 'Remark', index: 'Remark', width: 0, align: 'left',sortable: true  },
+                { label: 'Number', name: 'Number', index: 'Number', width: 0, align: 'left', hidden: true },
+                { label: '采集器', name: 'CollectorCode', index: 'CollectorCode', width: 150, align: 'left', sortable: true },
+                { label: '电表', name: 'AmmeterCode', index: 'AmmeterCode', width: 150, align: 'left', sortable: true },
+                { label: '操作人', name: 'UserName', index: 'UserName', width: 150, align: 'left',sortable: true  },
+                { label: '操作人姓名', name: 'U_Name', index: 'U_Name', width: 120, align: 'left', sortable: true },
+                { label: '操作类型', name: 'OperateTypeStr', index: 'OperateTypeStr', width: 150, align: 'left',sortable: true  },
+                { label: '操作结果', name: 'Result', index: 'Result', width: 150, align: 'left',sortable: true  },
+                {
+                    label: "操作时间", name: "CreateTime", index: "CreateTime", width: 150,
+                    formatter: function (value, options, rowObject) {
+                        return formatDate(value, 'yyyy-MM-dd hh:mm:ss');
+                    }
+                },
         ],
+        viewrecords: true,
         pager: "#gridPager",
-        sortname: '',
+        sortname: 'CreateTime',
         sortorder: 'desc',
         rownumbers: true,
         shrinkToFit: false,
         gridview: true,
     });
-}
-    //新增
-    function btn_add() {
-        var url = "/AmmeterModule/Am_AmmeterOperateLog/Form"
-        openDialog(url, "Form", "新增Am_AmmeterOperateLog", 770, 395, function (iframe) {
-            top.frames[iframe].AcceptClick()
-        });
     }
-    //编辑
-    function btn_edit() {
-        var KeyValue = GetJqGridRowValue("#gridTable", "Number");
-        if (IsChecked(KeyValue)) {
-            var url = "/AmmeterModule/Am_AmmeterOperateLog/Form?KeyValue=" + KeyValue;
-            openDialog(url, "Form", "编辑Am_AmmeterOperateLog", 770, 395, function (iframe) {
-                top.frames[iframe].AcceptClick();
-            });
-        }
-    }
-    //删除
-    function btn_delete() {
-        var KeyValue = GetJqGridRowValue("#gridTable", "Number");
-        if (IsDelData(KeyValue)) {
-            var delparm = 'KeyValue=' + KeyValue;
-            delConfig('/AmmeterModule/Am_AmmeterOperateLog/Delete', delparm, KeyValue.split(",").length);
-        }
+    //返回
+    function btn_Back() {
+        Urlhref("/AmmeterModule/Am_Ammeter/Index");
     }
     //明细
     function btn_detail() {
@@ -70,7 +55,52 @@
     //刷新
     function windowload() {
         $("#gridTable").trigger("reloadGrid"); //重新载入
-        
+    }
+    //搜索
+    function btn_Search() {
+        var keywords = $("#keywords").val();
+        var BeginTime = $("#BeginTime").val();
+        var EndTime = $("#EndTime").val();
+
+        $("#gridTable").jqGrid('setGridParam', {
+            url: "@Url.Content("~/AmmeterModule/Am_AmmeterOperateLog/GridPageListJson")?keywords=" + keywords + 
+               '&Number=' + AmNumber + '&BeginTime=' + BeginTime + '&EndTime=' + EndTime, page: 1
+    }).trigger('reloadGrid');
+    }
+    //要打印数据源，子页面调用的函数
+    function PrintDataSource() {
+        var columnModel = $("#gridTable").jqGrid('getGridParam', 'colModel');
+        var dataModel = $("#gridTable").jqGrid("getRowData");
+        //var footerData = $("#gridTable").jqGrid("footerData");
+        var JsonData = {
+            columnModel: columnModel,
+            dataModel: dataModel,
+            //footerData: footerData,
+        }
+        return JsonData;
+    }
+    //点击打印
+    function btn_Print() {
+        PrintDialog("/Utility/PrintPage", "PrintPage", "打印当前页", 1200, 500, function (iframe) {
+            top.frames[iframe].SubmitPrint()
+        });
+    }
+    //导出Excel
+    function btn_derive() {
+        //SetDeriveExcel("#gridTable", "订单信息");
+        //openDialog("/CommonModule/ExcelImport/DeriveDialog", "DeriveDialog", "订单信息", 600, 300, function (iframe) {
+        //    top.frames[iframe].AcceptClick();
+        //});
+        //var SelectedField = ""; $('#AccessView .selected a').each(function () { SelectedField += $(this).attr('id') + ","; });
+        Loading(true, "正在处理要导出数据...");
+        var keywords = $("#keywords").val();
+        var BeginTime = $("#BeginTime").val();
+        var EndTime = $("#EndTime").val();
+        window.setTimeout(function () {
+            location.href = "/AmmeterModule/Am_AmmeterOperateLog/ExportExcel??keywords=" + keywords + 
+                 '&Number=' + AmNumber + '&BeginTime=' + BeginTime + '&EndTime=' + EndTime;
+            Loading(false);
+        }, 200);
     }
 </script>
 <!--工具栏-->
@@ -85,6 +115,14 @@
             <th>关键字：</th>
             <td>
                 <input id="keywords" type="text" class="txt" style="width: 200px" />
+            </td>
+            <th>操作日期：</th>
+            <td>
+                <input id="BeginTime" type="text" class="txt Wdate" value="@LeaRun.Utilities.DateTimeHelper.GetToday()" style="width: 100px" onfocus="var endDate=$dp.$('EndTime');WdatePicker({onpicked:function(){EndTime.focus();},maxDate:'#F{$dp.$D(\'EndTime\')}'})" />
+            </td>
+            <td>-</td>
+            <td>
+                <input id="EndTime" type="text" class="txt Wdate" value="@LeaRun.Utilities.DateTimeHelper.GetToday()" style="width: 100px" onfocus="WdatePicker({ minDate: '#F{$dp.$D(\'BeginTime\')}' })" />
             </td>
             <td>
                 <input id="btnSearch" type="button" class="btnSearch" value="搜 索" onclick="btn_Search()" />

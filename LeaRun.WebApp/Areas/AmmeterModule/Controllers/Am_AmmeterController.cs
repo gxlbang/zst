@@ -32,6 +32,12 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
     /// </summary>
     public class Am_AmmeterController : PublicController<Am_Ammeter>
     {
+        public override ActionResult Index()
+        {
+            string _ModuleId = DESEncrypt.Encrypt("235ddccb-9114-404b-9632-06715c6ad496");
+            CookieHelper.WriteCookie("ModuleId", _ModuleId);
+            return View();
+        }
         /// <summary>
         /// ËÑË÷
         /// </summary>

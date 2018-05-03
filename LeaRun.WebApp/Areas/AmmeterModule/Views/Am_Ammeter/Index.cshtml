@@ -114,6 +114,12 @@
             gridview: true,
         });
     }
+    function btn_Log() {
+        var KeyValue = GetJqGridRowValue("#gridTable", "Number");
+        if (IsChecked(KeyValue)) {
+            Urlhref("/AmmeterModule/Am_AmmeterOperateLog/Index?AmNumber=" + KeyValue);
+        }
+    }
     //É¾³ý
     function btn_delete() {
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
