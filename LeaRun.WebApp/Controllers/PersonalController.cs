@@ -11,6 +11,7 @@ using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 
@@ -283,7 +284,7 @@ namespace LeaRun.WebApp.Controllers
         /// <returns></returns>
         public ActionResult MyBalance()
         {
-            
+
             var user = wbll.GetUserInfo(Request);
             var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Number='" + user.Number + "'");
             if (account != null && account.Number != null)
@@ -364,7 +365,7 @@ namespace LeaRun.WebApp.Controllers
                 charge.CreateTime = DateTime.Now;
                 charge.PayType = "微信支付";
                 charge.Moeny = money;
-                var statu = database.Insert <Am_Charge>(charge);
+                var statu = database.Insert<Am_Charge>(charge);
                 if (statu > 0)
                 {
                     List<DbParameter> parameter = new List<DbParameter>();
@@ -385,7 +386,7 @@ namespace LeaRun.WebApp.Controllers
 
                     else
                     {
-                        if (account.OpenId!=null )
+                        if (account.OpenId != null)
                         {
                             WePay _wePay = new WePay();
                             AlipayAndWepaySDK.Model.TransmiParameterModel model = new AlipayAndWepaySDK.Model.TransmiParameterModel();
@@ -402,7 +403,7 @@ namespace LeaRun.WebApp.Controllers
                         {
                             return Json(new { res = "No", msg = "支付失败，请先关注公众号" });
                         }
-                        
+
 
                     }
                 }
@@ -429,7 +430,7 @@ namespace LeaRun.WebApp.Controllers
                 ViewBag.Balance = account.Money;
                 List<DbParameter> parameter = new List<DbParameter>();
                 parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
-                var bank = database.FindEntityByWhere<Am_BankInfo>(" and U_Number=@U_Number",parameter .ToArray());
+                var bank = database.FindEntityByWhere<Am_BankInfo>(" and U_Number=@U_Number", parameter.ToArray());
                 ViewBag.Bank = bank;
             }
             return View();
@@ -489,10 +490,21 @@ namespace LeaRun.WebApp.Controllers
                         UserName = account.Account
                     };
                     account.Money = account.Money - money;
-                    if (database.Update<Ho_PartnerUser>(account)>0)
+                    if (database.Update<Ho_PartnerUser>(account) > 0)
                     {
-                        var moneyDetail = new Am_MoneyDetail {
-                             Number= CommonHelper.GetGuid, CreateTime =DateTime .Now, CreateUserId=user.Number, CreateUserName=user.Name, CurrMoney= account.Money, Money =money , OperateType=2, OperateTypeStr="提现", Remark ="", UserName =user .Account, U_Number=user.Number
+                        var moneyDetail = new Am_MoneyDetail
+                        {
+                            Number = CommonHelper.GetGuid,
+                            CreateTime = DateTime.Now,
+                            CreateUserId = user.Number,
+                            CreateUserName = user.Name,
+                            CurrMoney = account.Money,
+                            Money = money,
+                            OperateType = 2,
+                            OperateTypeStr = "提现",
+                            Remark = "",
+                            UserName = user.Account,
+                            U_Number = user.Number
                         };
                         database.Insert<Am_MoneyDetail>(moneyDetail);
 
@@ -502,7 +514,7 @@ namespace LeaRun.WebApp.Controllers
                             return Json(new { res = "Ok", msg = "成功提交申请" });
                         }
                     }
-                    
+
                 }
             }
             return Json(new { res = "No", msg = "提交失败" });
@@ -575,7 +587,7 @@ namespace LeaRun.WebApp.Controllers
                 var bank = new Am_BankInfo();
                 bank.Number = CommonHelper.GetGuid;
                 bank.Remark = "";
-                bank.UserName =user.Account;
+                bank.UserName = user.Account;
                 bank.U_Name = model.U_Name;
                 bank.U_Number = account.Number;
                 bank.BankAddress = model.BankAddress;
@@ -605,14 +617,14 @@ namespace LeaRun.WebApp.Controllers
             parameter.Add(DbFactory.CreateDbParameter("@Number", number));
             parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
 
-            var bank = database.FindEntityByWhere<Am_BankInfo>(" and U_Number=@U_Number and Number=@Number",parameter.ToArray());
+            var bank = database.FindEntityByWhere<Am_BankInfo>(" and U_Number=@U_Number and Number=@Number", parameter.ToArray());
             if (bank != null && bank.Number != null)
             {
-                if (database.Delete<Am_BankInfo>(bank)>0)
+                if (database.Delete<Am_BankInfo>(bank) > 0)
                 {
                     return Json(new { res = "No", msg = "删除成功" });
                 }
-                
+
             }
             return Json(new { res = "No", msg = "删除失败" });
         }
@@ -659,7 +671,7 @@ namespace LeaRun.WebApp.Controllers
             parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
             parameter.Add(DbFactory.CreateDbParameter("@Status", "1"));
 
-            var ammeterPermissionList = database.FindList<Am_AmmeterPermission>(" and U_Number=@U_Number and Status=@Status ",parameter.ToArray());
+            var ammeterPermissionList = database.FindList<Am_AmmeterPermission>(" and U_Number=@U_Number and Status=@Status ", parameter.ToArray());
             List<Am_Ammeter> list = new List<Am_Ammeter>();
             foreach (var item in ammeterPermissionList)
             {
@@ -667,7 +679,7 @@ namespace LeaRun.WebApp.Controllers
                 par.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
                 par.Add(DbFactory.CreateDbParameter("@Number", item.Ammeter_Number));
                 var model = database.FindEntityByWhere<Am_Ammeter>(" and U_Number=@U_Number and  Number=@Number", par.ToArray());
-                if (model!=null && model.Number !=null )
+                if (model != null && model.Number != null)
                 {
                     list.Add(model);
                 }
@@ -794,7 +806,7 @@ namespace LeaRun.WebApp.Controllers
                                 model.openId = account.OpenId;
                                 var payUrl = _wePay.BuildWePay(model, AlipayAndWepaySDK.Enum.EnumWePayTradeType.JSAPI);
 
-                                return Json(new { res = "No", msg = "充值失败,订单已支付",json= Newtonsoft.Json.JsonConvert.SerializeObject(payUrl) });
+                                return Json(new { res = "No", msg = "充值失败,订单已支付", json = Newtonsoft.Json.JsonConvert.SerializeObject(payUrl) });
                             }
                         }
                     }
@@ -865,7 +877,7 @@ namespace LeaRun.WebApp.Controllers
 
             if (Request.IsAjaxRequest())
             {
-                
+
                 return Json(chargeList);
             }
             else
@@ -1052,7 +1064,7 @@ namespace LeaRun.WebApp.Controllers
         {
             var user = wbll.GetUserInfo(Request);
             int recordCount = 0;
-           
+
 
             StringBuilder whereSb = new StringBuilder();
 
@@ -1066,18 +1078,18 @@ namespace LeaRun.WebApp.Controllers
                 whereSb.Append(" and BillCode=@BillCode");
                 parameter.Add(DbFactory.CreateDbParameter("@BillCode", billCode));
             }
-            if (star!=null )
+            if (star != null)
             {
                 whereSb.Append(" and SendTime>=@StarTime");
                 parameter.Add(DbFactory.CreateDbParameter("@StarTime", star));
             }
-            if (end!=null )
+            if (end != null)
             {
                 whereSb.Append(" and SendTime<=@EndTime");
                 parameter.Add(DbFactory.CreateDbParameter("@EndTime", end));
             }
-          
-            
+
+
 
 
             var billList = database.FindListPage<Am_Bill>(whereSb.ToString(), parameter.ToArray(), "Number", "desc", pageIndex, pageSize, ref recordCount);
@@ -1198,7 +1210,7 @@ namespace LeaRun.WebApp.Controllers
         /// <param name="imgList"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult RepairAdd(Am_Repair repair, List<string> imgList)
+        public ActionResult RepairAdd(string ammeterNumber, List<string> imgList, string explain)
         {
             var user = wbll.GetUserInfo(Request);
             if (imgList.Count > 5)
@@ -1208,30 +1220,72 @@ namespace LeaRun.WebApp.Controllers
 
             List<DbParameter> par = new List<DbParameter>();
             par.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
-            par.Add(DbFactory.CreateDbParameter("@Number", repair.AmmeterNumber));
+            par.Add(DbFactory.CreateDbParameter("@Number", ammeterNumber));
 
             var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number=@Number and U_Number=@U_Number", par.ToArray());
             if (ammeter != null && ammeter.Number != null)
             {
-                repair.Number = Utilities.CommonHelper.GetGuid;
-                repair.CreateTime = DateTime.Now;
-                repair.U_Number = user.Number;
-                repair.U_Name = user.Name;
-                repair.Status = 0;
-                repair.StatusStr = "提交报修";
-                repair.F_Number = ammeter.UY_Number;
-                repair.F_UserName = ammeter.UY_UserName;
-
+                var repair = new Am_Repair
+                {
+                    Number = Utilities.CommonHelper.GetGuid,
+                    CreateTime = DateTime.Now,
+                    U_Number = user.Number,
+                    U_Name = user.Name,
+                    Status = 0,
+                    StatusStr = "提交报修",
+                    F_Number = ammeter.UY_Number,
+                    F_UserName = ammeter.UY_UserName,
+                    Address = ammeter.Address,
+                    AmmeterCode = ammeter.AM_Code,
+                    AmmeterNumber = ammeter.Number,
+                    Cell = ammeter.Cell,
+                    City = ammeter.City,
+                    County = ammeter.County,
+                    Floor = ammeter.Floor,
+                    F_Name = ammeter.UY_Name,
+                    Province = ammeter.Province,
+                    RContent = explain,
+                    Remark = "",
+                    Room = ammeter.Room,
+                    UserName = user.Account
+                };
                 var status = database.Insert<Am_Repair>(repair);
                 if (status > 0)
                 {
                     List<Am_RepairImage> repairImageList = new List<Am_RepairImage>();
                     foreach (var item in imgList)
                     {
+                        var base64 = item;
+                        var imagePath = "";
+                        if (base64.Contains("data:image"))
+                        {
+                            Regex reg = new Regex("data:image/(.*);base64,");
+                            //正则替换
+                            base64 = reg.Replace(base64, "");
+
+                            //转换为byte数组
+                            byte[] arr = Convert.FromBase64String(base64);
+                            //转换为内存流
+                            var ms = new MemoryStream(arr);
+                            //转换为bitmap图片对象
+                            var bmp = new System.Drawing.Bitmap(ms);
+                            var path = "/UpLoads/Images/Repair/";
+
+                            Random r = new Random();
+                            string saveName = "UP_RI_" + DateTime.Now.ToString("yyyyMMddhhmmssff" + r.Next(0, 999).ToString().PadLeft(3, '0')) + ".jpg";//实际保存文件名           
+                            string phyPath = Request.MapPath(path);
+                            if (!System.IO.Directory.Exists(phyPath))
+                            {
+                                System.IO.Directory.CreateDirectory(phyPath);
+                            }
+                            bmp.Save(phyPath + saveName);
+                            imagePath = phyPath + saveName;
+                        }
+                         
                         var model = new Am_RepairImage
                         {
                             Number = Utilities.CommonHelper.GetGuid,
-                            ImagePath = item,
+                            ImagePath = imagePath,
                             Repair_Number = repair.Number,
                             ImageMark = "",
                             Remark = ""
@@ -1250,24 +1304,44 @@ namespace LeaRun.WebApp.Controllers
         /// <param name="pageIndex"></param>
         /// <param name="pageSize"></param>
         /// <returns></returns>
-        public ActionResult RepairRecord(int pageIndex = 1, int pageSize = 10)
+        public ActionResult RepairRecord( int pageSize = 10)
         {
             var user = wbll.GetUserInfo(Request);
-
             List<DbParameter> parameter = new List<DbParameter>();
             parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
 
+           var pending= database.FindCount<Am_Repair>(" and U_Number=@U_Number and  Status=0", parameter.ToArray());
+            ViewBag.recordCount = (int)Math.Ceiling(1.0 * pending / pageSize);
+            var processed= database.FindCount<Am_Repair>(" and U_Number=@U_Number and  Status=1", parameter.ToArray());
+            ViewBag.recordCount1 = (int)Math.Ceiling(1.0 * pending / pageSize);
+            return View();
+        }
+        /// <summary>
+        /// 获取报修记录
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        public ActionResult RepairRecordList(int type,int pageIndex = 1, int pageSize = 10)
+        {
+            var user = wbll.GetUserInfo(Request);
             int recordCount = 0;
-            var repairList = database.FindListPage<Am_Repair>(" and U_Number=@U_Number", parameter.ToArray(), "Number", "desc", pageIndex, pageSize, ref recordCount);
-            ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize); ;
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+            parameter.Add(DbFactory.CreateDbParameter("@Status", type));
+
+            var repairlList = database.FindListPage<Am_Repair>(" and U_Number=@U_Number and  Status=@Status", parameter.ToArray(), "Number", "desc", pageIndex, pageSize, ref recordCount);
+            //ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize); ;
             if (Request.IsAjaxRequest())
             {
-                return Json(repairList);
+                return Json(repairlList);
             }
             else
             {
                 return View();
             }
+
         }
         /// <summary>
         /// 报修详情
@@ -1434,6 +1508,33 @@ namespace LeaRun.WebApp.Controllers
                 var rentBillList = database.FindList<Am_RentBill>(" and RentNumber=@RentNumber", par1.ToArray());
             }
             return View(rent);
+        }
+        public ActionResult Upload(HttpPostedFileBase file)
+        {
+            if (file == null)
+            {
+                return Content("没有文件！");
+            }
+
+
+
+            //Random r = new Random(100); //产生一个随机数据
+            string Extends = DateTime.Now.ToFileTime().ToString();  //转换成windows文件夹时间
+            //获取文件的后缀名称
+            string geshi = file.FileName.Substring(file.FileName.IndexOf('.'));
+
+            //保存的路径 
+            string path = Path.Combine(Request.MapPath("~/Images"), Extends + geshi);
+            try
+            {
+                file.SaveAs(path);
+            }
+            catch (Exception x)
+            {
+                return Content("上传失败！");
+            }
+
+            return Content("上传成功！");
         }
     }
 }

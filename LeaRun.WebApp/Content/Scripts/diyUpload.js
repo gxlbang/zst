@@ -143,17 +143,8 @@
             },
             //配置生成缩略图的选项
             thumb:{
-                width:160,
-                height:120,
-                // 图片质量，只有type为`image/jpeg`的时候才有效。
-                quality:90,
-                // 是否允许放大，如果想要生成小图的时候不失真，此选项应该设置为false.
-                allowMagnify:false,
-                // 是否允许裁剪。
-                crop:true,
-                // 为空的话则保留原有图片格式。
-                // 否则强制转换成指定的类型。
-                type:"image/jpeg"
+                compress: false,
+                resize: false
             },
             //文件上传方式
             method:"POST",
@@ -166,9 +157,11 @@
             // 分片大小
             chunkSize:512 * 1024,
             //最大上传的文件数量, 总文件大小,单个文件大小(单位字节);
-            fileNumLimit:50,
+            fileNumLimit:5,
             fileSizeLimit:500000 * 1024,
-            fileSingleSizeLimit:50000 * 1024,
+            fileSingleSizeLimit: 50000 * 1024,
+            compress: false,
+            resize: false
         };
     }
 

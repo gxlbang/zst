@@ -8875,6 +8875,7 @@
     <Content Include="Content\Scripts\layui\lay\modules\upload.js" />
     <Content Include="Content\Scripts\layui\lay\modules\util.js" />
     <Content Include="Content\Scripts\learunui-framework.js" />
+    <Content Include="Content\Scripts\leftnav.js" />
     <Content Include="Content\Scripts\lhgdialog\default.css" />
     <Content Include="Content\Scripts\lhgdialog\icons\32X32\fail.png" />
     <Content Include="Content\Scripts\lhgdialog\icons\32X32\hits.png" />
@@ -9496,6 +9497,7 @@
     <Content Include="Views\Personal\RepairAdd1.cshtml" />
     <Content Include="Views\Shared\_Template.cshtml" />
     <Content Include="Views\Personal\RepairAdd2.cshtml" />
+    <Content Include="Views\Personal\RepairRecord.cshtml" />
     <None Include="Views\Utility\PrintPage.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
