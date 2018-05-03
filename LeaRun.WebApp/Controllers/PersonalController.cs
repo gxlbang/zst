@@ -23,8 +23,10 @@ namespace LeaRun.WebApp.Controllers
         IDatabase database = DataFactory.Database();
         WebData wbll = new WebData();
 
-        //
-        // GET: /Personal/
+        /// <summary>
+        /// 个人中心
+        /// </summary>
+        /// <returns></returns>
 
         public ActionResult Index()
         {
