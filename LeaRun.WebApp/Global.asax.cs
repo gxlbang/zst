@@ -49,7 +49,7 @@ namespace LeaRun.WebApp
         /// <param name="e"></param>
         protected void Application_Error(object sender, EventArgs e)
         {
-            var isDebug = false;
+            var isDebug = true;
             if (isDebug)
             {
                 Exception ex = this.Context.Server.GetLastError();
