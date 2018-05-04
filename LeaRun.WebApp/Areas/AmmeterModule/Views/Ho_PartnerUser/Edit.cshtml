@@ -77,7 +77,7 @@
             return false;
         }
         //var postData = GetWebControls("#form1");
-        var postData = jQuery.parseJSON('{"Name":"' + $("#Name").val() +
+        var postData = jQuery.parseJSON('{"Name":"' + $("#Name").val() + '","Password":"' + $("#Password").val() +
             '","Account":"' + $("#Account").val() + '","Address":"' + $("#Address").val() +
             '","CodeImg1":"' + $("#CodeImg1").val() + '","CodeImg2":"' + $("#CodeImg2").val() +
             '","Status":"' + $("#Status").val() + '","StatusStr":"' + $("#Status").find("option:selected").text() +
@@ -149,6 +149,7 @@
             <td class='formValue'>
                 <input id="uploadify1" name="uploadify1" type="file" />
                 <input id="CodeImg2" type="hidden" />
+                <input id="Password" type="hidden" />
             </td>
         </tr>
         <tr>

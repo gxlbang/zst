@@ -92,9 +92,9 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
                             var user = new Base_User()
                             {
                                 Account = model.Account,
-                                Password = model.Password,
-                                RealName=model.Name,
-                                Mobile=model.Account,
+                                Password = "123456",
+                                RealName = model.Name,
+                                Mobile = model.Account,
                                 SortCode = CommonHelper.GetInt(BaseFactory.BaseHelper().GetSortCode<Base_User>("SortCode")),
                                 InnerUser = 3,
                                 DepartmentId = "不能删除",
@@ -102,6 +102,7 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
                                 Code = "bd548d5b-1783-4582-9007-bb5c87803679"
                             };
                             user.Create();
+                            user.Password = model.Password;
                             database.Insert(user, isOpenTrans);
                             //权限分配-复制上级权限-bd548d5b-1783-4582-9007-bb5c87803679(此用户不能删除)
                             CopyUserRight("bd548d5b-1783-4582-9007-bb5c87803679", user.UserId, isOpenTrans);
