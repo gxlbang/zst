@@ -398,6 +398,12 @@ namespace LeaRun.Entity
         /// <returns></returns>
         [DisplayName("UpdateTime")]
         public DateTime? UpdateTime { get; set; }
+        /// <summary>
+        /// AgoDay
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("AgoDay")]
+        public int? AgoDay { get; set; }
         #endregion
 
         #region À©Õ¹²Ù×÷

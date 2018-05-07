@@ -222,6 +222,7 @@
     <Compile Include="CommonClass\WeixinConfig.cs" />
     <Compile Include="CommonClass\WeixinHelper.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\PayController.cs" />
     <Compile Include="Controllers\PersonalController.cs" />
     <Compile Include="Controllers\ProprietorController.cs" />
@@ -9438,6 +9439,7 @@
     <Content Include="Areas\AmmeterModule\Views\Am_ContractImage\Detail.cshtml" />
     <Content Include="Areas\AmmeterModule\Views\Am_ContractImage\Form.cshtml" />
     <Content Include="Areas\AmmeterModule\Views\Am_ContractImage\Index.cshtml" />
+    <None Include="Properties\PublishProfiles\Ammeter.pubxml" />
     <None Include="Properties\PublishProfiles\House.pubxml" />
     <Content Include="Views\Home\SkinIndex.cshtml" />
     <Content Include="Views\Login\Default.cshtml" />
@@ -9499,6 +9501,10 @@
     <Content Include="Views\Personal\RepairAdd2.cshtml" />
     <Content Include="Views\Personal\RepairRecord.cshtml" />
     <Content Include="Views\Error\ErrorEx.cshtml" />
+    <Content Include="Views\Common\Contract.cshtml" />
+    <Content Include="Views\TestDemo\CollectAddApi.cshtml" />
+    <Content Include="Views\TestDemo\AmmeterAddApi.cshtml" />
+    <Content Include="Views\TestDemo\AmmeterOpenCloseApi.cshtml" />
     <None Include="Views\Utility\PrintPage.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -9509,6 +9515,7 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
+    <Content Include="XmlConfig\config.json" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="XmlConfig\log4net.config" />
@@ -9523,6 +9530,10 @@
     <ProjectReference Include="..\AlipayAndWepaySDK\AlipayAndWepaySDK.csproj">
       <Project>{3c998ee8-7f0b-4d26-a5b9-abc15ad6298e}</Project>
       <Name>AlipayAndWepaySDK</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AmmeterSDK\AmmeterSDK.csproj">
+      <Project>{5dce796b-eaac-439e-b332-556dc4ac2469}</Project>
+      <Name>AmmeterSDK</Name>
     </ProjectReference>
     <ProjectReference Include="..\Deepleo.Weixin.SDK\Deepleo.Weixin.SDK.csproj">
       <Project>{e7421a8d-6149-402a-82f8-f6d7728ceed1}</Project>

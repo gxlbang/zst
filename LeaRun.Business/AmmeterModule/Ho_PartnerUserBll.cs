@@ -43,6 +43,12 @@ namespace LeaRun.Business
             List<DbParameter> parameter = new List<DbParameter>();
             strSql.Append(@"SELECT  *
                             FROM  Ho_PartnerUser where 1=1 ");
+            //用户限定
+            if (ManageProvider.Provider.Current().DepartmentId == "运营商")
+            {
+                strSql.Append(@" AND As_Number = @As_Number");
+                parameter.Add(DbFactory.CreateDbParameter("@As_Number", ManageProvider.Provider.Current().CompanyId));
+            }
             //状态
             if (Stuts >= 0)
             {
@@ -78,6 +84,12 @@ namespace LeaRun.Business
             List<DbParameter> parameter = new List<DbParameter>();
             strSql.Append(@"SELECT  *
                             FROM  Ho_PartnerUser where 1=1 ");
+            //用户限定
+            if (ManageProvider.Provider.Current().DepartmentId == "运营商")
+            {
+                strSql.Append(@" AND As_Number = @As_Number");
+                parameter.Add(DbFactory.CreateDbParameter("@As_Number", ManageProvider.Provider.Current().CompanyId));
+            }
             //状态
             if (Stuts >= 0)
             {

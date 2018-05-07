@@ -32,10 +32,10 @@ select,button { cursor: pointer; }
 
 .red { color: #f00; }
 .inp { display: inline-block; width: 1rem; text-align: center; height: 0.44rem; color: #333; line-height: 0.42rem; font-size: 0.28rem; border-bottom: 0.02rem solid #f00; }
-.inp-long { width: 3rem; text-align: left; padding-left: 0.1rem; }
+.inp-long { width: 4rem; text-align: left; padding-left: 0.1rem; }
 .text-right { padding-top: 0.4rem; padding-left: 1.3rem; }
 .text-right .inp { width: 0.8rem; }
-.text-right .inp-long { width: 3.2rem; }
+.text-right .inp-long { width: 3.6rem; }
 .span-pa { padding-left: 0.4rem; }
 .b-blod { font-weight: bold; color: #f00; }
 .form { width: 100%; }

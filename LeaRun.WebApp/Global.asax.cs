@@ -29,7 +29,7 @@ namespace LeaRun.WebApp
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             WeixinConfig.Register();
-          
+
         }
         /// <summary>
         /// 离开应用程序启动这件事会发生
@@ -40,6 +40,17 @@ namespace LeaRun.WebApp
         {
             Application.Lock();
             Application["OnLineCount"] = (int)Application["OnLineCount"] - 1;
+            Application.UnLock();
+        }
+        /// <summary>
+        /// 一个会话启动
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void Session_Start(object sender, EventArgs e)
+        {
+            Application.Lock();
+            Application["OnLineCount"] = (int)Application["OnLineCount"] + 1;
             Application.UnLock();
         }
         /// <summary>
@@ -82,7 +93,8 @@ namespace LeaRun.WebApp
                     System.Web.HttpContext.Current.Response.End();
                 }
             }
-            else {
+            else
+            {
                 const string url = "<script>window.location.href='/Error/ErrorEx'</script>";
 
                 System.Web.HttpContext.Current.Response.Write(url);
