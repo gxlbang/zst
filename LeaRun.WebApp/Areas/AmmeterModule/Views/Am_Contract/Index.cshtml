@@ -5,116 +5,97 @@
 <script type="text/javascript">
     $(function () {
         GetGrid();
+        BindCombobox();
     })
+    //初始化绑定下拉框
+    function BindCombobox() {
+        //所在省
+        $("#ProvinceId").append("<option value=''>==请选择==</option>");
+        $("#CityId").append("<option value=''>==请选择==</option>");
+        $("#CountyId").append("<option value=''>==请选择==</option>");
+        AjaxJson("/Utility/GetProvinceCityListJson", { ParentId: 0 }, function (DataJson) {
+            $.each(DataJson, function (i) {
+                $("#ProvinceId").append($("<option></option>").val(DataJson[i].Code).html(DataJson[i].FullName));
+            });
+        })
+        //所在市
+        $("#ProvinceId").change(function () {
+            BindCityId();
+            BindCountyId();
+        });
+        //所在县区
+        $("#CityId").change(function () {
+            BindCountyId();
+        });
+    }
+    //所在市下拉框
+    function BindCityId() {
+        $("#CityId").html("");
+        $("#CityId").append("<option value=''>==请选择==</option>");
+        AjaxJson("/Utility/GetProvinceCityListJson", { ParentId: $("#ProvinceId").val() }, function (DataJson) {
+            $.each(DataJson, function (i) {
+                $("#CityId").append($("<option></option>").val(DataJson[i].Code).html(DataJson[i].FullName));
+            });
+        })
+    }
+    //所在县区
+    function BindCountyId() {
+        $("#CountyId").html("");
+        $("#CountyId").append("<option value=''>==请选择==</option>");
+        AjaxJson("/Utility/GetProvinceCityListJson", { ParentId: $("#CityId").val() }, function (DataJson) {
+            $.each(DataJson, function (i) {
+                $("#CountyId").append($("<option></option>").val(DataJson[i].Code).html(DataJson[i].FullName));
+            });
+        })
+    }
     //加载表格
     function GetGrid() {
         $("#gridTable").jqGrid({
-        url: "@Url.Content("~/AmmeterModule/Am_Contract/GridPageJson")",
+        url: "@Url.Content("~/AmmeterModule/Am_Contract/GridPageListJson")",
         datatype: "json",
         height: $(window).height() - 149,
         autowidth: true,
         colModel: [
-                { label: 'Number', name: 'Number', index: 'Number', width: 0, align: 'left',sortable: true  },
-                { label: 'AmmeterNumber', name: 'AmmeterNumber', index: 'AmmeterNumber', width: 0, align: 'left',sortable: true  },
-                { label: 'AmmeterCode', name: 'AmmeterCode', index: 'AmmeterCode', width: 0, align: 'left',sortable: true  },
-                { label: 'TemplateNumber', name: 'TemplateNumber', index: 'TemplateNumber', width: 0, align: 'left',sortable: true  },
-                { label: 'CreateTime', name: 'CreateTime', index: 'CreateTime', width: 0, align: 'left',sortable: true  },
-                { label: 'F_U_Number', name: 'F_U_Number', index: 'F_U_Number', width: 0, align: 'left',sortable: true  },
-                { label: 'F_UserName', name: 'F_UserName', index: 'F_UserName', width: 0, align: 'left',sortable: true  },
-                { label: 'F_U_Name', name: 'F_U_Name', index: 'F_U_Name', width: 0, align: 'left',sortable: true  },
-                { label: 'Province', name: 'Province', index: 'Province', width: 0, align: 'left',sortable: true  },
-                { label: 'City', name: 'City', index: 'City', width: 0, align: 'left',sortable: true  },
-                { label: 'County', name: 'County', index: 'County', width: 0, align: 'left',sortable: true  },
-                { label: 'Address', name: 'Address', index: 'Address', width: 0, align: 'left',sortable: true  },
-                { label: 'Cell', name: 'Cell', index: 'Cell', width: 0, align: 'left',sortable: true  },
-                { label: 'Floor', name: 'Floor', index: 'Floor', width: 0, align: 'left',sortable: true  },
-                { label: 'Room', name: 'Room', index: 'Room', width: 0, align: 'left',sortable: true  },
-                { label: 'RoomNum', name: 'RoomNum', index: 'RoomNum', width: 0, align: 'left',sortable: true  },
-                { label: 'HallNum', name: 'HallNum', index: 'HallNum', width: 0, align: 'left',sortable: true  },
-                { label: 'KitchenNum', name: 'KitchenNum', index: 'KitchenNum', width: 0, align: 'left',sortable: true  },
-                { label: 'ToiletNum', name: 'ToiletNum', index: 'ToiletNum', width: 0, align: 'left',sortable: true  },
-                { label: 'HouseSize', name: 'HouseSize', index: 'HouseSize', width: 0, align: 'left',sortable: true  },
-                { label: 'Useing', name: 'Useing', index: 'Useing', width: 0, align: 'left',sortable: true  },
-                { label: 'UseingSize', name: 'UseingSize', index: 'UseingSize', width: 0, align: 'left',sortable: true  },
-                { label: 'Money', name: 'Money', index: 'Money', width: 0, align: 'left',sortable: true  },
-                { label: 'MoneyStr', name: 'MoneyStr', index: 'MoneyStr', width: 0, align: 'left',sortable: true  },
-                { label: 'DepositMoney', name: 'DepositMoney', index: 'DepositMoney', width: 0, align: 'left',sortable: true  },
-                { label: 'DepositMoneyStr', name: 'DepositMoneyStr', index: 'DepositMoneyStr', width: 0, align: 'left',sortable: true  },
-                { label: 'CycleTime', name: 'CycleTime', index: 'CycleTime', width: 0, align: 'left',sortable: true  },
-                { label: 'TotalMoney', name: 'TotalMoney', index: 'TotalMoney', width: 0, align: 'left',sortable: true  },
-                { label: 'TotalMoneyStr', name: 'TotalMoneyStr', index: 'TotalMoneyStr', width: 0, align: 'left',sortable: true  },
-                { label: 'BankInfo', name: 'BankInfo', index: 'BankInfo', width: 0, align: 'left',sortable: true  },
-                { label: 'BankUserName', name: 'BankUserName', index: 'BankUserName', width: 0, align: 'left',sortable: true  },
-                { label: 'BankCode', name: 'BankCode', index: 'BankCode', width: 0, align: 'left',sortable: true  },
-                { label: 'Am_Money', name: 'Am_Money', index: 'Am_Money', width: 0, align: 'left',sortable: true  },
-                { label: 'WaterMoney', name: 'WaterMoney', index: 'WaterMoney', width: 0, align: 'left',sortable: true  },
-                { label: 'PropertyMoeny', name: 'PropertyMoeny', index: 'PropertyMoeny', width: 0, align: 'left',sortable: true  },
-                { label: 'GarbageMoney', name: 'GarbageMoney', index: 'GarbageMoney', width: 0, align: 'left',sortable: true  },
-                { label: 'NetMoney', name: 'NetMoney', index: 'NetMoney', width: 0, align: 'left',sortable: true  },
-                { label: 'PenaltyTime', name: 'PenaltyTime', index: 'PenaltyTime', width: 0, align: 'left',sortable: true  },
-                { label: 'PenaltyMoney', name: 'PenaltyMoney', index: 'PenaltyMoney', width: 0, align: 'left',sortable: true  },
-                { label: 'BackTime', name: 'BackTime', index: 'BackTime', width: 0, align: 'left',sortable: true  },
-                { label: 'BackMoney', name: 'BackMoney', index: 'BackMoney', width: 0, align: 'left',sortable: true  },
-                { label: 'GoTime', name: 'GoTime', index: 'GoTime', width: 0, align: 'left',sortable: true  },
-                { label: 'GoMoney', name: 'GoMoney', index: 'GoMoney', width: 0, align: 'left',sortable: true  },
-                { label: 'GoOnTime', name: 'GoOnTime', index: 'GoOnTime', width: 0, align: 'left',sortable: true  },
-                { label: 'RentMoneyTime', name: 'RentMoneyTime', index: 'RentMoneyTime', width: 0, align: 'left',sortable: true  },
-                { label: 'HoName', name: 'HoName', index: 'HoName', width: 0, align: 'left',sortable: true  },
-                { label: 'HoUserName', name: 'HoUserName', index: 'HoUserName', width: 0, align: 'left',sortable: true  },
-                { label: 'HoUserMobile', name: 'HoUserMobile', index: 'HoUserMobile', width: 0, align: 'left',sortable: true  },
-                { label: 'Remark', name: 'Remark', index: 'Remark', width: 0, align: 'left',sortable: true  },
-                { label: 'U_Number', name: 'U_Number', index: 'U_Number', width: 0, align: 'left',sortable: true  },
-                { label: 'UserName', name: 'UserName', index: 'UserName', width: 0, align: 'left',sortable: true  },
-                { label: 'U_Name', name: 'U_Name', index: 'U_Name', width: 0, align: 'left',sortable: true  },
-                { label: 'RentBeginTime', name: 'RentBeginTime', index: 'RentBeginTime', width: 0, align: 'left',sortable: true  },
-                { label: 'RentEndTime', name: 'RentEndTime', index: 'RentEndTime', width: 0, align: 'left',sortable: true  },
-                { label: 'RentDate', name: 'RentDate', index: 'RentDate', width: 0, align: 'left',sortable: true  },
-                { label: 'U_Code', name: 'U_Code', index: 'U_Code', width: 0, align: 'left',sortable: true  },
-                { label: 'U_Mobile', name: 'U_Mobile', index: 'U_Mobile', width: 0, align: 'left',sortable: true  },
-                { label: 'CreateAddress', name: 'CreateAddress', index: 'CreateAddress', width: 0, align: 'left',sortable: true  },
-                { label: 'Status', name: 'Status', index: 'Status', width: 0, align: 'left',sortable: true  },
-                { label: 'StatusStr', name: 'StatusStr', index: 'StatusStr', width: 0, align: 'left',sortable: true  },
-                { label: 'UpdateTime', name: 'UpdateTime', index: 'UpdateTime', width: 0, align: 'left',sortable: true  },
+                { label: 'Number', name: 'Number', index: 'Number', width: 0, align: 'left', hidden: true },
+                { label: 'AmmeterNumber', name: 'AmmeterNumber', index: 'AmmeterNumber', width: 0, align: 'left', hidden: true },
+                { label: 'F_U_Number', name: 'F_U_Number', index: 'F_U_Number', width: 0, align: 'left', hidden: true },
+                { label: 'U_Number', name: 'U_Number', index: 'U_Number', width: 0, align: 'left', hidden: true },
+                { label: '电表表号', name: 'AmmeterCode', index: 'AmmeterCode', width: 120, align: 'left', sortable: true },
+                { label: '租户', name: 'UserName', index: 'UserName', width: 120, align: 'left', sortable: true },
+                { label: '租户姓名', name: 'U_Name', index: 'U_Name', width: 80, align: 'left', sortable: true },
+                {
+                    label: "签订日期", name: "CreateTime", index: "CreateTime", width: 150,
+                    formatter: function (value, options, rowObject) {
+                        return formatDate(value, 'yyyy-MM-dd hh:mm:ss');
+                    }
+                },
+                { label: '签订地址', name: 'CreateAddress', index: 'CreateAddress', width: 120, align: 'left', sortable: true },
+                { label: '状态', name: 'StatusStr', index: 'StatusStr', width: 60, align: 'left', sortable: true },
+                { label: '运营商帐号', name: 'F_UserName', index: 'F_UserName', width: 120, align: 'left', sortable: true },
+                { label: '运营商', name: 'F_U_Name', index: 'F_U_Name', width: 80, align: 'left',sortable: true  },
+                { label: '省', name: 'Province', index: 'Province', width: 60, align: 'left',sortable: true  },
+                { label: '市', name: 'City', index: 'City', width: 60, align: 'left',sortable: true  },
+                { label: '区', name: 'County', index: 'County', width: 60, align: 'left',sortable: true  },
+                { label: '地址', name: 'Address', index: 'Address', width: 150, align: 'left',sortable: true  },
+                { label: '单元', name: 'Cell', index: 'Cell', width: 60, align: 'left',sortable: true  },
+                { label: '楼层', name: 'Floor', index: 'Floor', width: 60, align: 'left',sortable: true  },
+                { label: '房号', name: 'Room', index: 'Room', width: 60, align: 'left',sortable: true  },
         ],
+        viewrecords: true,
         pager: "#gridPager",
-        sortname: '',
+        sortname: 'CreateTime',
         sortorder: 'desc',
         rownumbers: true,
         shrinkToFit: false,
         gridview: true,
     });
 }
-    //新增
-    function btn_add() {
-        var url = "/AmmeterModule/Am_Contract/Form"
-        openDialog(url, "Form", "新增Am_Contract", 770, 395, function (iframe) {
-            top.frames[iframe].AcceptClick()
-        });
-    }
-    //编辑
-    function btn_edit() {
-        var KeyValue = GetJqGridRowValue("#gridTable", "Number");
-        if (IsChecked(KeyValue)) {
-            var url = "/AmmeterModule/Am_Contract/Form?KeyValue=" + KeyValue;
-            openDialog(url, "Form", "编辑Am_Contract", 770, 395, function (iframe) {
-                top.frames[iframe].AcceptClick();
-            });
-        }
-    }
-    //删除
-    function btn_delete() {
-        var KeyValue = GetJqGridRowValue("#gridTable", "Number");
-        if (IsDelData(KeyValue)) {
-            var delparm = 'KeyValue=' + KeyValue;
-            delConfig('/AmmeterModule/Am_Contract/Delete', delparm, KeyValue.split(",").length);
-        }
-    }
     //明细
     function btn_detail() {
         var KeyValue = GetJqGridRowValue("#gridTable", "Number");
         if (IsChecked(KeyValue)) {
-            var url = "/AmmeterModule/Am_Contract/Detail?KeyValue=" + KeyValue;
-            Dialog(url, "Detail", "Am_Contract明细", 820, 500, function (iframe) {
+            var url = "/Common/Contract?KeyValue=" + KeyValue + "&Device=PC";
+            Dialog(url, "Detail", "合同明细", 820, 500, function (iframe) {
                 top.frames[iframe].AcceptClick();
             });
         }
@@ -122,7 +103,76 @@
     //刷新
     function windowload() {
         $("#gridTable").trigger("reloadGrid"); //重新载入
-        
+
+    }
+    //搜索
+    function btn_Search() {
+        var keywords = $("#keywords").val();
+        var Status = $("#Status").val();
+        var BeginTime = $("#BeginTime").val();
+        var EndTime = $("#EndTime").val();
+        var ProvinceId = "", CityId = "", CountyId = "";
+        if (IsNullOrEmpty($("#ProvinceId").val())) {
+            ProvinceId = $("#ProvinceId").find("option:selected").text();
+        }
+        if (IsNullOrEmpty($("#CityId").val())) {
+            CityId = $("#CityId").find("option:selected").text();
+        }
+        if (IsNullOrEmpty($("#CountyId").val())) {
+            CountyId = $("#CountyId").find("option:selected").text();
+        }
+        $("#gridTable").jqGrid('setGridParam', {
+            url: "@Url.Content("~/AmmeterModule/Am_Contract/GridPageListJson")?Status=" + Status + '&Keyword=' + keywords +
+                '&ProvinceId=' + ProvinceId + '&CityId=' + CityId + '&CountyId=' + CountyId +
+                '&BeginTime=' + BeginTime + '&EndTime=' + EndTime, page: 1
+    }).trigger('reloadGrid');
+    }
+    //要打印数据源，子页面调用的函数
+    function PrintDataSource() {
+        var columnModel = $("#gridTable").jqGrid('getGridParam', 'colModel');
+        var dataModel = $("#gridTable").jqGrid("getRowData");
+        //var footerData = $("#gridTable").jqGrid("footerData");
+        var JsonData = {
+            columnModel: columnModel,
+            dataModel: dataModel,
+            //footerData: footerData,
+        }
+        return JsonData;
+    }
+    //点击打印
+    function btn_Print() {
+        PrintDialog("/Utility/PrintPage", "PrintPage", "打印当前页", 1200, 500, function (iframe) {
+            top.frames[iframe].SubmitPrint()
+        });
+    }
+    //导出Excel
+    function btn_derive() {
+        //SetDeriveExcel("#gridTable", "订单信息");
+        //openDialog("/CommonModule/ExcelImport/DeriveDialog", "DeriveDialog", "订单信息", 600, 300, function (iframe) {
+        //    top.frames[iframe].AcceptClick();
+        //});
+        //var SelectedField = ""; $('#AccessView .selected a').each(function () { SelectedField += $(this).attr('id') + ","; });
+        Loading(true, "正在处理要导出数据...");
+        var keywords = $("#keywords").val();
+        var Status = $("#Status").val();
+        var BeginTime = $("#BeginTime").val();
+        var EndTime = $("#EndTime").val();
+        var ProvinceId="", CityId="", CountyId="";
+        if (IsNullOrEmpty($("#ProvinceId").val())) {
+            ProvinceId = $("#ProvinceId").find("option:selected").text();
+        }
+        if (IsNullOrEmpty($("#CityId").val())) {
+            CityId = $("#CityId").find("option:selected").text();
+        }
+        if (IsNullOrEmpty($("#CountyId").val())) {
+            CountyId = $("#CountyId").find("option:selected").text();
+        }
+        window.setTimeout(function () {
+            location.href = "/AmmeterModule/Am_Contract/ExportExcel??Keyword=" + keywords + '&Status=' + Status +
+                '&ProvinceId=' + ProvinceId + '&CityId=' + CityId + '&CountyId=' + CountyId +
+                '&BeginTime=' + BeginTime + '&EndTime=' + EndTime;
+            Loading(false);
+        }, 200);
     }
 </script>
 <!--工具栏-->
@@ -137,6 +187,35 @@
             <th>关键字：</th>
             <td>
                 <input id="keywords" type="text" class="txt" style="width: 200px" />
+            </td>
+            <th class="formTitle">所在省：</th>
+            <td class="formValue">
+                <select id="ProvinceId" class="select" style="width: 100px"></select>
+            </td>
+            <th class="formTitle">所在市：</th>
+            <td class="formValue">
+                <select id="CityId" class="select" style="width: 100px"></select>
+            </td>
+            <th class="formTitle">所在县区：</th>
+            <td class="formValue">
+                <select id="CountyId" class="select" style="width: 100px"></select>
+            </td>
+            <th>状态：</th>
+            <td>
+                <select id="Status" class="select" style="width: 80px">
+                    <option value="-1">请选择</option>
+                    <option value="0">已生成</option>
+                    <option value="1">已签订</option>
+                    <option value="1">已失效</option>
+                </select>
+            </td>
+            <th>合同日期：</th>
+            <td>
+                <input id="BeginTime" type="text" class="txt Wdate" value="@LeaRun.Utilities.DateTimeHelper.GetDate(-7)" style="width: 120px" onfocus="var endDate=$dp.$('EndTime');WdatePicker({onpicked:function(){EndTime.focus();},maxDate:'#F{$dp.$D(\'EndTime\')}'})" />
+            </td>
+            <td>-</td>
+            <td>
+                <input id="EndTime" type="text" class="txt Wdate" value="@LeaRun.Utilities.DateTimeHelper.GetToday()" style="width: 120px" onfocus="WdatePicker({ minDate: '#F{$dp.$D(\'BeginTime\')}' })" />
             </td>
             <td>
                 <input id="btnSearch" type="button" class="btnSearch" value="搜 索" onclick="btn_Search()" />

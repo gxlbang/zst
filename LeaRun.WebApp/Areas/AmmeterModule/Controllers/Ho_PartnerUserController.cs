@@ -39,7 +39,7 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
         /// 搜索
         /// </summary>
         /// <returns></returns>
-        public ActionResult GridPageListJson(JqGridParam jqgridparam, string Role, string Keyword, int Stuts)
+        public ActionResult GridPageListJson(JqGridParam jqgridparam, string Role, string Keyword, [DefaultValue(-1)]int Stuts)
         {
             try
             {
@@ -83,28 +83,44 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
                 string Message = KeyValue == "" ? "新增成功。" : "编辑成功。";
                 if (!string.IsNullOrEmpty(KeyValue))
                 {
+                    var userList = database.FindList<Base_User>(" and Account = '" + model.Account + "'");
                     if (model.UserRole == "运营商")//选择了运营商才添加
                     {
-                        var usermodelNum = database.FindCount<Base_User>(" and Account = '" + model.Account + "'");
-                        if (usermodelNum < 1)
+                        if (userList.Count < 1)
                         {
                             //如果添加运营商,则要往后台用户表添加一个帐号
                             var user = new Base_User()
                             {
                                 Account = model.Account,
-                                Password = model.Password,
-                                RealName=model.Name,
-                                Mobile=model.Account,
+                                Password = "123456",
+                                RealName = model.Name,
+                                Mobile = model.Account,
                                 SortCode = CommonHelper.GetInt(BaseFactory.BaseHelper().GetSortCode<Base_User>("SortCode")),
                                 InnerUser = 3,
-                                DepartmentId = "不能删除",
-                                CompanyId = "BaseUser",
+                                DepartmentId = "运营商",
+                                CompanyId = KeyValue,  //把用户编号记录
                                 Code = "bd548d5b-1783-4582-9007-bb5c87803679"
                             };
                             user.Create();
+                            user.Password = model.Password;
                             database.Insert(user, isOpenTrans);
                             //权限分配-复制上级权限-bd548d5b-1783-4582-9007-bb5c87803679(此用户不能删除)
                             CopyUserRight("bd548d5b-1783-4582-9007-bb5c87803679", user.UserId, isOpenTrans);
+                        }
+                        else {
+                            //修改后台用户信息
+                            userList[0].Account = model.Account;
+                            userList[0].RealName = model.Name;
+                            userList[0].ModifyDate = DateTime.Now;
+                            database.Update(userList[0]);
+                        }
+                    }
+                    else
+                    {
+                        if (userList.Count > 0)
+                        {
+                            //删除已有后台用户
+                            database.Delete<Base_User>(userList[0].UserId);
                         }
                     }
                     model.Modify(KeyValue);
@@ -115,19 +131,22 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
                 else //新建
                 {
                     //检测手机号和身份证号的唯一性
-                    var accountIsMobile = database.FindEntity<Ho_PartnerUser>(" and Account='" + model.Account + "'");
+                    var accountIsMobile = database.FindEntityByWhere<Ho_PartnerUser>(" and Account='" + model.Account + "'");
                     if (accountIsMobile != null && accountIsMobile.Number != null)
                     {
                         return Content(new JsonMessage { Success = false, Code = "1", Message = "手机号码已存在" }.ToString());
                     }
                     if (!string.IsNullOrEmpty(model.CardCode))
                     {
-                        var accountIsCardCode = database.FindEntity<Ho_PartnerUser>(" and CardCode='" + model.CardCode + "'");
+                        var accountIsCardCode = database.FindEntityByWhere<Ho_PartnerUser>(" and CardCode='" + model.CardCode + "'");
                         if (accountIsCardCode != null && accountIsCardCode.Number != null)
                         {
                             return Content(new JsonMessage { Success = false, Code = "1", Message = "身份证号码已存在" }.ToString());
                         }
                     }
+                    model.Password = PasswordHash.CreateHash(model.Password);
+                    model.Create();
+                    var IsOk = database.Insert(model, isOpenTrans);
                     if (model.UserRole == "运营商")//选择了运营商才添加
                     {
                         //如果添加运营商,则要往后台用户表添加一个帐号
@@ -138,9 +157,9 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
                             RealName = model.Name,
                             Mobile = model.Account,
                             SortCode = CommonHelper.GetInt(BaseFactory.BaseHelper().GetSortCode<Base_User>("SortCode")),
-                            InnerUser = 2,
-                            DepartmentId = "不能删除",
-                            CompanyId = "BaseUser",
+                            InnerUser = 3,
+                            DepartmentId = "运营商",
+                            CompanyId = model.Number,
                             Code = "bd548d5b-1783-4582-9007-bb5c87803679"
                         };
                         user.Create();
@@ -148,10 +167,6 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
                         //权限分配-复制上级权限-bd548d5b-1783-4582-9007-bb5c87803679(此用户不能删除)
                         CopyUserRight("bd548d5b-1783-4582-9007-bb5c87803679", user.UserId, isOpenTrans);
                     }
-                    model.Password = PasswordHash.CreateHash(model.Password);
-                    model.Create();
-                    var IsOk = database.Insert(model, isOpenTrans);
-
                     Base_SysLogBll.Instance.WriteLog(KeyValue, OperationType.Update, IsOk > 0 ? "成功" : "失败", "用户" + Message);
                 }
                 database.Commit();
@@ -286,7 +301,7 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
         /// <summary>
         /// 数据导出
         /// </summary>
-        public void ExportExcel(int Stuts, string Keyword, string Role)
+        public void ExportExcel([DefaultValue(-1)]int Stuts, string Keyword, string Role)
         {
             Ho_PartnerUserBll bll = new Ho_PartnerUserBll();
             var ListData = bll.GetPageList(Keyword, Role, Stuts);

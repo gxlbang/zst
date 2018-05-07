@@ -36,7 +36,7 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
         /// </summary>
         /// <returns></returns>
         public ActionResult GridPageListJson(JqGridParam jqgridparam, string keywords,
-            int Status, string ProvinceId, string CityId, string CountyId, string BeginTime, string EndTime)
+            [DefaultValue(-1)]int Status, string ProvinceId, string CityId, string CountyId, string BeginTime, string EndTime)
         {
             try
             {

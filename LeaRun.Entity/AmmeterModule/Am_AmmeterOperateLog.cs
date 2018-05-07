@@ -39,6 +39,30 @@ namespace LeaRun.Entity
         [DisplayName("Number")]
         public string Number { get; set; }
         /// <summary>
+        /// Number
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("AmmeterNumber")]
+        public string AmmeterNumber { get; set; }
+        /// <summary>
+        /// Number
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("AmmeterCode")]
+        public string AmmeterCode { get; set; }
+        /// <summary>
+        /// Number
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("CollectorNumber")]
+        public string CollectorNumber { get; set; }
+        /// <summary>
+        /// Number
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("CollectorCode")]
+        public string CollectorCode { get; set; }
+        /// <summary>
         /// U_Number
         /// </summary>
         /// <returns></returns>

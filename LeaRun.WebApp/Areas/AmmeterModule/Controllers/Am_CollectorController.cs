@@ -17,6 +17,7 @@ using LeaRun.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
@@ -34,7 +35,7 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
         /// 搜索
         /// </summary>
         /// <returns></returns>
-        public ActionResult GridPageListJson(JqGridParam jqgridparam, string keywords, int Stuts, string ProvinceId, string CityId, string CountyId)
+        public ActionResult GridPageListJson(JqGridParam jqgridparam, string keywords, [DefaultValue(-1)]int Stuts, string ProvinceId, string CityId, string CountyId)
         {
             try
             {
@@ -60,7 +61,7 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
         /// <summary>
         /// 数据导出
         /// </summary>
-        public void ExportExcel(int Stuts, string keywords, string ProvinceId, string CityId, string CountyId)
+        public void ExportExcel([DefaultValue(-1)]int Stuts, string keywords, string ProvinceId, string CityId, string CountyId)
         {
             Am_CollectorBll bll = new Am_CollectorBll();
             var ListData = bll.GetPageList(keywords, Stuts, ProvinceId, CityId, CountyId);
@@ -95,6 +96,16 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
             var time = DateTime.Now - date;
             var day = time.Days;
             return day;
+        }
+
+        public ActionResult AddCollect()
+        {
+            AmmeterSDK.MainApi api = new AmmeterSDK.MainApi();
+            List<Dictionary<string, object>> list = new List<Dictionary<string, object>>();
+            Dictionary<string, object> paramssMap = new Dictionary<string, object>();
+            paramssMap.Add("cid", "18015210009");
+            list.Add(paramssMap);
+            return Json(api.Request(AmmeterSDK.ApiUrl.COLLECTORADD, list, false));
         }
     }
 }

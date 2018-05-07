@@ -142,10 +142,10 @@
                 mimeTypes:"image/*"
             },
             //配置生成缩略图的选项
-            thumb:{
-                compress: false,
-                resize: false
-            },
+            //thumb:{
+            //    compress: false,
+            //    resize: false
+            //},
             //文件上传方式
             method:"POST",
             //服务器地址;

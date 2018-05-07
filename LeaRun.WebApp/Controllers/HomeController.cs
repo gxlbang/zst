@@ -161,6 +161,8 @@ namespace LeaRun.WebApp.Controllers
         public ActionResult TreeIndex()
         {
             ViewBag.Account = ManageProvider.Provider.Current().Account + "（" + ManageProvider.Provider.Current().UserName + "）";
+            HttpContext rq = System.Web.HttpContext.Current;
+            ViewBag.PAccount = (int)rq.Application["OnLineCount"];
             return View();
         }
         

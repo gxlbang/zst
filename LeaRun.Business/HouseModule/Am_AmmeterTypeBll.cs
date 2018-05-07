@@ -42,6 +42,7 @@ namespace LeaRun.Business
             List<DbParameter> parameter = new List<DbParameter>();
             strSql.Append(@"SELECT  *
                             FROM  Am_AmmeterType where 1=1 ");
+
             //¹Ø¼ü×Ö
             if (!string.IsNullOrEmpty(keyword))
             {

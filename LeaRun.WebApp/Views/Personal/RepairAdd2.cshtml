@@ -38,14 +38,15 @@
 
     
 </div>
-<script src="~/Content/Scripts/webuploader.min.js"></script>
-<script src="~/Content/Scripts/diyUpload.js"></script>
+<script src="~/Content/Scripts/webuploader.min.js?j=1.2"></script>
+<script src="~/Content/Scripts/diyUpload.js?j=1"></script>
 <script>
 $(function(){
 	//上传图片
 	var $tgaUpload = $('#goodsUpload').diyUpload({
 	    url:'',
 	    success: function (data) {
+	        alert('上传成功');
 	    },
 	    error: function (err) {  },
 		buttonText : '',
@@ -60,9 +61,7 @@ $(function(){
 			allowMagnify:false,
 			crop:false,
 			type: "image/jpeg",
-			fileNumLimit: 2,
-			compress: false,
-			resize: false
+			fileNumLimit: 2
 		}
 	});
 	 

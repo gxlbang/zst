@@ -51,7 +51,7 @@
     //加载表格
     function GetGrid() {
         $("#gridTable").jqGrid({
-            url: "@Url.Content("~/AmmeterModule/Am_Repair/GridPageJson")",
+            url: "@Url.Content("~/AmmeterModule/Am_Repair/GridPageListJson")",
             datatype: "json",
             height: $(window).height() - 149,
             autowidth: true,
@@ -216,7 +216,7 @@
             </td>
             <th>账单日期：</th>
             <td>
-                <input id="BeginTime" type="text" class="txt Wdate" value="@LeaRun.Utilities.DateTimeHelper.GetToday()" style="width: 100px" onfocus="var endDate=$dp.$('EndTime');WdatePicker({onpicked:function(){EndTime.focus();},maxDate:'#F{$dp.$D(\'EndTime\')}'})" />
+                <input id="BeginTime" type="text" class="txt Wdate" value="@LeaRun.Utilities.DateTimeHelper.GetDate(-7)" style="width: 100px" onfocus="var endDate=$dp.$('EndTime');WdatePicker({onpicked:function(){EndTime.focus();},maxDate:'#F{$dp.$D(\'EndTime\')}'})" />
             </td>
             <td>-</td>
             <td>

@@ -66,7 +66,7 @@
     //¼ÓÔØ±í¸ñ
     function GetGrid() {
         $("#gridTable").jqGrid({
-            url: "@Url.Content("~/AmmeterModule/Am_Ammeter/GridPageJson")",
+            url: "@Url.Content("~/AmmeterModule/Am_Ammeter/GridPageListJson")",
             datatype: "json",
             height: $(window).height() - 179,
             autowidth: true,
@@ -113,6 +113,12 @@
             shrinkToFit: false,
             gridview: true,
         });
+    }
+    function btn_Log() {
+        var KeyValue = GetJqGridRowValue("#gridTable", "Number");
+        if (IsChecked(KeyValue)) {
+            Urlhref("/AmmeterModule/Am_AmmeterOperateLog/Index?AmNumber=" + KeyValue);
+        }
     }
     //É¾³ý
     function btn_delete() {

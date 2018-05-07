@@ -61,6 +61,7 @@
     <Compile Include="AmmeterModule\Am_Ammeter.cs" />
     <Compile Include="AmmeterModule\Am_AmmeterMoneyNew.cs" />
     <Compile Include="AmmeterModule\Am_AmmeterMoney.cs" />
+    <Compile Include="AmmeterModule\Am_AmmeterOperateLogNew.cs" />
     <Compile Include="AmmeterModule\Am_AmmeterOperateLog.cs" />
     <Compile Include="AmmeterModule\Am_AmmeterPermission.cs" />
     <Compile Include="AmmeterModule\Am_BankInfo.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="AmmeterModule\Am_Charge.cs" />
     <Compile Include="AmmeterModule\Am_ChargeItem.cs" />
     <Compile Include="AmmeterModule\Am_CollectorNew.cs" />
+    <Compile Include="AmmeterModule\Am_ContractNew.cs" />
     <Compile Include="AmmeterModule\Am_Contract.cs" />
     <Compile Include="AmmeterModule\Am_ContractImage.cs" />
     <Compile Include="AmmeterModule\Am_ContractTemplate.cs" />

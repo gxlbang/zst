@@ -19,6 +19,7 @@ using LeaRun.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
@@ -32,11 +33,17 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
     /// </summary>
     public class Am_AmmeterController : PublicController<Am_Ammeter>
     {
+        public override ActionResult Index()
+        {
+            string _ModuleId = DESEncrypt.Encrypt("235ddccb-9114-404b-9632-06715c6ad496");
+            CookieHelper.WriteCookie("ModuleId", _ModuleId);
+            return View();
+        }
         /// <summary>
         /// 搜索
         /// </summary>
         /// <returns></returns>
-        public ActionResult GridPageListJson(JqGridParam jqgridparam,string Number, string keywords, int Stuts, string ProvinceId, string CityId, string CountyId)
+        public ActionResult GridPageListJson(JqGridParam jqgridparam,string Number, string keywords, [DefaultValue(-1)]int Stuts, string ProvinceId, string CityId, string CountyId)
         {
             try
             {
@@ -62,7 +69,7 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
         /// <summary>
         /// 数据导出
         /// </summary>
-        public void ExportExcel(int Stuts, string keywords, string Number, string ProvinceId, string CityId, string CountyId)
+        public void ExportExcel([DefaultValue(-1)]int Stuts, string keywords, string Number, string ProvinceId, string CityId, string CountyId)
         {
             Am_AmmeterBll bll = new Am_AmmeterBll();
             var ListData = bll.GetPageList(keywords,Number, Stuts, ProvinceId, CityId, CountyId);
@@ -108,6 +115,11 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
         {
             IDatabase database = DataFactory.Database();
             string sql = "select Number,CollectorCode from Am_Collector where 1=1";
+            //用户限定
+            if (ManageProvider.Provider.Current().DepartmentId == "运营商")
+            {
+                sql += " and UNumber = '" + ManageProvider.Provider.Current().CompanyId + "'";
+            }
             if (!StringHelper.IsNullOrEmpty(Number))
             {
                 sql += " and Collector_Number = '" + Number + "'";
