@@ -36,5 +36,22 @@ namespace LeaRun.Business
             parameter.Add(DbFactory.CreateDbParameter("@ParentId", ParentId));
             return this.Repository().FindList(WhereSql.ToString(), parameter.ToArray());
         }
+        /// <summary>
+        /// 获取省市区名称
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public string GetProvinceCityName(string number)
+        {
+            IDatabase database = DataFactory.Database();
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@Code", number));
+            var model = database.FindEntityByWhere<Base_ProvinceCity>(" and Code=@Code ", parameter.ToArray());
+            if (model != null && model.Code != null)
+            {
+                return model.FullName;
+            }
+            return null;
+        }
     }
 }

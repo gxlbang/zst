@@ -1304,7 +1304,7 @@ namespace LeaRun.WebApp.Controllers
         /// <param name="pageIndex"></param>
         /// <param name="pageSize"></param>
         /// <returns></returns>
-        public ActionResult RepairRecord( int pageSize = 10)
+        public ActionResult RepairRecord( int pageSize = 5)
         {
             var user = wbll.GetUserInfo(Request);
             List<DbParameter> parameter = new List<DbParameter>();
@@ -1312,8 +1312,9 @@ namespace LeaRun.WebApp.Controllers
 
            var pending= database.FindCount<Am_Repair>(" and U_Number=@U_Number and  Status=0", parameter.ToArray());
             ViewBag.recordCount = (int)Math.Ceiling(1.0 * pending / pageSize);
+
             var processed= database.FindCount<Am_Repair>(" and U_Number=@U_Number and  Status=1", parameter.ToArray());
-            ViewBag.recordCount1 = (int)Math.Ceiling(1.0 * pending / pageSize);
+            ViewBag.recordCount1 = (int)Math.Ceiling(1.0 * processed / pageSize);
             return View();
         }
         /// <summary>
@@ -1323,7 +1324,7 @@ namespace LeaRun.WebApp.Controllers
         /// <param name="pageIndex"></param>
         /// <param name="pageSize"></param>
         /// <returns></returns>
-        public ActionResult RepairRecordList(int type,int pageIndex = 1, int pageSize = 10)
+        public ActionResult RepairRecordList(int type,int pageIndex = 1, int pageSize = 5)
         {
             var user = wbll.GetUserInfo(Request);
             int recordCount = 0;
@@ -1331,7 +1332,7 @@ namespace LeaRun.WebApp.Controllers
             parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
             parameter.Add(DbFactory.CreateDbParameter("@Status", type));
 
-            var repairlList = database.FindListPage<Am_Repair>(" and U_Number=@U_Number and  Status=@Status", parameter.ToArray(), "Number", "desc", pageIndex, pageSize, ref recordCount);
+            var repairlList = database.FindListPage<Am_Repair>(" and U_Number=@U_Number and  Status=@Status", parameter.ToArray(), "CreateTime", "desc", pageIndex, pageSize, ref recordCount);
             //ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize); ;
             if (Request.IsAjaxRequest())
             {
@@ -1348,16 +1349,27 @@ namespace LeaRun.WebApp.Controllers
         /// </summary>
         /// <param name="Number"></param>
         /// <returns></returns>
-        public ActionResult RepairInfo(string Number)
+        public ActionResult RepairInfo(string number)
         {
             var user = wbll.GetUserInfo(Request);
             List<DbParameter> par = new List<DbParameter>();
             par.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
-            par.Add(DbFactory.CreateDbParameter("@Number", Number));
+            par.Add(DbFactory.CreateDbParameter("@Number", number));
 
             var repair = database.FindEntityByWhere<Am_Repair>(" and Number=@Number and U_Number=@U_Number", par.ToArray());
             if (repair != null && repair.Number != null)
             {
+                List<DbParameter> par1 = new List<DbParameter>();
+                par1.Add(DbFactory.CreateDbParameter("@Repair_Number", repair.Number));
+
+                var repairImage = database.FindList<Am_RepairImage>(" and  Repair_Number=@Repair_Number ", par1.ToArray());
+                ViewBag.repairImage = repairImage;
+
+                List<DbParameter> par2 = new List<DbParameter>();
+                par2.Add(DbFactory.CreateDbParameter("@Repair_Number", repair.Number));
+                var repairAnswer = database.FindEntityByWhere<Am_RepairAnswer>(" and Repair_Number=@Repair_Number ", par2.ToArray());
+                ViewBag.repairAnswer = repairAnswer;
+
                 return View(repair);
             }
             return View();
@@ -1381,6 +1393,14 @@ namespace LeaRun.WebApp.Controllers
             return View();
         }
         /// <summary>
+        /// 我的退租
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult MyRent()
+        {
+            return View();
+        }
+        /// <summary>
         /// 退租
         /// </summary>
         /// <returns></returns>
@@ -1401,7 +1421,7 @@ namespace LeaRun.WebApp.Controllers
                     List<DbParameter> par = new List<DbParameter>();
                     par.Add(DbFactory.CreateDbParameter("@Number", item.Ammeter_Number));
 
-                    var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number=@Number", par.ToArray());
+                    var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number=@Number and  Number not in  ( select AmmeterNumber from   Am_Rent where Status=0 )", par.ToArray());
                     if (ammeter != null && ammeter.Number != null)
                     {
                         list.Add(ammeter);
@@ -1477,7 +1497,7 @@ namespace LeaRun.WebApp.Controllers
             parameter.Add(DbFactory.CreateDbParameter("@Status", "1"));
 
             int recordCount = 0;
-            var rentList = database.FindListPage<Am_Rent>(" and U_Number=@U_Number and Status=@Status", parameter.ToArray(), "Number", "desc", pageIndex, pageSize, ref recordCount);
+            var rentList = database.FindListPage<Am_Rent>(" and U_Number=@U_Number and Status=@Status", parameter.ToArray(), "CreateTime", "desc", pageIndex, pageSize, ref recordCount);
             ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize);
             if (Request.IsAjaxRequest())
             {

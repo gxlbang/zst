@@ -44,7 +44,6 @@
               , yes: function (index) {
                   $.post("/Personal/BandCardDel", { number: number }, function (data) {
                       if (data.res == "Ok") {
-                          alert("");
                           layer.open({ content: data.msg, skin: 'msg', time: 2 });
                           location.reload();
                           layer.close(index);

@@ -25,7 +25,6 @@
                 <div>
                     <ul class="upload-ul clearfix">
                         <li class="upload-pick">
-                            <input type="file" name="file" >
                             <div class="webuploader-container clear" id="goodsUpload"></div>
                         </li>
                     </ul>
@@ -45,7 +44,7 @@
 $(function(){
 	//上传图片
 	var $tgaUpload = $('#goodsUpload').diyUpload({
-	    url: 'Personal/Upload',
+	    url:'',
 	    success: function (data) {
 	    },
 	    error: function (err) {  },
@@ -55,6 +54,8 @@ $(function(){
 			extensions: 'gif,jpg,jpeg,bmp,png'
 		},
 		thumb: {
+		    width: 10000,
+            height:10000,
 			quality:100,
 			allowMagnify:false,
 			crop:false,

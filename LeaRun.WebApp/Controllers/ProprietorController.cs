@@ -11,6 +11,8 @@ using System.Web.Mvc;
 
 namespace LeaRun.WebApp.Controllers
 {
+    [UserLoginFilters]
+    [UserOperatorFilters]
     public class ProprietorController : Controller
     {
         IDatabase database = DataFactory.Database();
@@ -27,24 +29,25 @@ namespace LeaRun.WebApp.Controllers
         /// </summary>
         /// <param name="Number"></param>
         /// <returns></returns>
-        public ActionResult Ammeter(string Number)
+        public ActionResult AmmeterAdd(string Number)
         {
             var user = wbll.GetUserInfo(Request);
 
             var ammeterTpyeList = database.FindList<Am_AmmeterType>("");
+            ViewBag.ammeterTpyeList = ammeterTpyeList;
 
             List<DbParameter> parameter = new List<DbParameter>();
             parameter.Add(DbFactory.CreateDbParameter("@UNumber", user.Number));
             var collectorList = database.FindList<Am_Collector>(" and UNumber=@UNumber", parameter.ToArray());
+            ViewBag.collectorList = collectorList;
+
 
             List<DbParameter> par1 = new List<DbParameter>();
             par1.Add(DbFactory.CreateDbParameter("@UserNumber", user.Number));
             var ammeterMoneyList = database.FindList<Am_AmmeterMoney>(" and UserNumber=@UserNumber", par1.ToArray());
-            if (Number != null && Number != "")
-            {
+            ViewBag.ammeterMoneyList = ammeterMoneyList;
 
-            }
-            else
+            if (Number != null && Number != "")
             {
                 List<DbParameter> par2 = new List<DbParameter>();
                 par2.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
@@ -68,23 +71,61 @@ namespace LeaRun.WebApp.Controllers
             var user = wbll.GetUserInfo(Request);
             if (model.Number != null && model.Number != "")
             {
-                List<DbParameter> par2 = new List<DbParameter>();
-                par2.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
-                par2.Add(DbFactory.CreateDbParameter("@Number", model.Number));
-                var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and UY_Number=@UY_Number and Number=@Number", par2.ToArray());
+                List<DbParameter> parAmmeter = new List<DbParameter>();
+                parAmmeter.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
+                parAmmeter.Add(DbFactory.CreateDbParameter("@Number", model.Number));
+                var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and UY_Number=@UY_Number and Number=@Number", parAmmeter.ToArray());
+
                 if (ammeter != null && ammeter.Number != null)
                 {
-                    ammeter.AmmeterType_Number = model.AmmeterType_Number;
-                    ammeter.AmmeterType_Name = model.AmmeterType_Name;
-                    ammeter.AmmeterType_Name = model.AmmeterType_Name;
-                    ammeter.AmmeterType_Number = model.AmmeterType_Number;
+                    List<DbParameter> par1 = new List<DbParameter>();
+                    par1.Add(DbFactory.CreateDbParameter("@Number", model.AmmeterMoney_Number));
+                    par1.Add(DbFactory.CreateDbParameter("@UserNumber", user.Number));
+                    var ammeterMoney = database.FindEntityByWhere<Am_AmmeterMoney>(" and Number=@Number ", par1.ToArray());
+                    ammeter.AmmeterMoney_Number = ammeterMoney.Number;
+                    ammeter.AmmeterMoney_Name = ammeterMoney.Name;
+
+                    List<DbParameter> par2 = new List<DbParameter>();
+                    par2.Add(DbFactory.CreateDbParameter("@Number", model.AmmeterType_Number));
+                    var ammeterType = database.FindEntityByWhere<Am_AmmeterType>(" and Number=@Number ", par2.ToArray());
+                    ammeter.AmmeterType_Number = ammeterType.Number;
+                    ammeter.AmmeterType_Name = ammeterType.Name;
+
+                    List<DbParameter> par3 = new List<DbParameter>();
+                    par3.Add(DbFactory.CreateDbParameter("@Number", model.Collector_Number));
+                    var collector = database.FindEntityByWhere<Am_Collector>(" and Number=@Number ", par3.ToArray());
+                    ammeter.Collector_Number = collector.Number;
+                    ammeter.Collector_Code = collector.CollectorCode;
+
+                    if (model.UserName != null && model.UserName != "")
+                    {
+                        ammeter.Status = 1;
+                        ammeter.StatusStr = "已开户";
+
+                        List<DbParameter> par4 = new List<DbParameter>();
+                        par4.Add(DbFactory.CreateDbParameter("@Account", model.UserName));
+                        par4.Add(DbFactory.CreateDbParameter("@Name", model.U_Name));
+                        par4.Add(DbFactory.CreateDbParameter("@Status", "3"));//审核已过
+
+                        var partnerUser = database.FindEntityByWhere<Ho_PartnerUser>(" and Account=@Account and  Name=@Name and Status=@Status", par4.ToArray());
+                        if (partnerUser != null && partnerUser.Number != null)
+                        {
+                            ammeter.UserName = partnerUser.Account;
+                            ammeter.U_Number = partnerUser.Number;
+                            ammeter.U_Name = partnerUser.Name;
+                        }
+                        else
+                        {
+                            return Json(new { res = "No", msg = "提交失败，没有找到该用户" });
+                        }
+                    }
+
+
                     ammeter.Address = model.Address;
                     ammeter.AllMoney = model.AllMoney;
                     ammeter.AM_Code = model.AM_Code;
                     ammeter.Cell = model.Cell;
                     ammeter.City = model.City;
-                    ammeter.Collector_Code = model.Collector_Code;
-                    ammeter.Collector_Number = model.Collector_Number;
                     ammeter.County = model.County;
                     ammeter.CurrMoney = model.CurrMoney;
                     ammeter.CurrPower = model.CurrPower;
@@ -95,9 +136,6 @@ namespace LeaRun.WebApp.Controllers
                     ammeter.Room = model.Room;
                     ammeter.SencondAlarm = model.SencondAlarm;
                     ammeter.UpdateTime = DateTime.Now;
-                    ammeter.UserName = model.UserName;
-                    ammeter.U_Name = model.U_Name;
-                    ammeter.U_Number = model.U_Number;
                     ammeter.Remark = model.Remark;
 
                     var status = database.Update<Am_Ammeter>(ammeter);
@@ -106,27 +144,156 @@ namespace LeaRun.WebApp.Controllers
                         return Json(new { res = "Ok", msg = "修改成功" });
                     }
                 }
-                else
-                {
-                    model.Number = Utilities.CommonHelper.GetGuid;
-                    model.CreateTime = DateTime.Now;
-                    model.Status = 1;
-                    model.CM_Time = DateTime.Now;
-                    model.CP_Time = DateTime.Now;
-                    model.UpdateTime = DateTime.Now;
-                    model.UY_Name = user.Name;
-                    model.UY_Number = user.Number;
-                    model.UY_UserName = user.Account;
+            }
+            else
+            {
+                List<DbParameter> par1 = new List<DbParameter>();
+                par1.Add(DbFactory.CreateDbParameter("@Number", model.AmmeterMoney_Number));
+                var ammeterMoney = database.FindEntityByWhere<Am_AmmeterMoney>(" and Number=@Number ", par1.ToArray());
 
-                    var status = database.Insert<Am_Ammeter>(model);
-                    if (status > 0)
+                List<DbParameter> par2 = new List<DbParameter>();
+                par2.Add(DbFactory.CreateDbParameter("@Number", model.AmmeterType_Number));
+                var ammeterType = database.FindEntityByWhere<Am_AmmeterType>(" and Number=@Number ", par2.ToArray());
+
+                List<DbParameter> par3 = new List<DbParameter>();
+                par3.Add(DbFactory.CreateDbParameter("@Number", model.Collector_Number));
+                var collector = database.FindEntityByWhere<Am_Collector>(" and Number=@Number ", par3.ToArray());
+
+
+                var insertModel = new Am_Ammeter
+                {
+                    Address = model.Address,
+                    UserTime = DateTime.Now,
+                    AllMoney = 0.00,
+                    AmmeterMoney_Name = ammeterMoney.Name,
+                    AmmeterMoney_Number = model.AmmeterMoney_Number,
+                    AmmeterType_Name = ammeterType.Name,
+                    AmmeterType_Number = model.AmmeterType_Number,
+                    AM_Code = model.AM_Code,
+                    Cell = model.Cell,
+                    City = collector.City,
+                    CM_Time = DateTime.Now,
+                    Collector_Code = collector.CollectorCode,
+                    Collector_Number = model.Collector_Number,
+                    County = collector.County,
+                    CP_Time = DateTime.Now,
+                    CreateTime = DateTime.Now,
+                    CurrMoney = 0.00,
+                    CurrPower = "0",
+                    FirstAlarm = model.FirstAlarm,
+                    Floor = model.Floor,
+                    HGQBB = "0",
+                    Money = 0.00,
+                    Number = Utilities.CommonHelper.GetGuid,
+                    Province = collector.Province,
+                    Remark = model.Remark,
+                    Room = model.Room,
+                    SencondAlarm = 0,
+                    Status = 0,
+                    StatusStr = "未开户",
+                    UpdateTime = DateTime.Now,
+                    UserName = model.UserName,
+                    UY_Name = user.Name,
+                    UY_Number = user.Number,
+                    UY_UserName = user.Account,
+                    U_Name = model.U_Name,
+                    U_Number = model.U_Number
+                };
+                if (model.UserName != null && model.UserName != "")
+                {
+                    insertModel.Status = 1;
+                    insertModel.StatusStr = "已开户";
+
+                    List<DbParameter> par4 = new List<DbParameter>();
+                    par4.Add(DbFactory.CreateDbParameter("@Account", model.UserName));
+                    par4.Add(DbFactory.CreateDbParameter("@Name", model.U_Name));
+                    par4.Add(DbFactory.CreateDbParameter("@Status", "3"));//审核已过
+
+                    var partnerUser = database.FindEntityByWhere<Ho_PartnerUser>(" and Account=@Account and  Name=@Name and Status=@Status", par4.ToArray());
+                    if (partnerUser != null && partnerUser.Number != null)
                     {
-                        return Json(new { res = "Ok", msg = "添加成功" });
+                        insertModel.UserName = partnerUser.Account;
+                        insertModel.U_Number = partnerUser.Number;
+                        insertModel.U_Name = partnerUser.Name;
+                    }
+                    else
+                    {
+                        return Json(new { res = "No", msg = "提交失败，没有找到该用户" });
                     }
                 }
+
+                var status = database.Insert<Am_Ammeter>(insertModel);
+                if (status > 0)
+                {
+                    return Json(new { res = "Ok", msg = "添加成功" });
+                }
             }
-            return Json(new { res = "Ok", msg = "修改成功" });
+            return Json(new { res = "No", msg = "提交失败" });
         }
+
+        public ActionResult AmmeterManage()
+        {
+            return View();
+        }
+        /// <summary>
+        /// 电表列表
+        /// </summary>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        public ActionResult AmmeterList(string ammeterCode, string name, int pageIndex = 1, int pageSize = 10)
+        {
+            var user = wbll.GetUserInfo(Request);
+            int recordCount = 0;
+
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
+
+            StringBuilder sbWhere = new StringBuilder();
+            sbWhere.Append(" and UY_Number=@UY_Number ");
+
+            if (ammeterCode != null && ammeterCode != "")
+            {
+                parameter.Add(DbFactory.CreateDbParameter("@AM_Code", ammeterCode));
+                sbWhere.Append(" and AM_Code=@AM_Code");
+            }
+            if (name != null && name != "")
+            {
+                parameter.Add(DbFactory.CreateDbParameter("@U_Name", name));
+                sbWhere.Append(" and U_Name=@U_Name");
+            }
+
+            var ammeterList = database.FindListPage<Am_Ammeter>(sbWhere.ToString(), parameter.ToArray(), "CreateTime", "desc", pageIndex, pageSize, ref recordCount);
+            ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize); ;
+            if (Request.IsAjaxRequest())
+            {
+                return Json(ammeterList);
+            }
+            else
+            {
+                return View();
+            }
+        }
+        /// <summary>
+        /// 电表详情
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public ActionResult AmmeterInfo(string number)
+        {
+            var user = wbll.GetUserInfo(Request);
+            List<DbParameter> par2 = new List<DbParameter>();
+            par2.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
+            par2.Add(DbFactory.CreateDbParameter("@Number", number));
+            var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and UY_Number=@UY_Number and Number=@Number", par2.ToArray());
+            if (ammeter != null && ammeter.Number != null)
+            {
+                return View(ammeter);
+            }
+            return View();
+        }
+
+        #region 电价
 
         /// <summary>
         /// 电价列表
@@ -147,6 +314,7 @@ namespace LeaRun.WebApp.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
+        [HttpPost]
         public ActionResult AmmeterMoneyEidt(Am_AmmeterMoney model)
         {
             var user = wbll.GetUserInfo(Request);
@@ -186,6 +354,15 @@ namespace LeaRun.WebApp.Controllers
                 model.UserName = user.Account;
                 model.UserNumber = user.Number;
                 model.UserRealName = user.Name;
+                model.Classify = 0;
+                model.First = 0;
+                model.Fourth = 0;
+                model.FourthMoney = 0;
+                model.Second = 0;
+                model.SecondMoney = 0;
+                model.Third = 0;
+                model.ThirdMoney = 0;
+                model.StatusStr = "正常";
                 var status = database.Insert<Am_AmmeterMoney>(model);
                 if (status > 0)
                 {
@@ -193,6 +370,22 @@ namespace LeaRun.WebApp.Controllers
                 }
             }
             return Json(new { res = "No", msg = "保存失败" });
+        }
+        public ActionResult AmmeterMoneyEidt(string number)
+        {
+            var user = wbll.GetUserInfo(Request);
+            if (number != null && number != "")
+            {
+                List<DbParameter> parameter = new List<DbParameter>();
+                parameter.Add(DbFactory.CreateDbParameter("@Number", number));
+                parameter.Add(DbFactory.CreateDbParameter("@UserNumber", user.Number));
+                var ammeterMoney = database.FindEntityByWhere<Am_AmmeterMoney>(" and  Number=@Number and UserNumber=@UserNumber ", parameter.ToArray());
+                if (ammeterMoney != null && ammeterMoney.Number != null)
+                {
+                    return View(ammeterMoney);
+                }
+            }
+            return View();
         }
         /// <summary>
         /// 删除电价
@@ -205,10 +398,11 @@ namespace LeaRun.WebApp.Controllers
             if (number != null && number != "")
             {
                 List<DbParameter> parameter = new List<DbParameter>();
-                parameter.Add(DbFactory.CreateDbParameter("@AmmeterMoneyNumber", user.Number));
+                parameter.Add(DbFactory.CreateDbParameter("@AmmeterMoney_Number", number));
 
-                var count = database.FindCount<Am_AmmeterMoney>(" and AmmeterMoneyNumber=@AmmeterMoneyNumber", parameter.ToArray());
-                if (count>0)
+
+                var count = database.FindCount<Am_Ammeter>(" and AmmeterMoney_Number=@AmmeterMoney_Number", parameter.ToArray());
+                if (count > 0)
                 {
                     return Json(new { res = "No", msg = "删除失败，有电表在使用该电价" });
                 }
@@ -220,7 +414,7 @@ namespace LeaRun.WebApp.Controllers
                 if (ammeterMoney != null && ammeterMoney.Number != null)
                 {
                     var status = database.Delete<Am_AmmeterMoney>(ammeterMoney);
-                    if (status>0)
+                    if (status > 0)
                     {
                         return Json(new { res = "Ok", msg = "删除成功" });
                     }
@@ -228,52 +422,10 @@ namespace LeaRun.WebApp.Controllers
             }
             return Json(new { res = "No", msg = "删除失败" });
         }
-        /// <summary>
-        /// 电表列表
-        /// </summary>
-        /// <param name="pageIndex"></param>
-        /// <param name="pageSize"></param>
-        /// <returns></returns>
-        public ActionResult AmmeterList(int pageIndex = 1, int pageSize = 10)
-        {
-            var user = wbll.GetUserInfo(Request);
-            int recordCount = 0;
+        #endregion
 
-            List<DbParameter> parameter = new List<DbParameter>();
-            parameter.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
 
-            StringBuilder sbWhere = new StringBuilder();
-            sbWhere.Append(" and UY_Number=@UY_Number ");
 
-            var ammeterList = database.FindListPage<Am_Ammeter>(sbWhere.ToString (), parameter.ToArray(),"Number", "desc", pageIndex, pageSize, ref recordCount);
-            ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize); ;
-            if (Request.IsAjaxRequest())
-            {
-                return Json(ammeterList);
-            }
-            else
-            {
-                return View();
-            }
-        }
-        /// <summary>
-        /// 电表详情
-        /// </summary>
-        /// <param name="number"></param>
-        /// <returns></returns>
-        public ActionResult AmmeterInfo(string  number )
-        {
-            var user = wbll.GetUserInfo(Request);
-            List<DbParameter> par2 = new List<DbParameter>();
-            par2.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
-            par2.Add(DbFactory.CreateDbParameter("@Number", number));
-            var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and UY_Number=@UY_Number and Number=@Number", par2.ToArray());
-            if (ammeter != null && ammeter.Number != null)
-            {
-                return View(ammeter);
-            }
-            return View();
-        }
         /// <summary>
         /// 采集器列表
         /// </summary>
@@ -288,14 +440,15 @@ namespace LeaRun.WebApp.Controllers
             List<DbParameter> par = new List<DbParameter>();
             par.Add(DbFactory.CreateDbParameter("@UNumber", user.Number));
             var list = database.FindListPage<Am_Collector>(" and UNumber=@UNumber ", par.ToArray(), "Number", "desc", pageIndex, pageSize, ref recordCount);
+            ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize);
             if (list != null)
             {
                 foreach (var item in list)
                 {
                     List<DbParameter> par1 = new List<DbParameter>();
-                    par1.Add(DbFactory.CreateDbParameter("@CollectorNumber", item.Number));
-                    var count = database.FindCount<Am_Ammeter>(" and CollectorNumber=@CollectorNumber",par1.ToArray());
-                    item.AmCount = count.ToString ();
+                    par1.Add(DbFactory.CreateDbParameter("@Collector_Number", item.Number));
+                    var count = database.FindCount<Am_Ammeter>(" and Collector_Number=@Collector_Number", par1.ToArray());
+                    item.AmCount = count.ToString();
                 }
             }
             if (Request.IsAjaxRequest())
@@ -307,8 +460,20 @@ namespace LeaRun.WebApp.Controllers
                 return View();
             }
         }
-        public ActionResult Collector()
+        public ActionResult Collector(string number)
         {
+            var user = wbll.GetUserInfo(Request);
+            if (number != null && number != "")
+            {
+                List<DbParameter> parameter = new List<DbParameter>();
+                parameter.Add(DbFactory.CreateDbParameter("@Number", number));
+                parameter.Add(DbFactory.CreateDbParameter("@UNumber", user.Number));
+                var collector = database.FindEntityByWhere<Am_Collector>(" and  Number=@Number and UNumber=@UNumber ", parameter.ToArray());
+                if (collector != null && collector.Number != null)
+                {
+                    return View(collector);
+                }
+            }
             return View();
         }
         /// <summary>
@@ -319,8 +484,18 @@ namespace LeaRun.WebApp.Controllers
         public ActionResult CollectorEdit(Am_Collector model)
         {
             var user = wbll.GetUserInfo(Request);
-            if (model.Number ==null ||model .Number=="")
+            Business.Base_ProvinceCityBll bll = new Business.Base_ProvinceCityBll();
+            if (model.Number == null || model.Number == "")
             {
+                List<DbParameter> parameter = new List<DbParameter>();
+                parameter.Add(DbFactory.CreateDbParameter("@CollectorCode", model.CollectorCode));
+
+                var isExist = database.FindEntityByWhere<Am_Collector>(" and  CollectorCode=@CollectorCode", parameter.ToArray());
+                if (isExist != null && isExist.Number != null)
+                {
+                    return Json(new { res = "No", msg = "添加失败，已存在采集器" });
+                }
+
                 model.Number = Utilities.CommonHelper.GetGuid;
                 model.LastConnectTime = DateTime.Now;
                 model.CreateTime = DateTime.Now;
@@ -329,9 +504,12 @@ namespace LeaRun.WebApp.Controllers
                 model.UNumber = user.Number;
                 model.URealName = user.Name;
                 model.UserName = user.Account;
+                model.Province = bll.GetProvinceCityName(model.Province);
+                model.City = bll.GetProvinceCityName(model.City);
+                model.County = bll.GetProvinceCityName(model.County);
 
                 var status = database.Insert<Am_Collector>(model);
-                if (status>0)
+                if (status > 0)
                 {
                     return Json(new { res = "Ok", msg = "添加成功" });
                 }
@@ -340,21 +518,21 @@ namespace LeaRun.WebApp.Controllers
             {
                 List<DbParameter> parameter = new List<DbParameter>();
                 parameter.Add(DbFactory.CreateDbParameter("@Number", model.Number));
-                parameter.Add(DbFactory.CreateDbParameter("@UNumber", model.Number));
+                parameter.Add(DbFactory.CreateDbParameter("@UNumber", user.Number));
 
-                var collerctor = database.FindEntityByWhere<Am_Collector>(" and Number=@Number and UNumber=@UNumber",parameter.ToArray());
-                if (collerctor!=null && collerctor.Number !=null )
+                var collerctor = database.FindEntityByWhere<Am_Collector>(" and Number=@Number and UNumber=@UNumber", parameter.ToArray());
+                if (collerctor != null && collerctor.Number != null)
                 {
-                    collerctor.Province = model.Province;
+                    collerctor.Province = bll.GetProvinceCityName(model.Province);
+                    collerctor.City = bll.GetProvinceCityName(model.City);
+                    collerctor.County = bll.GetProvinceCityName(model.County);
                     collerctor.Remark = model.Remark;
                     collerctor.UNumber = model.UNumber;
-
                     collerctor.Address = model.Address;
-                    collerctor.City = model.City;
                     collerctor.CollectorCode = model.CollectorCode;
-                    collerctor.County = model.County;
+
                     var status = database.Update<Am_Collector>(collerctor);
-                    if (status>0)
+                    if (status > 0)
                     {
                         return Json(new { res = "Ok", msg = "修改成功" });
                     }
@@ -376,15 +554,14 @@ namespace LeaRun.WebApp.Controllers
 
             List<DbParameter> parameter = new List<DbParameter>();
             parameter.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
-            parameter.Add(DbFactory.CreateDbParameter("@U_Name", Name));
-
-
             StringBuilder sbWhere = new StringBuilder();
             sbWhere.Append(" and UY_Number=@UY_Number ");
-            sbWhere.Append(" and U_Name=@U_Name ");
-
-
-            var ammeterList = database.FindListPage<Am_AmmeterPermission>(sbWhere.ToString(), parameter.ToArray(), "Number", "desc", pageIndex, pageSize, ref recordCount);
+            if (Name != null && Name != "")
+            {
+                parameter.Add(DbFactory.CreateDbParameter("@U_Name", Name));
+                sbWhere.Append(" and U_Name=@U_Name ");
+            }
+            var ammeterList = database.FindListPage<Am_Ammeter>(sbWhere.ToString(), parameter.ToArray(), "CreateTime", "desc", pageIndex, pageSize, ref recordCount);
             ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize); ;
             if (Request.IsAjaxRequest())
             {
@@ -400,42 +577,64 @@ namespace LeaRun.WebApp.Controllers
         /// </summary>
         /// <param name="number"></param>
         /// <returns></returns>
-        public ActionResult AmmeterUserDetails(string number)
+        public ActionResult AmmeterUserDetailsList(string ammeterNumber, int pageIndex = 1, int pageSize = 10)
         {
             var user = wbll.GetUserInfo(Request);
-            List<DbParameter> parameter = new List<DbParameter>();
-            parameter.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
-            parameter.Add(DbFactory.CreateDbParameter("@Number", number));
-            var ammeter = database.FindEntityByWhere<Am_AmmeterPermission>(" and UY_Number=@UY_Number and Number=@Number", parameter.ToArray());
+            int recordCount = 0;
+            List<DbParameter> par = new List<DbParameter>();
+            par.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
+            par.Add(DbFactory.CreateDbParameter("@Number", ammeterNumber));
+
+            var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and UY_Number=@UY_Number and Number=@Number ", par.ToArray());
             if (ammeter != null && ammeter.Number != null)
             {
-                return View(ammeter);
+                ViewBag.ammeter = ammeter;
+                List<DbParameter> parameter = new List<DbParameter>();
+                parameter.Add(DbFactory.CreateDbParameter("@Ammeter_Number", ammeterNumber));
+
+                var ammeterPermissionList = database.FindListPage<Am_AmmeterPermission>(" and Ammeter_Number=@Ammeter_Number", parameter.ToArray(), "CreateTime", "desc", pageIndex, pageSize, ref recordCount);
+                ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize); ;
+                if (Request.IsAjaxRequest())
+                {
+                    return Json(ammeterPermissionList);
+                }
             }
+            return View();
+        }
+        public ActionResult ChargeManage()
+        {
+            return View();
+        }
+        public ActionResult BillManageNav()
+        {
             return View();
         }
         /// <summary>
         /// 模板页
         /// </summary>
         /// <returns></returns>
-        public ActionResult Template(int pageIndex = 1, int pageSize = 10)
+        public ActionResult TemplateList(string ammeterNumber, int pageIndex = 1, int pageSize = 10)
         {
-             
             var user = wbll.GetUserInfo(Request);
             int recordCount = 0;
- 
+
             List<DbParameter> parameter = new List<DbParameter>();
-            parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
-
-
+            parameter.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
             StringBuilder sbWhere = new StringBuilder();
-            sbWhere.Append(" and U_Number=@U_Number ");
+            sbWhere.Append(" and UY_Number=@UY_Number ");
 
+            if (ammeterNumber != null && ammeterNumber != "")
+            {
+                parameter.Add(DbFactory.CreateDbParameter("@Ammeter_Number", user.Number));
+                sbWhere.Append(" and Ammeter_Number=@Ammeter_Number ");
+            }
+            sbWhere.Append(" and Number in (select Ammeter_Number from Am_Template ) ");
+            var ammeterList = database.FindListPage<Am_Ammeter>(sbWhere.ToString(), parameter.ToArray(), "CreateTime", "desc", pageIndex, pageSize, ref recordCount);
 
-            var templateList = database.FindListPage<Am_Template>(sbWhere.ToString(), parameter.ToArray(), "Number", "desc", pageIndex, pageSize, ref recordCount);
             ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize); ;
             if (Request.IsAjaxRequest())
             {
-                return Json(templateList);
+                return Json(ammeterList);
             }
             else
             {
@@ -447,32 +646,41 @@ namespace LeaRun.WebApp.Controllers
         /// </summary>
         /// <param name="number"></param>
         /// <returns></returns>
-        public ActionResult Template(string number)
+        public ActionResult Template(string ammeterNumber)
         {
             var user = wbll.GetUserInfo(Request);
-            List<DbParameter> par2 = new List<DbParameter>();
-            par2.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
-            par2.Add(DbFactory.CreateDbParameter("@Number", number));
+            List<DbParameter> par = new List<DbParameter>();
+            par.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
+            par.Add(DbFactory.CreateDbParameter("@Number", ammeterNumber));
 
-            var template = database.FindEntityByWhere<Am_Template>(" and U_Number=@U_Number and Number=@Number", par2.ToArray());
-            if (template != null && template.Number != null)
+            var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and UY_Number=@UY_Number and Number=@Number ", par.ToArray());
+            if (ammeter != null && ammeter.Number != null)
             {
-                List<DbParameter> par3 = new List<DbParameter>();
-                par3.Add(DbFactory.CreateDbParameter("@Template_Number", template.Number));
+                List<DbParameter> par2 = new List<DbParameter>();
+                par2.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+                par2.Add(DbFactory.CreateDbParameter("@Ammeter_Number", ammeter.Number));
 
-                var templateContent = database.FindList<Am_TemplateContent>(" and Template_Number=@Template_Number ");
-                ViewBag.templateContent = templateContent;
-                return View(template);
+                var template = database.FindEntityByWhere<Am_Template>(" and U_Number=@U_Number and Ammeter_Number=@Ammeter_Number", par2.ToArray());
+                ViewBag.template = template;
+                if (template != null && template.Number != null)
+                {
+                    List<DbParameter> par3 = new List<DbParameter>();
+                    par3.Add(DbFactory.CreateDbParameter("@Template_Number", template.Number));
+
+                    var templateContent = database.FindList<Am_TemplateContent>(" and Template_Number=@Template_Number ");
+                    ViewBag.templateContent = templateContent;
+                }
+                return View(ammeter);
             }
             return View();
         }
         [HttpPost]
-        public JsonResult TemplateEidt(List<Am_TemplateContent> result,Am_Template template)
+        public JsonResult TemplateEidt(List<Am_TemplateContent> result, Am_Template template)
         {
             var user = wbll.GetUserInfo(Request);
-            if (template.Number==null||template .Number=="" )
+            if (template.Number == null || template.Number == "")
             {
-                template.Number= Utilities.CommonHelper.GetGuid;
+                template.Number = Utilities.CommonHelper.GetGuid;
                 template.UserFromTime = DateTime.Now;
                 template.CreateTime = DateTime.Now;
                 template.U_Number = user.Number;
@@ -480,11 +688,11 @@ namespace LeaRun.WebApp.Controllers
                 template.UserName = user.Account;
 
                 var status = database.Insert<Am_Template>(template);
-                if (status>0)
+                if (status > 0)
                 {
                     foreach (var item in result)
                     {
-                        if (item.ChargeItem_Title!=null &&item .ChargeItem_Title != "")
+                        if (item.ChargeItem_Title != null && item.ChargeItem_Title != "")
                         {
                             item.Template_Number = template.Number;
                             item.Template_Name = template.Name;
@@ -502,15 +710,15 @@ namespace LeaRun.WebApp.Controllers
                 parameter.Add(DbFactory.CreateDbParameter("@Number", template.Number));
 
                 var templateModel = database.FindEntityByWhere<Am_Template>(" and Number=@Number and UY_Number=@UY_Number", parameter.ToArray());
-                if (templateModel!=null && templateModel.Number !=null )
+                if (templateModel != null && templateModel.Number != null)
                 {
                     templateModel.OtherFees = template.OtherFees;
-                    if (database.Update<Am_Template>(templateModel)>0)
+                    if (database.Update<Am_Template>(templateModel) > 0)
                     {
                         List<DbParameter> par1 = new List<DbParameter>();
                         par1.Add(DbFactory.CreateDbParameter("@Template_Number", templateModel.Number));
-                         
-                        database.Delete<Am_Template>(" Template_Number=@Template_Number",par1.ToArray());
+
+                        database.Delete<Am_Template>(" Template_Number=@Template_Number", par1.ToArray());
                         foreach (var item in result)
                         {
                             if (item.ChargeItem_Title != null && item.ChargeItem_Title != "")
@@ -520,7 +728,7 @@ namespace LeaRun.WebApp.Controllers
                                 par2.Add(DbFactory.CreateDbParameter("@Number", item.Number));
 
                                 var chargeItem = database.FindEntityByWhere<Am_ChargeItem>(" and Number=@Number and Title=@Title ", par2.ToArray());
-                                if (chargeItem!=null && chargeItem.Number !=null )
+                                if (chargeItem != null && chargeItem.Number != null)
                                 {
                                     item.Template_Number = template.Number;
                                 }
@@ -562,7 +770,7 @@ namespace LeaRun.WebApp.Controllers
         public ActionResult ChargeItemAdd(Am_ChargeItem model)
         {
             var user = wbll.GetUserInfo(Request);
-            
+
             List<DbParameter> par = new List<DbParameter>();
             par.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
             par.Add(DbFactory.CreateDbParameter("@Title", model.Title));
@@ -574,14 +782,146 @@ namespace LeaRun.WebApp.Controllers
                 model.UserName = user.Account;
                 model.U_Name = user.Name;
 
-                if (database.Insert<Am_ChargeItem>(model)>0)
+                if (database.Insert<Am_ChargeItem>(model) > 0)
                 {
                     return Json(new { res = "Ok", msg = "添加成功" });
                 }
             }
             return Json(new { res = "No", msg = "添加失败" });
         }
+        /// <summary>
+        /// 出账账单管理
+        /// </summary>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        public ActionResult Billing(int pageSize = 5)
+        {
+            var user = wbll.GetUserInfo(Request);
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@F_U_Number", user.Number));
 
-        
+            var pending = database.FindCount<Am_Bill>(" and F_U_Number=@F_U_Number and  Status=0", parameter.ToArray());
+            ViewBag.recordCount = (int)Math.Ceiling(1.0 * pending / pageSize);
+
+            var processed = database.FindCount<Am_Bill>(" and F_U_Number=@F_U_Number and  Status=1", parameter.ToArray());
+            ViewBag.recordCount1 = (int)Math.Ceiling(1.0 * processed / pageSize);
+            return View();
+        }
+        /// <summary>
+        /// 账单列表
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        public ActionResult BillingList(int type, int pageIndex = 1, int pageSize = 5)
+        {
+            var user = wbll.GetUserInfo(Request);
+            int recordCount = 0;
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@F_U_Number", user.Number));
+            parameter.Add(DbFactory.CreateDbParameter("@Status", type));
+
+            var billlList = database.FindListPage<Am_Bill>(" and F_U_Number=@F_U_Number and  Status=@Status", parameter.ToArray(), "CreateTime", "desc", pageIndex, pageSize, ref recordCount);
+            //ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize); 
+            if (Request.IsAjaxRequest())
+            {
+                return Json(billlList);
+            }
+            else
+            {
+                return View();
+            }
+        }
+        /// <summary>
+        /// 出账详情
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public ActionResult BillingDetails(string number)
+        {
+            var user = wbll.GetUserInfo(Request);
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@F_U_Number", user.Number));
+            parameter.Add(DbFactory.CreateDbParameter("@Number", number));
+
+            var bill = database.FindEntityByWhere<Am_Bill>(" and F_U_Number=@F_U_Number and Number=@Number", parameter.ToArray());
+            if (bill != null && bill.Number != null)
+            {
+                List<DbParameter> par = new List<DbParameter>();
+                par.Add(DbFactory.CreateDbParameter("@Bill_Number", bill.Number));
+                var billContentList = database.FindList<Am_BillContent>(" and Bill_Number=@Bill_Number", par.ToArray());
+                ViewBag.billContentList = billContentList;
+                return View(bill);
+            }
+            return View();
+        }
+        /// <summary>
+        /// 待出账编辑
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public ActionResult BillingEdit(string number)
+        {
+            var user = wbll.GetUserInfo(Request);
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@F_U_Number", user.Number));
+            parameter.Add(DbFactory.CreateDbParameter("@Number", number));
+            parameter.Add(DbFactory.CreateDbParameter("@Status", "0"));
+
+            var bill = database.FindEntityByWhere<Am_Bill>(" and F_U_Number=@F_U_Number and Number=@Number and Status=@Status", parameter.ToArray());
+            if (bill != null && bill.Number != null)
+            {
+                List<DbParameter> par = new List<DbParameter>();
+                par.Add(DbFactory.CreateDbParameter("@Bill_Number", bill.Number));
+                var billContentList = database.FindList<Am_BillContent>(" and Bill_Number=@Bill_Number", par.ToArray());
+                ViewBag.billContentList = billContentList;
+                return View(bill);
+            }
+            return View();
+        }
+        /// <summary>
+        /// 待出账编辑
+        /// </summary>
+        /// <param name="number"></param>.
+        /// <param name="remark"></param>
+        /// <param name="billList"></param>
+        /// <returns></returns>
+        [HttpPost ]
+        public ActionResult BillingEdit(string number, string remark, List<Am_BillContent> billList)
+        {
+            var user = wbll.GetUserInfo(Request);
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@F_U_Number", user.Number));
+            parameter.Add(DbFactory.CreateDbParameter("@Number", number));
+
+            var bill = database.FindEntityByWhere<Am_Bill>(" and F_U_Number=@F_U_Number and Number=@Number", parameter.ToArray());
+            if (bill != null && bill.Number != null)
+            {
+                List<DbParameter> par = new List<DbParameter>();
+                par.Add(DbFactory.CreateDbParameter("@Bill_Number", bill.Number));
+                if (database.Delete<Am_BillContent>(" and Bill_Number=@Bill_Number", par.ToArray()) > 0)
+                {
+                    foreach (var item in billList)
+                    {
+                        var billContent = new Am_BillContent
+                        {
+                            Bill_Code = bill.BillCode,
+                            Bill_Number = bill.Number,
+                            Number = Utilities.CommonHelper.GetGuid,
+                            ChargeItem_ChargeType = item.ChargeItem_ChargeType,
+                            ChargeItem_Number = item.ChargeItem_Number,
+                            ChargeItem_Title = item.ChargeItem_Title,
+                            Money = item.Money,
+                            Remark = remark,
+                            UMark = ""
+                        };
+                        database.Insert<Am_BillContent>(billContent);
+                    }
+                    return Json(new { res = "Ok", msg = "提交成功" });
+                }
+            }
+            return Json(new { res = "No", msg = "提交失败" });
+        }
     }
 }

@@ -103,12 +103,13 @@ function GetQuery(key) {
             if (unescape(ar[1]) == 'undefined') {
                 return "";
             } else {
-                return unescape(ar[1]);
+                return decodeURI(ar[1]);
             }
         }
     }
     return "";
 }
+ 
 /**
 格式化时间显示方式、用法:format="yyyy-MM-dd hh:mm:ss";
 */

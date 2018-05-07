@@ -180,6 +180,7 @@ namespace LeaRun.WebApp.Controllers
             List<Base_ProvinceCity> ListData = base_provincecitybll.GetList(ParentId);
             return Content(ListData.ToJson());
         }
+        
         #endregion
 
         #region 验证对象值不能重复

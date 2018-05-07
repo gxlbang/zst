@@ -217,6 +217,7 @@
     <Compile Include="CommonClass\ToJsonMy.cs" />
     <Compile Include="CommonClass\UploadFileResult.cs" />
     <Compile Include="CommonClass\UserLoginFilters.cs" />
+    <Compile Include="CommonClass\UserOperatorFilters.cs" />
     <Compile Include="CommonClass\UserRightFilters.cs" />
     <Compile Include="CommonClass\WebData.cs" />
     <Compile Include="CommonClass\WeixinConfig.cs" />
@@ -8109,6 +8110,7 @@
     <Content Include="Content\Scripts\ckeditor\plugins\image\dialogs\image - 复制.js" />
     <Content Include="Content\Scripts\diyUpload.js" />
     <Content Include="Content\Scripts\image\demo.js" />
+    <Content Include="Content\Scripts\inkage.js" />
     <Content Include="Content\Scripts\jqthumb.min.js" />
     <Content Include="Content\Scripts\jquery.js" />
     <Content Include="Content\Scripts\jquery\jquery-1.4.1.min.js" />
@@ -9104,6 +9106,7 @@
     <Content Include="Content\Scripts\webuploader\webuploader.withoutimage.js" />
     <Content Include="Content\Scripts\webuploader\webuploader.withoutimage.min.js" />
     <Content Include="Content\Scripts\weixin\demo.js" />
+    <Content Include="Content\Scripts\zoomify.min.js" />
     <Content Include="Content\skins\theme_red\theme_red.css" />
     <Content Include="Content\Styles\960.css" />
     <Content Include="Content\Styles\com.css" />
@@ -9498,6 +9501,27 @@
     <Content Include="Views\Shared\_Template.cshtml" />
     <Content Include="Views\Personal\RepairAdd2.cshtml" />
     <Content Include="Views\Personal\RepairRecord.cshtml" />
+    <Content Include="Views\Personal\MyRent.cshtml" />
+    <Content Include="Views\Personal\Rent.cshtml" />
+    <Content Include="Views\Proprietor\Index.cshtml" />
+    <Content Include="Views\Proprietor\AmmeterAdd.cshtml" />
+    <Content Include="Views\Proprietor\AmmeterManage.cshtml" />
+    <Content Include="Views\Proprietor\AmmeterMoneyList.cshtml" />
+    <Content Include="Views\Proprietor\AmmeterMoneyEidt.cshtml" />
+    <Content Include="Views\Proprietor\AmmeterMoneyAdd.cshtml" />
+    <Content Include="Views\Proprietor\CollectorList.cshtml" />
+    <Content Include="Views\Personal\RepairInfo.cshtml" />
+    <Content Include="Views\Proprietor\Collector.cshtml" />
+    <Content Include="Views\Proprietor\AmmeterList.cshtml" />
+    <Content Include="Views\Proprietor\AmmeterUser.cshtml" />
+    <Content Include="Views\Proprietor\AmmeterUserDetailsList.cshtml" />
+    <Content Include="Views\Proprietor\TemplateList.cshtml" />
+    <Content Include="Views\Proprietor\ChargeManage.cshtml" />
+    <Content Include="Views\Proprietor\BillManageNav.cshtml" />
+    <Content Include="Views\Proprietor\Template.cshtml" />
+    <Content Include="Views\Proprietor\Billing.cshtml" />
+    <Content Include="Views\Proprietor\BillingDetails.cshtml" />
+    <Content Include="Views\Proprietor\BillingEdit.cshtml" />
     <None Include="Views\Utility\PrintPage.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

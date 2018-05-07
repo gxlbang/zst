@@ -89,6 +89,10 @@ select,button { cursor: pointer; }
 .repair-m .repair-span:nth-child(4) { padding: 0; display: block; width: 100%; height: 0.6rem; color: #4b93db; }
 .repair-m .icon-next { position: absolute; top: 50%; right: 0rem; margin-top: -0.4rem; }
 .repair-m .re-gary { color: #999 !important;}
+#Tab .tab-hd-index { background: #fff; }
+#Tab .pen-span { width: auto; padding: 0; }
+#Tab .pen-a { padding: 0.2rem 0.7rem 0.2rem 0.3rem; }
+#Tab .pen-a .repair-span:nth-child(4) { width: 100%; padding: 0; } 
 
 /*pending-list 待处理列表*/
 .all-pa { padding: 0 0.3rem 0.3rem; }
@@ -100,6 +104,10 @@ select,button { cursor: pointer; }
 .pen-li .pen-z { color: #333; }
 .pen-a { padding: 0.2rem 0; }
 .pen-a .repair-span:nth-child(4) { padding: 0; display: block; width: 100%; height: 0.8rem; line-height: 0.8rem; color: #333; padding-left: 0.2rem; }
+.reti-list { display: block; width: auto; padding: 0.2rem 0.8rem 0.2rem 0.2rem; margin: 0.3rem 0.2rem; position: relative; }
+.reti-list .pen-span { width: auto; }
+.reti-list .icon-next { position: absolute; top: 50%; right: 0; margin-top: -0.4rem; }
+
 
 /*revision-record 报修记录*/
 .pen-re { padding: 0 0.2rem; }

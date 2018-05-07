@@ -50,7 +50,7 @@ namespace LeaRun.WebApp.Controllers
                 var insertModel = new Ho_PartnerUser();
                 insertModel.Account = model.Name;
                 insertModel.Number = CommonHelper.GetGuid;
-                insertModel.Password = PasswordHash.CreateHash(model.Password);
+                insertModel.Password = Md5Helper.MD5Make(model.Password, "", 32).ToLower();
                 insertModel.Mobile = model.Name;
                 insertModel.CreatTime = DateTime.Now;
                 insertModel.ModifyTime = DateTime.Now;
@@ -110,7 +110,7 @@ namespace LeaRun.WebApp.Controllers
                 var accountIsMobile = database.FindEntity<Ho_PartnerUser>(" and Accout='" + model.Name + "'");
                 if (accountIsMobile != null && accountIsMobile.Number != null)
                 {
-                    accountIsMobile.Password = PasswordHash.CreateHash(model.Password);
+                    accountIsMobile.Password = Md5Helper.MD5Make(model.Password, "", 32).ToLower();
                     if (database.Update<Ho_PartnerUser>(accountIsMobile)>0)
                     {
                         return Json(new { res = "Ok", msg = "修改密码成功" });
@@ -142,7 +142,7 @@ namespace LeaRun.WebApp.Controllers
                 if (account != null 
                     && account.Number != null 
                     && account.Status !=9
-                    && PasswordHash.ValidatePassword(pwd, account?.Password))
+                    && Md5Helper.MD5Make(pwd, "", 32).ToLower()== account.Password)
                 {
                     // 抽取用户信息
                     string Md5 = Md5Helper.MD5(account.Number + account.OpenId + Request.UserHostAddress + Request.Browser.Type + Request.Browser.ClrVersion.ToString() + "2017", 16);

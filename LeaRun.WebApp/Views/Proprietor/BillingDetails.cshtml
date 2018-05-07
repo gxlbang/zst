@@ -1,0 +1,53 @@
+﻿@model LeaRun.Entity.Am_Bill
+@{
+    ViewBag.Title = "出账未付款账单详情";
+    Layout = "~/Views/Shared/_Partial.cshtml";
+}
+@if (Model != null)
+{
+    <div class="all pro-all">
+        <header class="header clear">
+            <a href="javascript:history.go(-1);" class="return fl"></a>
+            <h1 class="title">已出账未付款账单</h1>
+        </header>
+        <div class="list-index">
+            <div class="pro">
+                <span class="pro-li">账单号：@Model.BillCode</span>
+                <span class="pro-li">表号：@Model.AmmeterCode</span>
+                <span class="pro-li">姓名：@Model.T_U_Name</span>
+                <span class="pro-li">手机号：@Model.T_UserName</span>
+                <span class="pro-li">区域：@Model.Province@Model.City@Model.County</span>
+                <span class="pro-li">地址：@Model.Address</span>
+                <span class="pro-li">单元：@Model.Cell 单元</span>
+                <span class="pro-li">楼层：@Model.Floor 层</span>
+                <span class="pro-li">房号：@Model.Room 号</span>
+                <span class="pro-li">账单状态：@Model.StatusStr</span>
+                <span class="pro-li">账单出账时间：@Model.SendTime.Value.ToString("yyyy-MM-dd")</span>
+            </div>
+            <div class="pro mt15">
+                <div class="pro-explain pro-tit bbot">账单明细</div>
+                <div class="op-litwo op-lione clear">
+                    @if (ViewBag.billContentList != null)
+                    {
+                        var list = ViewBag.billContentList as List<LeaRun.Entity.Am_BillContent>;
+                        foreach (var item in list)
+                        {
+                            <span class="op-sshow his-show fl">@item.ChargeItem_Title：@Model.Money.Value.ToString("0.00") 元</span>
+                        }
+                    }
+                </div>
+ 
+                <div class="op-litwo his-all btop"><span class="op-sshow">合计：@Model.Money.Value.ToString("0.00") 元</span></div>
+            </div>
+            <div class="pro mt15">
+                <div class="pro-explain pro-tit bbot">备注</div>
+                <div class="pro-explain">
+                    <p>@Model.Remark</p>
+                </div>
+            </div>
+            <a href="" class="btn-all">确定已收款</a>
+        </div>
+    </div>
+}
+
+
