@@ -5,6 +5,7 @@
 }
 @if (Model != null)
 {
+    <input type="hidden" name="name" id="number" value="@Model.Number" />
     <div class="all pro-all">
         <header class="header clear">
             <a href="javascript:history.go(-1);" class="return fl"></a>
@@ -18,9 +19,7 @@
                 <span class="pro-li">手机号：@Model.T_UserName</span>
                 <span class="pro-li">区域：@Model.Province@Model.City@Model.County</span>
                 <span class="pro-li">地址：@Model.Address</span>
-                <span class="pro-li">单元：@Model.Cell 单元</span>
-                <span class="pro-li">楼层：@Model.Floor 层</span>
-                <span class="pro-li">房号：@Model.Room 号</span>
+                <span class="pro-li">单元：@Model.Cell 单元 @Model.Floor 层 @Model.Room 号</span>
                 <span class="pro-li">账单状态：@Model.StatusStr</span>
                 <span class="pro-li">账单出账时间：@Model.SendTime.Value.ToString("yyyy-MM-dd")</span>
             </div>
@@ -42,12 +41,40 @@
             <div class="pro mt15">
                 <div class="pro-explain pro-tit bbot">备注</div>
                 <div class="pro-explain">
-                    <p>@Model.Remark</p>
+                    <textarea class="acc-text" id="remark" placeholder="备注">@Model.Remark</textarea>
                 </div>
             </div>
-            <a href="" class="btn-all">确定已收款</a>
+            <a href="javascript:;" onclick="sub()" class="btn-all">确定已收款</a>
         </div>
     </div>
 }
 
+<script src="~/Content/Scripts/layer.mobile-v2.0/layer_mobile/layer.js"></script>
+<script>
+    function sub() {
+        layer.open({
+            content: '确定已收款?'
+              , btn: ['确定', '取消']
+              , skin: 'footer'
+              , yes: function (index) {
+                  var number = $("#number").val();
+                  var remark = $("#remark").val();
+                  $.post("/Proprietor/BillingHandle", { number: number, remark: remark }, function (data) {
+                      if (data.res == "Ok") {
+                          layer.open({ content: data.msg, skin: 'msg', time: 2 });
+                          layer.close(index);
+                          setTimeout("jump()", 1000);
+                      } else {
+                          layer.open({ content: data.msg, skin: 'msg', time: 2 });
+                      }
 
+                  });
+
+
+              }
+        });
+    }
+    function jump() {
+        window.location.href = '@Url.Action("Billing", "Proprietor")';
+    }
+</script>

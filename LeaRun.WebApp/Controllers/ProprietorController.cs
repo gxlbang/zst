@@ -900,10 +900,17 @@ namespace LeaRun.WebApp.Controllers
             {
                 List<DbParameter> par = new List<DbParameter>();
                 par.Add(DbFactory.CreateDbParameter("@Bill_Number", bill.Number));
-                if (database.Delete<Am_BillContent>(" and Bill_Number=@Bill_Number", par.ToArray()) > 0)
+                var billContentList = database.FindList<Am_BillContent>("and Bill_Number=@Bill_Number", par.ToArray());
+                if (billContentList.Count()>0&&database.Delete<Am_BillContent>(billContentList.Select(x=>x.Bill_Number).ToArray()) > 0)
                 {
+                    double total = 0;
+                    var inserList =new  List<Am_BillContent>();
                     foreach (var item in billList)
                     {
+                        if (item.ChargeItem_ChargeType==null )
+                        {
+                            item.ChargeItem_ChargeType = 0;
+                        }
                         var billContent = new Am_BillContent
                         {
                             Bill_Code = bill.BillCode,
@@ -916,12 +923,142 @@ namespace LeaRun.WebApp.Controllers
                             Remark = remark,
                             UMark = ""
                         };
-                        database.Insert<Am_BillContent>(billContent);
+                        total += item.Money.Value;
+                        inserList.Add(billContent);
+                        
                     }
+                    if (database.Insert<Am_BillContent>(inserList)>0)
+                    {
+                        total = total + bill.OtherFees.Value;
+                        bill.Money = total;
+                        if (database.Update<Am_Bill>(bill) > 0)
+                        {
+                            return Json(new { res = "Ok", msg = "提交成功" });
+                        }
+                    } 
+                }
+            }
+            return Json(new { res = "No", msg = "提交失败" });
+        }
+        /// <summary>
+        /// 出账未付款处理
+        /// </summary>
+        /// <param name="number"></param>
+        /// <param name="remark"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult BillingHandle(string number,string remark)
+        {
+            var user = wbll.GetUserInfo(Request);
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@F_U_Number", user.Number));
+            parameter.Add(DbFactory.CreateDbParameter("@Number", number));
+            parameter.Add(DbFactory.CreateDbParameter("@Status", "1"));
+
+            var bill = database.FindEntityByWhere<Am_Bill>(" and F_U_Number=@F_U_Number and Number=@Number and Status=@Status ", parameter.ToArray());
+            if (bill != null && bill.Number != null)
+            {
+                bill.Status = 2;
+                bill.StatusStr = "已支付";
+                bill.Remark = remark;
+                if (database .Update<Am_Bill>(bill)>0)
+                {
                     return Json(new { res = "Ok", msg = "提交成功" });
                 }
             }
             return Json(new { res = "No", msg = "提交失败" });
+        }
+        /// <summary>
+        /// 关联用户
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public ActionResult BindUser(string number)
+        {
+            var user = wbll.GetUserInfo(Request);
+            List<DbParameter> par = new List<DbParameter>();
+            par.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
+            par.Add(DbFactory.CreateDbParameter("@Number", number));
+
+            var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and UY_Number=@UY_Number and Number=@Number ", par.ToArray());
+            if (ammeter != null && ammeter.Number != null)
+            {
+                List<DbParameter> parAmmeterPermission = new List<DbParameter>();
+                parAmmeterPermission.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
+                parAmmeterPermission.Add(DbFactory.CreateDbParameter("@Ammeter_Number", ammeter.Number));
+                parAmmeterPermission.Add(DbFactory.CreateDbParameter("@Status", "1"));
+                //关联用户
+                var ammeterPermission = database.FindEntityByWhere<Am_AmmeterPermission>(" and UY_Number=@UY_Number and Ammeter_Number=@Ammeter_Number and Status=@Status ", parAmmeterPermission.ToArray());
+                if (ammeterPermission!=null&& ammeterPermission.Number!=null )
+                {
+                    ViewBag.ammeterPermission = ammeterPermission;
+                }
+
+                List<DbParameter> par1 = new List<DbParameter>();
+                par1.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+                par1.Add(DbFactory.CreateDbParameter("@Ammeter_Number", number));
+                //电表模板
+                var template = database.FindEntityByWhere<Am_Template>(" and U_Number=@U_Number and Ammeter_Number=@Ammeter_Number ", par1.ToArray());
+                if (template!=null && template.Number !=null )
+                {
+                    ViewBag.template = template;
+                    List<DbParameter> par2 = new List<DbParameter>();
+                    par2.Add(DbFactory.CreateDbParameter("@Template_Number", template.Number));
+                    var templateContentList = database.FindList<Am_Template>(" and UY_Number=@UY_Number and Ammeter_Number=@Ammeter_Number ", par2.ToArray());
+                    //模板内容
+                    if (templateContentList != null && templateContentList.Count() >0)
+                    {
+                        ViewBag.templateContent = templateContentList;
+                    }
+                }
+                else
+                {
+                    List<DbParameter> par3 = new List<DbParameter>();
+                    par3.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+                    par3.Add(DbFactory.CreateDbParameter("@U_Number2", "System"));
+                    //收费项
+                    var chargeItemList = database.FindList<Am_ChargeItem>(" and U_Number=@U_Number or U_Number=@U_Number2 ",par3.ToArray());
+                    ViewBag.chargeItemList = chargeItemList;
+                }
+                return View(ammeter);
+            }
+            return View();
+        }
+        [HttpPost]
+        public ActionResult BindUser(string number ,string phone,string name,string starTime,string endTime,string cycle,string lateFee, List<Am_ChargeItem> itemList)
+        {
+            var user = wbll.GetUserInfo(Request);
+            List<DbParameter> par = new List<DbParameter>();
+            par.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
+            par.Add(DbFactory.CreateDbParameter("@Number", number));
+
+            var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and UY_Number=@UY_Number and Number=@Number ", par.ToArray());
+            if (ammeter != null && ammeter.Number != null)
+            {
+                List<DbParameter> parAmmeterPermission = new List<DbParameter>();
+                parAmmeterPermission.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
+                parAmmeterPermission.Add(DbFactory.CreateDbParameter("@Ammeter_Number", ammeter.Number));
+                parAmmeterPermission.Add(DbFactory.CreateDbParameter("@Status", "1"));
+                //关联用户
+                var ammeterPermission = database.FindEntityByWhere<Am_AmmeterPermission>(" and UY_Number=@UY_Number and Ammeter_Number=@Ammeter_Number and Status=@Status ", parAmmeterPermission.ToArray());
+                if (ammeterPermission != null && ammeterPermission.Number != null)
+                {
+                    if (ammeterPermission.UserName.Equals(phone))
+                    {
+                        
+                    }
+                    else
+                    {
+
+                    }
+                }
+                else
+                {
+
+                }
+
+            }
+                return View();
         }
     }
 }

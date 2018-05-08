@@ -96,7 +96,7 @@ select,button { cursor: pointer; }
 
 /*pending-list 待处理列表*/
 .all-pa { padding: 0 0.3rem 0.3rem; }
-.pen-li { display: block; width: 100%; line-height: 0.8rem; }
+.pen-li { display: block; width: 100%; line-height: 0.8rem; background: #fff; }
 .pen-span { display: block; width: 32%; height: 0.8rem; line-height: 0.8rem; padding-left: 0.2rem; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pen-time { width: 43%; }
 /*.pen-a .pen-time { width: 43%; }*/
@@ -111,7 +111,7 @@ select,button { cursor: pointer; }
 
 /*revision-record 报修记录*/
 .pen-re { padding: 0 0.2rem; }
-.re-re { border: 0; box-shadow: none; padding: 0 0.2rem; display: block; width: 100%; position: relative; }
+.re-re { border: 0; box-shadow: none; padding: 0 0.2rem; display: block; width: 100%; position: relative; background: #fff; }
 .re-re .pen-z { width: 23%; }
 .re-re .icon-next { position: absolute; top: 50%; right: 0rem; margin-top: -0.4rem; }
 /*repair-page 报修页面*/
@@ -172,7 +172,7 @@ select,button { cursor: pointer; }
 /*recharge 充值*/
 /*details-account 待出账详情*/
 .acc-all { /*padding-bottom: 0.3rem;*/ }
-.acc-top { width: 100%; line-height: 0.8rem; padding: 0 0.3rem; }
+.acc-top { width: 100%; line-height: 0.8rem; padding: 0 0.3rem; background: #fff; }
 .acc-one { display: block; width: 30%; }
 .acc-two { width: 60%; padding: 0 0.2rem; }
 .acc-pa { padding: 0.2rem 0.3rem 0 0.3rem; }
@@ -343,17 +343,17 @@ select,button { cursor: pointer; }
 .charge-se option { line-height: 0.8rem; }
 
 /*equipment-deposit 设备押金*/
-.ep-de { display: block; width: 100%; padding: 0 0.3rem; }
+.ep-de { display: block; width: 100%; padding: 0 0.3rem; background: #fff; }
 .ep-de .pen-span { width: 28%; padding: 0; }
 .ep-de .pen-time { width: 44%; }
 /*retiring-record 退租记录*/
-.reti-re { display: block; width: 100%; padding: 0 2.3rem 0 0.3rem; position: relative; color: #333; }
+.reti-re { display: block; width: 100%; padding: 0 2.3rem 0 0.3rem; position: relative; color: #333; background: #fff; }
 .reti-re .icon-next { position: absolute; top: 50%; right: 0; margin-top: -0.4rem; }
 .reti-re .pen-span { width: 100%; padding: 0; }
 .reti-re .reti-span { width: 1.6rem; color: #999; text-align: right; position: absolute; top: 0.02rem; right: 0.6rem; }
 
 /*add-repair 添加报修*/
-.add-repair { display: block; width: 100%; color: #333; padding: 0 0.3rem; position: relative; }
+.add-repair { display: block; width: 100%; color: #333; padding: 0 0.3rem; position: relative; background: #fff; }
 .add-repair .pen-span { width: 18%; padding: 0; text-align: center; }
 .add-repair .pen-span:nth-child(1) { width: 25%; }
 .add-repair .icon-next { position: absolute; top: 50%; right: 0; margin-top: -0.4rem; }
@@ -361,11 +361,11 @@ select,button { cursor: pointer; }
 .charge-form .acc-in { width: 30%; margin-right: 3.33%; }
 .charge-form .acc-btn { margin-top: 0.2rem; margin-right: 3.33%; }
 .charge-form .charge-btn { background: #fff; border: 0.02rem solid #e0e0e0; color: #333; }
-.charge-man { display: block; color: #333; padding: 0 0.3rem; }
+.charge-man { display: block; color: #333; padding: 0 0.3rem; background: #fff; }
 .charge-man .pen-span { width: 25%; padding: 0; text-align: center; }
 
 /*add-collector 添加采集器*/
-.add-co { width: 100%; padding: 0 0.3rem 0 2rem; }
+.add-co { width: 100%; padding: 0 0.3rem 0 2rem; margin: 0; padding-top: 0.3rem; background: #fff; }
 .add-co .bill-text { width: 1.7rem; margin-left: -1.7rem; }
 .add-co .charge-se { width: 33.33%; }
 .add-cote { width: 100%; min-height: 1.2rem; line-height: 2; padding: 0.12rem 0.2rem; }
@@ -428,7 +428,7 @@ modify-password 修改密码*/
 .my-border { display: block; width: 2.8rem; height: 2.8rem; border: 0.1rem solid #fff; opacity: 0.4; position: absolute; top: 0.6rem; left: 0.6rem; border-radius: 50%; }
 .my-img .jqthumb { width: 2.8rem; height: 2.8rem; border-radius: 50%; overflow: hidden; }
 .my-xing { display: block; width: 100%; line-height: 0.7rem; font-size: 0.36rem; position: relative; top: -0.3rem; text-align: center; color: #fff; }
-.my-list { display: block; width: 100%; line-height: 0.8rem; padding-left: 0.8rem; position: relative; font-size: 0.32rem; }
+.my-list { display: block; width: 100%; line-height: 0.8rem; padding-left: 0.8rem; position: relative; font-size: 0.32rem; background: #fff; }
 .my-list .icon-next { position: absolute; top: 0; right: 0; }
 .icon { display: block; width: 0.8rem; height: 0.8rem; margin-left: -0.8rem; background-size: 0.6rem 0.6rem !important; }
 .icon-one { background: url(../images/mine-meter.png) center center no-repeat; }
@@ -465,6 +465,7 @@ modify-password 修改密码*/
 .my-de { padding: 0; }
 /*I-want-retire 我要退租*/
 /*perfect-information 完善信息*/
+.perfect-mian { background: #fff; }
 .perfect-mian .bill-text { text-align: left; }
 /*share 我要分享*/
 .share { display: block; width: 100%; padding: 0.3rem; }
@@ -477,7 +478,10 @@ modify-password 修改密码*/
 .icon-ty { background: url(../images/collector.png) center center no-repeat; }
 .icon-thy { background: url(../images/manage.png) center center no-repeat; }
 
-
+/*binding-users 绑定用户*/
+.gary.binding-text { height: auto; }
+.binding-text { padding-left: 1.8rem; }
+.binding-text .bill-text { width: 1.5rem; margin-left: -1.5rem; text-align: left; }
 
 
 

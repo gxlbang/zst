@@ -9529,6 +9529,7 @@
     <Content Include="Views\Proprietor\Billing.cshtml" />
     <Content Include="Views\Proprietor\BillingDetails.cshtml" />
     <Content Include="Views\Proprietor\BillingEdit.cshtml" />
+    <Content Include="Views\Proprietor\BindUser.cshtml" />
     <None Include="Views\Utility\PrintPage.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

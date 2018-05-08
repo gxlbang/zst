@@ -1,4 +1,4 @@
-﻿@model LeaRun.Entity .Am_Bill
+﻿@model LeaRun.Entity.Am_Bill
 @{
     ViewBag.Title = "待出账详情";
     Layout = "~/Views/Shared/_Partial.cshtml";
@@ -6,7 +6,7 @@
 
 @if (Model != null)
 {
-    <input type="hidden"  name="name" id="number"  value="@Model.Number" />
+    <input type="hidden" name="name" id="number" value="@Model.Number" />
     <div class="all pro-all">
         <header class="header clear">
             <a href="javascript:history.go(-1);" class="return fl"></a>
@@ -22,14 +22,14 @@
             <span class="charge-span">单元：@Model.Cell 单元 @Model.Floor 层 @Model.Room 号</span>
             <span class="charge-span">账单状态：@Model.StatusStr</span>
             <span class="charge-span">账单出账时间：@Model.SendTime.Value.ToString("yyyy-MM-dd")</span>
-            
+
         </div>
         <div class="gary"></div>
         <div class="acc-top bbot btop clear">
             <span class="acc-one fl">项目</span>
             <span class="acc-one acc-two fl">金额</span>
         </div>
-        
+
 
         <div class="acc-all bbot">
             @if (ViewBag.billContentList != null)
@@ -37,12 +37,12 @@
                 var list = ViewBag.billContentList as List<LeaRun.Entity.Am_BillContent>;
                 foreach (var item in list)
                 {
-            <div class="acc-top acc-pa clear">
-                <input type="hidden" name="name" value="@item.Number" />
-                <span class="acc-one fl"><input type="text" class="acc-in" value="@item.ChargeItem_Title" /></span>
-                <span class="acc-one acc-two fl"><input type="text" class="acc-in" value="@item.Money.Value.ToString("0.00")" onkeyup="clearNoNum(this)" /></span>
-                <input class="icon-close fr" type="button" onclick="test(this)" value="-" />
-            </div>
+                    <div class="acc-top acc-pa clear">
+                        <input type="hidden" name="name" value="@item.Number" />
+                        <span class="acc-one fl"><input type="text" class="acc-in" value="@item.ChargeItem_Title" /></span>
+                        <span class="acc-one acc-two fl"><input type="text" class="acc-in" value="@item.Money.Value.ToString("0.00")" onkeyup="clearNoNum(this)" /></span>
+                        <input class="icon-close fr" type="button" onclick="test(this)" value="-" />
+                    </div>
                 }
             }
 
@@ -55,19 +55,19 @@
             <span class="charge-span">账单金额：<label id="money">@Model.Money.Value.ToString("0.00")</label>元</span>
         </div>
         <div class="gary"></div>
-        <div class="acc-bei acc-all bbot btop clear"><span class="acc-b fl">备注：</span><textarea class="acc-text"   id="remark" placeholder="备注"></textarea></div>
-        <div class="acc-btnt clear"><a href="javascript:;" id="submit1" class="acc-btno fl">保存</a><a href="" class="acc-btno acc-btntt fr">取消</a></div>
+        <div class="acc-bei acc-all bbot btop clear"><span class="acc-b fl">备注：</span><textarea class="acc-text" id="remark" placeholder="备注"></textarea></div>
+        <div class="acc-btnt clear"><a href="javascript:;" id="submit1" class="acc-btno fl">保存</a></div>
     </div>
 }
 
-
+<script src="~/Content/Scripts/layer.mobile-v2.0/layer_mobile/layer.js"></script>
 <script type="text/javascript">
     var add = document.getElementById('add');
     var container = document.getElementById('container');
     var node = container.nextSibling;
     add.onclick = function () {
         oDiv = document.createElement('div');
-        oDiv.innerHTML = "<div class='acc-top acc-pa clear'><input type=\"hidden\" name=\"name\" value=\"\" /><span class='acc-one fl'><input type='text' class='acc-in' placeholder='公摊费'/></span><span class='acc-one acc-two fl'><input type='text' class='acc-in' placeholder='0.00'  onkeyup=\"clearNoNum(this)\"/></span><input class='icon-close fr' type='button' onclick='test(this)' value='-' /></div>";
+        oDiv.innerHTML = "<div class='acc-top acc-pa clear'><input type=\"hidden\" name=\"name\" value=\"\" /><span class='acc-one fl'><input type='text' class='acc-in' placeholder='其他'/></span><span class='acc-one acc-two fl'><input type='text' class='acc-in' placeholder='0.00'  onkeyup=\"clearNoNum(this)\"/></span><input class='icon-close fr' type='button' onclick='test(this)' value='-' /></div>";
         container.parentNode.insertBefore(oDiv, node)
         node = oDiv.nextSibling;
 
@@ -78,14 +78,10 @@
         obj.value = obj.value.replace(/\.{2,}/g, "."); //只保留第一个, 清除多余的
         obj.value = obj.value.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
         obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3'); //只能输入两个小数
-     
+
     }
 
     function test(test) {
-        //if ($(test).parent().find("input:eq(2)").val().length > 0) {
-        //    var money = parseFloat($("#money").text()) - parseFloat($(test).parent().find("input:eq(2)").val());
-        //    $("#money").text(money);
-        //}
         test.parentNode.parentNode.removeChild(test.parentNode);
     }
 
@@ -94,7 +90,7 @@
         $('.acc-pa').each(function (i) {
             var thisItem = $(this);
             thisItem.find("input:eq(2)").bind('input propertychange', function () {
-                 
+
             });
         });
 
@@ -112,29 +108,46 @@
                     isTrue = false;
                 }
                 else {
-                    total += thisItem.find("input:eq(1)").val();
+                    total += parseFloat(thisItem.find("input:eq(2)").val());
                 }
 
             });
             if (!isTrue) {
                 return;
             }
-            total = total + $("#otherFees").text();
+            total = total + parseFloat($("#otherFees").text());
             _list["number"] = $("#number").val();
             _list["remark"] = $("#remark").val();
-
-            $.ajax({
-                type: "POST",
-                url: "/Proprietor/BillingEdit",
-                traditional: true,
-                data: _list,
-                success: function (data) {
-                    console.log("successfully processed.");
-                },
-                error: function (data) {
-                    console.log("error occurred.");
-                }
+            var text = "您是否确定要保存?";
+            if (parseFloat($("#money").text()) != parseFloat(total)) {
+                var text = "您的账单金额已经变为：" + total + "元，您是否确定要保存?";
+            }
+            layer.open({
+                content: text
+              , btn: ['保存', '取消']
+              , skin: 'footer'
+              , yes: function (index) {
+                  $.ajax({
+                      type: "POST",
+                      url: "/Proprietor/BillingEdit",
+                      traditional: true,
+                      data: _list,
+                      success: function (data) {
+                          if (data.res == "Ok") {
+                              layer.open({ content: data.msg, skin: 'msg', time: 2 });
+                              location.reload();
+                              layer.close(index);
+                          } else {
+                              layer.open({ content: data.msg, skin: 'msg', time: 2 });
+                          }
+                      },
+                      error: function (data) {
+                          layer.open({ content: data.msg, skin: 'msg', time: 2 });
+                      }
+                  });
+              }
             });
+
             return false;
         });
     });
