@@ -887,7 +887,7 @@ namespace LeaRun.WebApp.Controllers
         /// <param name="remark"></param>
         /// <param name="billList"></param>
         /// <returns></returns>
-        [HttpPost ]
+        [HttpPost]
         public ActionResult BillingEdit(string number, string remark, List<Am_BillContent> billList)
         {
             var user = wbll.GetUserInfo(Request);

@@ -38,12 +38,19 @@ namespace LeaRun.Entity
         /// <returns></returns>
         [DisplayName("Number")]
         public string Number { get; set; }
+
         /// <summary>
         /// Repair_Number
         /// </summary>
         /// <returns></returns>
         [DisplayName("Repair_Number")]
         public string Repair_Number { get; set; }
+        /// <summary>
+        /// RepairCode
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("RepairCode")]
+        public int? RepairCode { get; set; }
         /// <summary>
         /// ImagePath
         /// </summary>

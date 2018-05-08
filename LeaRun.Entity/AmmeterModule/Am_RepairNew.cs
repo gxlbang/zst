@@ -32,6 +32,12 @@ namespace LeaRun.Entity
     {
         #region 获取/设置 字段值
         /// <summary>
+        /// RepairCode
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("RepairCode")]
+        public string RepairCode { get; set; }
+        /// <summary>
         /// UserName
         /// </summary>
         /// <returns></returns>

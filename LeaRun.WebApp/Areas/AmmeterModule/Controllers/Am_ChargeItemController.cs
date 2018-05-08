@@ -83,6 +83,8 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
                 }
                 else //新建
                 {
+                    model.U_Number = "System";
+                    model.UserName="系统预设";
                     model.Create();
                     var IsOk = database.Insert(model, isOpenTrans);
                     Base_SysLogBll.Instance.WriteLog(KeyValue, OperationType.Update, IsOk > 0 ? "成功" : "失败", "收费项" + Message);

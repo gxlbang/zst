@@ -105,10 +105,11 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
                 model.F_UserName = item.F_UserName;
                 model.UserName = item.UserName;
                 model.U_Name = item.U_Name;
+                model.RepairCode = item.RepairCode.Value.ToString();
 
                 newlist.Add(model);
             }
-            string[] columns = new string[] { "电表编号:AmmeterCode", "租户:UserName", "租户姓名:U_Name",
+            string[] columns = new string[] { "报修编号:RepairCode","电表编号:AmmeterCode", "租户:UserName", "租户姓名:U_Name",
                 "业主:F_UserName","业主姓名:F_Name","状态:StatusStr","报修时间:CreateTime",
                 "省:Province","市:City", "区:County", "地址:Address","单元:Cell","楼层:Floor","房号:Room" };
             DeriveExcel.ListToExcel<Am_RepairNew>(newlist, columns, "报修数据" + DateTime.Now.ToString("yyyyMMddHHmmss"));

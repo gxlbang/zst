@@ -13,14 +13,11 @@
     {
         <div class="list-index">
             <div class="pro">
+                <span class="pro-li">编号：@Model.RepairCode</span>
                 <span class="pro-li">表号：@Model.AmmeterCode</span>
-                <span class="pro-li">姓名：@Model.U_Name</span>
-                <span class="pro-li">手机号：@Model.UserName</span>
-                <span class="pro-li">区域：@Model.Province@Model.City@Model.County</span>
-                <span class="pro-li">地址：@Model.Address</span>
-                <span class="pro-li">单元：@Model.Cell 单元</span>
-                <span class="pro-li">楼层：@Model.Floor 层</span>
-                <span class="pro-li">房号：@Model.Room 号</span>
+                <span class="pro-li">姓名：@Model.U_Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 手机号：@Model.UserName</span>
+                <span class="pro-li">区域：@Model.Province@Model.City@Model.County@Model.Address</span>
+                <span class="pro-li">地址：@Model.Cell 单元 @Model.Floor 层 @Model.Room 号</span>
                 <span class="pro-li">状态：@Model.StatusStr</span>
                 <div class="pro-img clear" data-am-widget="gallery" data-am-gallery="{ pureview: true }">
                     @if (ViewBag.repairImage != null)
@@ -43,7 +40,8 @@
                         if (repairAnswer!=null&& repairAnswer.Number !=null && repairAnswer.Number !="")
                         {
                             <p>已安排师傅过去维修</p>
-                            <p>联系方式：@repairAnswer.Mobile<span style="padding-left: 0.3rem;">@repairAnswer.UserName</span></p>
+                            <p>联系方式：@repairAnswer.Mobile<span style="padding-left: 0.3rem;">@repairAnswer.U_Name</span></p>
+                            <p>备注：@repairAnswer.AContent</p>
                         }
                     }
 
