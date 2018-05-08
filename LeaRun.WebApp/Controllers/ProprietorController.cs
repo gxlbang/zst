@@ -1060,5 +1060,161 @@ namespace LeaRun.WebApp.Controllers
             }
                 return View();
         }
+
+
+        #region 报修管理
+        /// <summary>
+        /// 报修记录
+        /// </summary>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        public ActionResult RepairManagement(int pageSize = 5)
+        {
+            var user = wbll.GetUserInfo(Request);
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+
+            var pending = database.FindCount<Am_Repair>(" and F_Number=@U_Number and  Status=0", parameter.ToArray());
+            ViewBag.recordCount = (int)Math.Ceiling(1.0 * pending / pageSize);
+
+            var processed = database.FindCount<Am_Repair>(" and F_Number=@U_Number and  Status=1", parameter.ToArray());
+            ViewBag.recordCount1 = (int)Math.Ceiling(1.0 * processed / pageSize);
+            return View();
+        }
+        /// <summary>
+        /// 获取报修记录
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        public ActionResult RepairRecordList(int type, int pageIndex = 1, int pageSize = 5)
+        {
+            var user = wbll.GetUserInfo(Request);
+            int recordCount = 0;
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+            parameter.Add(DbFactory.CreateDbParameter("@Status", type));
+
+            var repairlList = database.FindListPage<Am_Repair>(" and F_Number=@U_Number and  Status=@Status", parameter.ToArray(), "CreateTime", "desc", pageIndex, pageSize, ref recordCount);
+            //ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize); ;
+            if (Request.IsAjaxRequest())
+            {
+                return Json(repairlList);
+            }
+            else
+            {
+                return View();
+            }
+
+        }
+        /// <summary>
+        /// 报修详情
+        /// </summary>
+        /// <param name="Number"></param>
+        /// <returns></returns>
+        public ActionResult RepairInfo(string number)
+        {
+            var user = wbll.GetUserInfo(Request);
+            List<DbParameter> par = new List<DbParameter>();
+            par.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+            par.Add(DbFactory.CreateDbParameter("@Number", number));
+
+            var repair = database.FindEntityByWhere<Am_Repair>(" and Number=@Number and F_Number=@U_Number", par.ToArray());
+            if (repair != null && repair.Number != null)
+            {
+                List<DbParameter> par1 = new List<DbParameter>();
+                par1.Add(DbFactory.CreateDbParameter("@Repair_Number", repair.Number));
+
+                var repairImage = database.FindList<Am_RepairImage>(" and  Repair_Number=@Repair_Number ", par1.ToArray());
+                ViewBag.repairImage = repairImage;
+
+                List<DbParameter> par2 = new List<DbParameter>();
+                par2.Add(DbFactory.CreateDbParameter("@Repair_Number", repair.Number));
+                var repairAnswer = database.FindEntityByWhere<Am_RepairAnswer>(" and Repair_Number=@Repair_Number ", par2.ToArray());
+                ViewBag.repairAnswer = repairAnswer;
+
+                return View(repair);
+            }
+            return View();
+        }
+        /// <summary>
+        /// 获取维修师傅
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult GetMyUserWXList()
+        {
+            var user = wbll.GetUserInfo(Request);
+            List<DbParameter> par = new List<DbParameter>();
+            par.Add(DbFactory.CreateDbParameter("@As_Number", user.Number));
+            var PartnerUserList = database.FindList<Ho_PartnerUser>(" and UserRole = '维修师傅' and As_Number=@As_Number", par.ToArray());
+            //if (PartnerUser != null && PartnerUser.Number != null)
+            //{
+            //    return Json(PartnerUser);
+            //}
+            //return View();
+            return Json(PartnerUserList);
+        }
+        /// <summary>
+        /// 报修处理提交
+        /// </summary>
+        /// <param name="Number"></param>
+        /// <param name="U_Number"></param>
+        /// <param name="AContent"></param>
+        /// <returns></returns>
+        public ActionResult SubmitRepairAnswer(string Number, string U_Number, string AContent)
+        {
+            DbTransaction isOpenTrans = database.BeginTrans();
+            try
+            {
+                var repair = database.FindEntity<Am_Repair>(Number);
+                var wxuser = database.FindEntity<Ho_PartnerUser>(U_Number);
+                if (repair != null && repair.Number != null)
+                {
+
+                    var answer = new Am_RepairAnswer()
+                    {
+                        AContent = AContent,
+                        Mobile = wxuser.Mobile,
+                        CreateTime = DateTime.Now,
+                        RepairCode = repair.RepairCode,
+                        Repair_Number = repair.Number,
+                        STATUS = 1,
+                        StatusStr = "已处理",
+                        UserName = wxuser.Account,
+                        U_Name = wxuser.Name,
+                        U_Number = wxuser.Number
+                    };
+                    answer.Create();
+                    var result = database.Insert(answer, isOpenTrans); //添加报修记录
+                    //更新报修表
+                    repair.Status = 1;
+                    repair.StatusStr = "已处理";
+                    repair.Modify(repair.Number);
+                    repair.RepairCode = null;   //一定要null,因为数据库为自增字段,所以不允许update此字段
+                    result += database.Update(repair, isOpenTrans);
+                    if (result < 2) //处理失败
+                    {
+                        database.Rollback();
+                        return Json(new { res = "No", msg = "提交失败" });
+                    }
+                    else
+                    {
+                        //发送微信通知给师傅
+
+
+                        database.Commit();
+                        return Json(new { res = "Ok", msg = "提交成功" });
+                    }
+                }
+            }
+            catch
+            {
+                isOpenTrans.Rollback();
+            }
+            return Json(new { res = "No", msg = "提交失败" });
+        }
+        #endregion
     }
 }
