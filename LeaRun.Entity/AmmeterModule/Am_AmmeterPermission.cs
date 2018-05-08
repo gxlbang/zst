@@ -111,6 +111,18 @@ namespace LeaRun.Entity
         [DisplayName("UY_Name")]
         public string UY_Name { get; set; }
         /// <summary>
+        /// 起租日期
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("BeginTime")]
+        public DateTime? BeginTime { get; set; }
+        /// <summary>
+        /// 到期日期
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("EndTime")]
+        public DateTime? EndTime { get; set; }
+        /// <summary>
         /// Remark
         /// </summary>
         /// <returns></returns>

@@ -57,12 +57,13 @@
             autowidth: true,
             colModel: [
                     { label: 'Number', name: 'Number', index: 'Number', width: 0, align: 'left', hidden: true },
+                    { label: '报修编号', name: 'RepairCode', index: 'RepairCode', width: 60, align: 'left', sortable: true },
                     { label: '电表编号', name: 'AmmeterCode', index: 'AmmeterCode', width: 120, align: 'left', sortable: true },
                     { label: '租户', name: 'UserName', index: 'UserName', width: 120, align: 'left', sortable: true },
-                    { label: '租户姓名', name: 'U_Name', index: 'U_Name', width: 80, align: 'left', sortable: true },
+                    { label: '租户姓名', name: 'U_Name', index: 'U_Name', width: 60, align: 'left', sortable: true },
                     { label: '业主', name: 'F_UserName', index: 'F_UserName', width: 120, align: 'left', sortable: true },
-                    { label: '业主姓名', name: 'F_Name', index: 'F_Name', width: 80, align: 'left', sortable: true },
-                     { label: '状态', name: 'StatusStr', index: 'StatusStr', width: 80, align: 'left', sortable: true, cellattr: addCellAttr_red },
+                    { label: '业主姓名', name: 'F_Name', index: 'F_Name', width: 60, align: 'left', sortable: true },
+                     { label: '状态', name: 'StatusStr', index: 'StatusStr', width: 60, align: 'left', sortable: true, cellattr: addCellAttr_red },
                     {
                         label: "报修时间", name: "CreateTime", index: "CreateTime", width: 150,
                         formatter: function (value, options, rowObject) {

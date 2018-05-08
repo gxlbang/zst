@@ -28,7 +28,7 @@ namespace LeaRun.Entity
     /// </author>
     /// </summary>
     [Description("Am_RepairAnswer")]
-    [PrimaryKey("Repair_Number")]
+    [PrimaryKey("Number")]
     public class Am_RepairAnswer : BaseEntity
     {
         #region 获取/设置 字段值
@@ -38,6 +38,12 @@ namespace LeaRun.Entity
         /// <returns></returns>
         [DisplayName("Number")]
         public string Number { get; set; }
+        /// <summary>
+        /// RepairCode
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("RepairCode")]
+        public int? RepairCode { get; set; }
         /// <summary>
         /// Repair_Number
         /// </summary>
@@ -106,7 +112,7 @@ namespace LeaRun.Entity
         /// </summary>
         public override void Create()
         {
-            this.Repair_Number = CommonHelper.GetGuid;
+            this.Number = CommonHelper.GetGuid;
                                             }
         /// <summary>
         /// 编辑调用
@@ -114,7 +120,7 @@ namespace LeaRun.Entity
         /// <param name="KeyValue"></param>
         public override void Modify(string KeyValue)
         {
-            this.Repair_Number = KeyValue;
+            this.Number = KeyValue;
                                             }
         #endregion
     }

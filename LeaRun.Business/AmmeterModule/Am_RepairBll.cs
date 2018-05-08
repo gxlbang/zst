@@ -67,6 +67,7 @@ namespace LeaRun.Business
                                     OR Cell LIKE @keyword 
                                     OR Floor LIKE @keyword 
                                     OR Room LIKE @keyword 
+                                    OR RepairCode LIKE @keyword 
                                     OR Address LIKE @keyword)");
                 parameter.Add(DbFactory.CreateDbParameter("@keyword", '%' + keywords + '%'));
             }
@@ -172,6 +173,7 @@ namespace LeaRun.Business
                                     OR Cell LIKE @keyword 
                                     OR Floor LIKE @keyword 
                                     OR Room LIKE @keyword 
+                                    OR RepairCode LIKE @keyword 
                                     OR Address LIKE @keyword)");
                 parameter.Add(DbFactory.CreateDbParameter("@keyword", '%' + keywords + '%'));
             }
