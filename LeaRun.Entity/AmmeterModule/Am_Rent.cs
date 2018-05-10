@@ -147,6 +147,12 @@ namespace LeaRun.Entity
         [DisplayName("F_UserName")]
         public string F_UserName { get; set; }
         /// <summary>
+        /// F_Name
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("F_Name")]
+        public string F_Name { get; set; }
+        /// <summary>
         /// CollectorNumber
         /// </summary>
         /// <returns></returns>
