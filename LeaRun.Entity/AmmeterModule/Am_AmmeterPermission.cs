@@ -28,7 +28,7 @@ namespace LeaRun.Entity
     /// </author>
     /// </summary>
     [Description("Am_AmmeterPermission")]
-    [PrimaryKey("Ammeter_Number")]
+    [PrimaryKey("Number")]
     public class Am_AmmeterPermission : BaseEntity
     {
         #region 获取/设置 字段值
