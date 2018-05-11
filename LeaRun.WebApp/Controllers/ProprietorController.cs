@@ -78,6 +78,7 @@ namespace LeaRun.WebApp.Controllers
 
                 if (ammeter != null && ammeter.Number != null)
                 {
+                    //获取电价
                     List<DbParameter> par1 = new List<DbParameter>();
                     par1.Add(DbFactory.CreateDbParameter("@Number", model.AmmeterMoney_Number));
                     par1.Add(DbFactory.CreateDbParameter("@UserNumber", user.Number));
@@ -85,40 +86,42 @@ namespace LeaRun.WebApp.Controllers
                     ammeter.AmmeterMoney_Number = ammeterMoney.Number;
                     ammeter.AmmeterMoney_Name = ammeterMoney.Name;
 
+                    //获取电表类型
                     List<DbParameter> par2 = new List<DbParameter>();
                     par2.Add(DbFactory.CreateDbParameter("@Number", model.AmmeterType_Number));
                     var ammeterType = database.FindEntityByWhere<Am_AmmeterType>(" and Number=@Number ", par2.ToArray());
                     ammeter.AmmeterType_Number = ammeterType.Number;
                     ammeter.AmmeterType_Name = ammeterType.Name;
 
+                    //获取控制器
                     List<DbParameter> par3 = new List<DbParameter>();
                     par3.Add(DbFactory.CreateDbParameter("@Number", model.Collector_Number));
                     var collector = database.FindEntityByWhere<Am_Collector>(" and Number=@Number ", par3.ToArray());
                     ammeter.Collector_Number = collector.Number;
                     ammeter.Collector_Code = collector.CollectorCode;
 
-                    if (model.UserName != null && model.UserName != "")
-                    {
-                        ammeter.Status = 1;
-                        ammeter.StatusStr = "已开户";
+                    //if (model.UserName != null && model.UserName != "")
+                    //{
+                    //    ammeter.Status = 1;
+                    //    ammeter.StatusStr = "已开户";
 
-                        List<DbParameter> par4 = new List<DbParameter>();
-                        par4.Add(DbFactory.CreateDbParameter("@Account", model.UserName));
-                        par4.Add(DbFactory.CreateDbParameter("@Name", model.U_Name));
-                        par4.Add(DbFactory.CreateDbParameter("@Status", "3"));//审核已过
+                    //    List<DbParameter> par4 = new List<DbParameter>();
+                    //    par4.Add(DbFactory.CreateDbParameter("@Account", model.UserName));
+                    //    par4.Add(DbFactory.CreateDbParameter("@Name", model.U_Name));
+                    //    par4.Add(DbFactory.CreateDbParameter("@Status", "3"));//审核已过
 
-                        var partnerUser = database.FindEntityByWhere<Ho_PartnerUser>(" and Account=@Account and  Name=@Name and Status=@Status", par4.ToArray());
-                        if (partnerUser != null && partnerUser.Number != null)
-                        {
-                            ammeter.UserName = partnerUser.Account;
-                            ammeter.U_Number = partnerUser.Number;
-                            ammeter.U_Name = partnerUser.Name;
-                        }
-                        else
-                        {
-                            return Json(new { res = "No", msg = "提交失败，没有找到该用户" });
-                        }
-                    }
+                    //    var partnerUser = database.FindEntityByWhere<Ho_PartnerUser>(" and Account=@Account and  Name=@Name and Status=@Status", par4.ToArray());
+                    //    if (partnerUser != null && partnerUser.Number != null)
+                    //    {
+                    //        ammeter.UserName = partnerUser.Account;
+                    //        ammeter.U_Number = partnerUser.Number;
+                    //        ammeter.U_Name = partnerUser.Name;
+                    //    }
+                    //    else
+                    //    {
+                    //        return Json(new { res = "No", msg = "提交失败，没有找到该用户" });
+                    //    }
+                    //}
 
 
                     ammeter.Address = model.Address;
@@ -147,14 +150,15 @@ namespace LeaRun.WebApp.Controllers
             }
             else
             {
+                //获取电价
                 List<DbParameter> par1 = new List<DbParameter>();
                 par1.Add(DbFactory.CreateDbParameter("@Number", model.AmmeterMoney_Number));
                 var ammeterMoney = database.FindEntityByWhere<Am_AmmeterMoney>(" and Number=@Number ", par1.ToArray());
-
+                //获取电表类型
                 List<DbParameter> par2 = new List<DbParameter>();
                 par2.Add(DbFactory.CreateDbParameter("@Number", model.AmmeterType_Number));
                 var ammeterType = database.FindEntityByWhere<Am_AmmeterType>(" and Number=@Number ", par2.ToArray());
-
+                //获取控制器
                 List<DbParameter> par3 = new List<DbParameter>();
                 par3.Add(DbFactory.CreateDbParameter("@Number", model.Collector_Number));
                 var collector = database.FindEntityByWhere<Am_Collector>(" and Number=@Number ", par3.ToArray());
@@ -199,28 +203,28 @@ namespace LeaRun.WebApp.Controllers
                     U_Name = model.U_Name,
                     U_Number = model.U_Number
                 };
-                if (model.UserName != null && model.UserName != "")
-                {
-                    insertModel.Status = 1;
-                    insertModel.StatusStr = "已开户";
+                //if (model.UserName != null && model.UserName != "")
+                //{
+                //    insertModel.Status = 1;
+                //    insertModel.StatusStr = "已开户";
 
-                    List<DbParameter> par4 = new List<DbParameter>();
-                    par4.Add(DbFactory.CreateDbParameter("@Account", model.UserName));
-                    par4.Add(DbFactory.CreateDbParameter("@Name", model.U_Name));
-                    par4.Add(DbFactory.CreateDbParameter("@Status", "3"));//审核已过
+                //    List<DbParameter> par4 = new List<DbParameter>();
+                //    par4.Add(DbFactory.CreateDbParameter("@Account", model.UserName));
+                //    par4.Add(DbFactory.CreateDbParameter("@Name", model.U_Name));
+                //    par4.Add(DbFactory.CreateDbParameter("@Status", "3"));//审核已过
 
-                    var partnerUser = database.FindEntityByWhere<Ho_PartnerUser>(" and Account=@Account and  Name=@Name and Status=@Status", par4.ToArray());
-                    if (partnerUser != null && partnerUser.Number != null)
-                    {
-                        insertModel.UserName = partnerUser.Account;
-                        insertModel.U_Number = partnerUser.Number;
-                        insertModel.U_Name = partnerUser.Name;
-                    }
-                    else
-                    {
-                        return Json(new { res = "No", msg = "提交失败，没有找到该用户" });
-                    }
-                }
+                //    var partnerUser = database.FindEntityByWhere<Ho_PartnerUser>(" and Account=@Account and  Name=@Name and Status=@Status", par4.ToArray());
+                //    if (partnerUser != null && partnerUser.Number != null)
+                //    {
+                //        insertModel.UserName = partnerUser.Account;
+                //        insertModel.U_Number = partnerUser.Number;
+                //        insertModel.U_Name = partnerUser.Name;
+                //    }
+                //    else
+                //    {
+                //        return Json(new { res = "No", msg = "提交失败，没有找到该用户" });
+                //    }
+                //}
 
                 var status = database.Insert<Am_Ammeter>(insertModel);
                 if (status > 0)
@@ -293,6 +297,25 @@ namespace LeaRun.WebApp.Controllers
             return View();
         }
 
+        /// <summary>
+        /// 电表基本业务
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public ActionResult BasicBusiness(string number)
+        {
+            var user = wbll.GetUserInfo(Request);
+            List<DbParameter> par2 = new List<DbParameter>();
+            par2.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
+            par2.Add(DbFactory.CreateDbParameter("@Number", number));
+            var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and UY_Number=@UY_Number and Number=@Number", par2.ToArray());
+            if (ammeter != null && ammeter.Number != null)
+            {
+                return View(ammeter);
+            }
+
+            return View();
+        }
         #region 电价
 
         /// <summary>
@@ -901,13 +924,13 @@ namespace LeaRun.WebApp.Controllers
                 List<DbParameter> par = new List<DbParameter>();
                 par.Add(DbFactory.CreateDbParameter("@Bill_Number", bill.Number));
                 var billContentList = database.FindList<Am_BillContent>("and Bill_Number=@Bill_Number", par.ToArray());
-                if (billContentList.Count()>0&&database.Delete<Am_BillContent>(billContentList.Select(x=>x.Bill_Number).ToArray()) > 0)
+                if (billContentList.Count() > 0 && database.Delete<Am_BillContent>(billContentList.Select(x => x.Bill_Number).ToArray()) > 0)
                 {
                     double total = 0;
-                    var inserList =new  List<Am_BillContent>();
+                    var inserList = new List<Am_BillContent>();
                     foreach (var item in billList)
                     {
-                        if (item.ChargeItem_ChargeType==null )
+                        if (item.ChargeItem_ChargeType == null)
                         {
                             item.ChargeItem_ChargeType = 0;
                         }
@@ -925,9 +948,9 @@ namespace LeaRun.WebApp.Controllers
                         };
                         total += item.Money.Value;
                         inserList.Add(billContent);
-                        
+
                     }
-                    if (database.Insert<Am_BillContent>(inserList)>0)
+                    if (database.Insert<Am_BillContent>(inserList) > 0)
                     {
                         total = total + bill.OtherFees.Value;
                         bill.Money = total;
@@ -935,7 +958,7 @@ namespace LeaRun.WebApp.Controllers
                         {
                             return Json(new { res = "Ok", msg = "提交成功" });
                         }
-                    } 
+                    }
                 }
             }
             return Json(new { res = "No", msg = "提交失败" });
@@ -947,7 +970,7 @@ namespace LeaRun.WebApp.Controllers
         /// <param name="remark"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult BillingHandle(string number,string remark)
+        public ActionResult BillingHandle(string number, string remark)
         {
             var user = wbll.GetUserInfo(Request);
             List<DbParameter> parameter = new List<DbParameter>();
@@ -961,7 +984,7 @@ namespace LeaRun.WebApp.Controllers
                 bill.Status = 2;
                 bill.StatusStr = "已支付";
                 bill.Remark = remark;
-                if (database .Update<Am_Bill>(bill)>0)
+                if (database.Update<Am_Bill>(bill) > 0)
                 {
                     return Json(new { res = "Ok", msg = "提交成功" });
                 }
@@ -989,7 +1012,7 @@ namespace LeaRun.WebApp.Controllers
                 parAmmeterPermission.Add(DbFactory.CreateDbParameter("@Status", "1"));
                 //关联用户
                 var ammeterPermission = database.FindEntityByWhere<Am_AmmeterPermission>(" and UY_Number=@UY_Number and Ammeter_Number=@Ammeter_Number and Status=@Status ", parAmmeterPermission.ToArray());
-                if (ammeterPermission!=null&& ammeterPermission.Number!=null )
+                if (ammeterPermission != null && ammeterPermission.Number != null)
                 {
                     ViewBag.ammeterPermission = ammeterPermission;
                 }
@@ -999,66 +1022,251 @@ namespace LeaRun.WebApp.Controllers
                 par1.Add(DbFactory.CreateDbParameter("@Ammeter_Number", number));
                 //电表模板
                 var template = database.FindEntityByWhere<Am_Template>(" and U_Number=@U_Number and Ammeter_Number=@Ammeter_Number ", par1.ToArray());
-                if (template!=null && template.Number !=null )
+                if (template != null && template.Number != null)
                 {
                     ViewBag.template = template;
                     List<DbParameter> par2 = new List<DbParameter>();
                     par2.Add(DbFactory.CreateDbParameter("@Template_Number", template.Number));
-                    var templateContentList = database.FindList<Am_Template>(" and UY_Number=@UY_Number and Ammeter_Number=@Ammeter_Number ", par2.ToArray());
+                    var templateContentList = database.FindList<Am_TemplateContent>(" and Template_Number=@Template_Number  ", par2.ToArray());
                     //模板内容
-                    if (templateContentList != null && templateContentList.Count() >0)
+                    if (templateContentList != null && templateContentList.Count() > 0)
                     {
-                        ViewBag.templateContent = templateContentList;
+                        ViewBag.templateContentList = templateContentList;
                     }
                 }
-                else
-                {
-                    List<DbParameter> par3 = new List<DbParameter>();
-                    par3.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
-                    par3.Add(DbFactory.CreateDbParameter("@U_Number2", "System"));
-                    //收费项
-                    var chargeItemList = database.FindList<Am_ChargeItem>(" and U_Number=@U_Number or U_Number=@U_Number2 ",par3.ToArray());
-                    ViewBag.chargeItemList = chargeItemList;
-                }
+
+                List<DbParameter> par3 = new List<DbParameter>();
+                par3.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+                par3.Add(DbFactory.CreateDbParameter("@U_Number2", "System"));
+                //收费项
+                var chargeItemList = database.FindList<Am_ChargeItem>(" and U_Number=@U_Number or U_Number=@U_Number2 ", par3.ToArray());
+                ViewBag.chargeItemList = chargeItemList;
+
                 return View(ammeter);
             }
             return View();
         }
+        /// <summary>
+        /// 关联用户
+        /// </summary>
+        /// <param name="number"></param>
+        /// <param name="phone"></param>
+        /// <param name="name"></param>
+        /// <param name="starTime"></param>
+        /// <param name="endTime"></param>
+        /// <param name="cycle"></param>
+        /// <param name="lateFee"></param>
+        /// <param name="itemList"></param>
+        /// <returns></returns>
         [HttpPost]
-        public ActionResult BindUser(string number ,string phone,string name,string starTime,string endTime,string cycle,string lateFee, List<Am_ChargeItem> itemList)
+        public ActionResult BindUser(string number, string phone, string name, string starTime, string endTime, string cycle, string lateFee, List<Am_ChargeItem> itemList)
         {
             var user = wbll.GetUserInfo(Request);
-            List<DbParameter> par = new List<DbParameter>();
-            par.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
-            par.Add(DbFactory.CreateDbParameter("@Number", number));
 
-            var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and UY_Number=@UY_Number and Number=@Number ", par.ToArray());
-            if (ammeter != null && ammeter.Number != null)
+            List<DbParameter> parTenant1 = new List<DbParameter>();
+            parTenant1.Add(DbFactory.CreateDbParameter("@Name", name));
+            parTenant1.Add(DbFactory.CreateDbParameter("@Account", phone));
+            parTenant1.Add(DbFactory.CreateDbParameter("@Status", "3"));
+
+            var isTenant = database.FindEntityByWhere<Ho_PartnerUser>(" and Name=@Name and Account=@Account and Status=@Status", parTenant1.ToArray());
+            //是否存在用户
+            if (isTenant != null && isTenant.Number != null)
             {
-                List<DbParameter> parAmmeterPermission = new List<DbParameter>();
-                parAmmeterPermission.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
-                parAmmeterPermission.Add(DbFactory.CreateDbParameter("@Ammeter_Number", ammeter.Number));
-                parAmmeterPermission.Add(DbFactory.CreateDbParameter("@Status", "1"));
-                //关联用户
-                var ammeterPermission = database.FindEntityByWhere<Am_AmmeterPermission>(" and UY_Number=@UY_Number and Ammeter_Number=@Ammeter_Number and Status=@Status ", parAmmeterPermission.ToArray());
-                if (ammeterPermission != null && ammeterPermission.Number != null)
+                List<DbParameter> par = new List<DbParameter>();
+                par.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
+                par.Add(DbFactory.CreateDbParameter("@Number", number));
+
+                var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and UY_Number=@UY_Number and Number=@Number ", par.ToArray());
+                if (ammeter != null && ammeter.Number != null)
                 {
-                    if (ammeterPermission.UserName.Equals(phone))
+                    List<DbParameter> parAmmeterPermission = new List<DbParameter>();
+                    parAmmeterPermission.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
+                    parAmmeterPermission.Add(DbFactory.CreateDbParameter("@Ammeter_Number", ammeter.Number));
+                    parAmmeterPermission.Add(DbFactory.CreateDbParameter("@Status", "1"));
+                    //关联用户
+                    var ammeterPermission = database.FindEntityByWhere<Am_AmmeterPermission>(" and UY_Number=@UY_Number and Ammeter_Number=@Ammeter_Number and Status=@Status ", parAmmeterPermission.ToArray());
+
+                    if (ammeterPermission != null && ammeterPermission.Number != null)
                     {
-                        
+                        //属于当前关联用户则修改
+                        if (ammeterPermission.UserName.Equals(phone))
+                        {
+                            ammeterPermission.BeginTime = DateTime.Parse(starTime);
+                            ammeterPermission.EndTime = DateTime.Parse(endTime);
+                            database.Update<Am_AmmeterPermission>(ammeterPermission);
+                        }
+                        else
+                        {
+                            //更换关联用户，原用户退租
+                            ammeterPermission.Status = 2;
+                            ammeterPermission.StatusStr = "退租";
+                            ammeterPermission.LeaveTime = DateTime.Now;
+                            if (database.Update<Am_AmmeterPermission>(ammeterPermission) > 0)
+                            {
+                                List<DbParameter> parTenant = new List<DbParameter>();
+                                parTenant.Add(DbFactory.CreateDbParameter("@Name", name));
+                                parTenant.Add(DbFactory.CreateDbParameter("@Accout", phone));
+                                parTenant.Add(DbFactory.CreateDbParameter("@Status", "3"));
+
+                                var tenant = database.FindEntityByWhere<Ho_PartnerUser>(" and Name=@Name and Account=@Account and Status=@Status", parTenant.ToArray());
+                                if (tenant != null && tenant.Number != null)
+                                {
+                                    var newAmmeterPermission = new Am_AmmeterPermission
+                                    {
+                                        Ammeter_Code = ammeter.AM_Code,
+                                        Ammeter_Number = ammeter.Number,
+                                        Number = Utilities.CommonHelper.GetGuid,
+                                        BeginTime = DateTime.Parse(starTime),
+                                        CreateTime = DateTime.Now,
+                                        EndTime = DateTime.Parse(endTime),
+                                        LeaveTime = null,
+                                        Remark = "",
+                                        Status = 1,
+                                        StatusStr = "正常",
+                                        UserName = tenant.Account,
+                                        UY_Name = user.Name,
+                                        UY_Number = user.Number,
+                                        UY_UserName = user.Account,
+                                        U_Name = tenant.Name,
+                                        U_Number = tenant.Number
+                                    };
+                                    if (database.Insert<Am_AmmeterPermission>(newAmmeterPermission) > 0)
+                                    {
+                                        ammeter.UserName = isTenant.Account;
+                                        ammeter.U_Name = isTenant.Name;
+                                        ammeter.U_Number = isTenant.Number;
+                                        database.Update<Am_Ammeter>(ammeter);
+                                    }
+                                }
+
+                            }
+                        }
                     }
                     else
                     {
+                        //当前没有租户
+                        List<DbParameter> parTenant = new List<DbParameter>();
+                        parTenant.Add(DbFactory.CreateDbParameter("@Name", name));
+                        parTenant.Add(DbFactory.CreateDbParameter("@Account", phone));
+                        parTenant.Add(DbFactory.CreateDbParameter("@Status", "3"));
 
+                        var tenant = database.FindEntityByWhere<Ho_PartnerUser>(" and Name=@Name and Account=@Account and Status=@Status", parTenant.ToArray());
+                        if (tenant != null && tenant.Number != null)
+                        {
+                            //建立租赁关系
+                            var newAmmeterPermission = new Am_AmmeterPermission
+                            {
+                                Ammeter_Code = ammeter.AM_Code,
+                                Ammeter_Number = ammeter.Number,
+                                Number = Utilities.CommonHelper.GetGuid,
+                                BeginTime = DateTime.Parse(starTime),
+                                CreateTime = DateTime.Now,
+                                EndTime = DateTime.Parse(endTime),
+                                LeaveTime = null,
+                                Remark = "",
+                                Status = 1,
+                                StatusStr = "正常",
+                                UserName = tenant.Account,
+                                UY_Name = user.Name,
+                                UY_Number = user.Number,
+                                UY_UserName = user.Account,
+                                U_Name = tenant.Name,
+                                U_Number = tenant.Number
+                            };
+                            if (database.Insert<Am_AmmeterPermission>(newAmmeterPermission) > 0)
+                            {
+                                ammeter.UserName = isTenant.Account;
+                                ammeter.U_Name = isTenant.Name;
+                                ammeter.U_Number = isTenant.Number;
+                                database.Update<Am_Ammeter>(ammeter);
+                            }
+                        }
                     }
-                }
-                else
-                {
 
-                }
+                    List<DbParameter> par1 = new List<DbParameter>();
+                    par1.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+                    par1.Add(DbFactory.CreateDbParameter("@Ammeter_Number", number));
 
+                    //电表模板
+                    var template = database.FindEntityByWhere<Am_Template>(" and U_Number=@U_Number and Ammeter_Number=@Ammeter_Number ", par1.ToArray());
+                    string templateNumber = "";
+                    //模板存在，更新
+                    if (template != null && template.Number != null)
+                    {
+                        templateNumber = template.Number;
+                        template.BillCyc = cycle;
+                        template.OtherFees = lateFee;
+                        database.Update<Am_Template>(template);
+                    }
+                    else
+                    {
+                        //建立模板
+                        var newTemplate = new Am_Template
+                        {
+                            Ammeter_Code = ammeter.AM_Code,
+                            Ammeter_Number = ammeter.Number,
+                            Number = Utilities.CommonHelper.GetGuid,
+                            BillCyc = cycle,
+                            CreateTime = DateTime.Now,
+                            Name = "0",
+                            OtherFees = lateFee,
+                            Remark = "",
+                            UserFromTime = DateTime.Now,
+                            UserName = user.Account,
+                            U_Name = user.Name,
+                            U_Number = user.Number
+                        };
+                        templateNumber = newTemplate.Number;
+                        database.Insert<Am_Template>(newTemplate);
+                    }
+
+                    if (templateNumber != "")
+                    {
+                        List<DbParameter> partcl = new List<DbParameter>();
+                        partcl.Add(DbFactory.CreateDbParameter("@Template_Number", templateNumber));
+
+                        var templateContentList = database.FindList<Am_TemplateContent>(" and Template_Number=@Template_Number ", partcl.ToArray());
+                        if (templateContentList != null)
+                        {
+                            //清除收费项，重新建立
+                            if (templateContentList.Count() == 0 || database.Delete<Am_TemplateContent>(templateContentList.Select(x => x.Template_Number).ToArray()) > 0)
+                            {
+                                List<Am_TemplateContent> newList = new List<Am_TemplateContent>();
+                                foreach (var item in itemList)
+                                {
+                                    if (item.ChargeType == null)
+                                    {
+                                        item.ChargeType = 2;
+                                    }
+                                    if (item.Number == null)
+                                    {
+                                        item.Number = "0";
+                                    }
+                                    var model = new Am_TemplateContent
+                                    {
+                                        ChargeItem_ChargeType = item.ChargeType,
+                                        ChargeItem_Number = item.Number,
+                                        Number = Utilities.CommonHelper.GetGuid,
+                                        ChargeItem_Title = item.Title,
+                                        Money = item.Money,
+                                        Remark = "",
+                                        Template_Name = "0",
+                                        Template_Number = templateNumber
+                                    };
+                                    newList.Add(model);
+                                }
+                                database.Insert<Am_TemplateContent>(newList);
+                            }
+                        }
+                    }
+                    return Json(new { res = "Ok", msg = "提交成功" });
+                }
             }
-                return View();
+            else
+            {
+                return Json(new { res = "No", msg = "没有找到该用户" });
+            }
+            return Json(new { res = "No", msg = "提交失败" });
         }
 
 
@@ -1216,5 +1424,396 @@ namespace LeaRun.WebApp.Controllers
             return Json(new { res = "No", msg = "提交失败" });
         }
         #endregion
+
+        /// <summary>
+        /// 历史账单导航
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult HistoricalBillNav()
+        {
+            return View();
+        }
+        /// <summary>
+        ///  电表历史账单
+        /// </summary>
+        /// <param name="ammeterCode"></param>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        public ActionResult AmmeterBill(string ammeterCode, int pageIndex = 1, int pageSize = 5)
+        {
+            var user = wbll.GetUserInfo(Request);
+            int recordCount = 0;
+
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
+            StringBuilder sbWhere = new StringBuilder();
+            sbWhere.Append(" and UY_Number=@UY_Number ");
+            if (ammeterCode != null && ammeterCode != "")
+            {
+                parameter.Add(DbFactory.CreateDbParameter("@AM_Code", ammeterCode));
+                sbWhere.Append(" and AM_Code=@AM_Code ");
+            }
+            var ammeterList = database.FindListPage<Am_Ammeter>(sbWhere.ToString(), parameter.ToArray(), "CreateTime", "desc", pageIndex, pageSize, ref recordCount);
+            ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize); ;
+            if (Request.IsAjaxRequest())
+            {
+                return Json(ammeterList);
+            }
+            else
+            {
+                return View();
+            }
+        }
+        /// <summary>
+        /// 电表历史账单列表
+        /// </summary>
+        /// <param name="ammeterNumber"></param>
+        /// <param name="name"></param>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        public ActionResult AmmeterBillList(string ammeterNumber, string name, int pageIndex = 1, int pageSize = 5)
+        {
+            var user = wbll.GetUserInfo(Request);
+            int recordCount = 0;
+
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@F_U_Number", user.Number));
+            parameter.Add(DbFactory.CreateDbParameter("@AmmeterNumber", ammeterNumber));
+
+            StringBuilder sbWhere = new StringBuilder();
+            sbWhere.Append(" and F_U_Number=@F_U_Number ");
+            sbWhere.Append(" and AmmeterNumber=@AmmeterNumber ");
+            sbWhere.Append(" and (Status=1 or Status=2) ");
+            if (name != null && name != "")
+            {
+                parameter.Add(DbFactory.CreateDbParameter("@T_U_Name", name));
+                sbWhere.Append(" and T_U_Name=@T_U_Name ");
+            }
+            var billList = database.FindListPage<Am_Bill>(sbWhere.ToString(), parameter.ToArray(), "CreateTime", "desc", pageIndex, pageSize, ref recordCount);
+            ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize); ;
+            if (Request.IsAjaxRequest())
+            {
+                return Json(billList);
+            }
+            else
+            {
+                List<DbParameter> par = new List<DbParameter>();
+                par.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
+                par.Add(DbFactory.CreateDbParameter("@Number", ammeterNumber));
+
+                var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and UY_Number=@UY_Number and Number=@Number ", par.ToArray());
+                if (ammeter != null && ammeter.Number != null)
+                {
+                    return View(ammeter);
+                }
+
+            }
+
+            return View();
+        }
+        /// <summary>
+        /// 用户账单列表
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        public ActionResult UserList(string name, int pageIndex = 1, int pageSize = 10)
+        {
+            var user = wbll.GetUserInfo(Request);
+            int recordCount = 0;
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@F_U_Number", user.Number));
+
+            StringBuilder sbWhere = new StringBuilder();
+            sbWhere.Append(" and F_U_Number=@F_U_Number ");
+
+            if (name != null && name != "")
+            {
+                parameter.Add(DbFactory.CreateDbParameter("@T_U_Name", name));
+                sbWhere.Append(" and T_U_Name=@T_U_Name ");
+            }
+
+            var data = database.FindListPageBySql<UserBill>("SELECT [T_U_Number],T_U_Name FROM[AmmeterDB].[dbo].[Am_Bill] where 1=1  " + sbWhere.ToString() + " group by T_U_Number, T_U_Name", parameter.ToArray(), "T_U_Name", "desc", pageIndex, pageSize, ref recordCount);
+            ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize);
+            if (Request.IsAjaxRequest())
+            {
+                return Json(data);
+            }
+            else
+            {
+                return View();
+            }
+        }
+        /// <summary>
+        /// 用户历史账单列表
+        /// </summary>
+        /// <param name="userNumber"></param>
+        /// <param name="starTime"></param>
+        /// <param name="endTime"></param>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        public ActionResult UserBillList(string userNumber, string starTime, string endTime, int pageIndex = 1, int pageSize = 5)
+        {
+            var user = wbll.GetUserInfo(Request);
+            int recordCount = 0;
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@F_U_Number", user.Number));
+
+            StringBuilder sbWhere = new StringBuilder();
+            sbWhere.Append(" and F_U_Number=@F_U_Number ");
+
+            if (starTime != null && starTime != "")
+            {
+                parameter.Add(DbFactory.CreateDbParameter("@starTime", starTime));
+                sbWhere.Append(" and SendTime>=@starTime ");
+            }
+            if (endTime != null && endTime != "")
+            {
+                parameter.Add(DbFactory.CreateDbParameter("@endTime", endTime));
+                sbWhere.Append(" and SendTime<=@endTime ");
+            }
+
+            var data = database.FindListPage<Am_Bill>(sbWhere.ToString(), parameter.ToArray(), "SendTime", "desc", pageIndex, pageSize, ref recordCount);
+            ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize);
+            if (Request.IsAjaxRequest())
+            {
+                return Json(data);
+            }
+            else
+            {
+                return View();
+            }
+        }
+        public class UserBill
+        {
+            public string T_U_Number { get; set; }
+            public string T_UserName { get; set; }
+            public string T_U_Name { get; set; }
+        }
+        /// <summary>
+        /// 退租菜单
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult RetireNav()
+        {
+            return View();
+        }
+        /// <summary>
+        /// 退租审核列表
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        public ActionResult RentingAuditList(string name, int pageIndex = 1, int pageSize = 5)
+        {
+            var user = wbll.GetUserInfo(Request);
+            int recordCount = 0;
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@F_Number", user.Number));
+
+            StringBuilder sbWhere = new StringBuilder();
+            sbWhere.Append(" and F_Number=@F_Number ");
+
+            if (name != null && name != "")
+            {
+                parameter.Add(DbFactory.CreateDbParameter("@U_Name", name));
+                sbWhere.Append(" and U_Name>=@U_Name ");
+            }
+
+
+            var data = database.FindListPage<Am_Rent>(sbWhere.ToString(), parameter.ToArray(), "CreateTime", "desc", pageIndex, pageSize, ref recordCount);
+            ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize);
+            if (Request.IsAjaxRequest())
+            {
+                return Json(data);
+            }
+            else
+            {
+                return View();
+            }
+        }
+        /// <summary>
+        /// 退租详情
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public ActionResult RentingDetails(string number)
+        {
+            var user = wbll.GetUserInfo(Request);
+            List<DbParameter> par = new List<DbParameter>();
+            par.Add(DbFactory.CreateDbParameter("@F_Number", user.Number));
+            par.Add(DbFactory.CreateDbParameter("@Number", number));
+
+            var rent = database.FindEntityByWhere<Am_Rent>(" and Number=@Number and F_Number=@F_Number", par.ToArray());
+            if (rent != null && rent.Number != null)
+            {
+                List<DbParameter> par1 = new List<DbParameter>();
+                par1.Add(DbFactory.CreateDbParameter("@Number", rent.AmmeterNumber));
+                var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and  Number=@Number ", par1.ToArray());
+                ViewBag.ammeter = ammeter;
+
+
+                List<DbParameter> par2 = new List<DbParameter>();
+                par2.Add(DbFactory.CreateDbParameter("@U_Number", rent.U_Number));
+                par2.Add(DbFactory.CreateDbParameter("@Ammeter_Number", rent.AmmeterNumber));
+                var userDeposit = database.FindEntityByWhere<Am_UserDeposit>(" and U_Number=@U_Number and Ammeter_Number=@Ammeter_Number ", par2.ToArray());
+                ViewBag.userDeposit = userDeposit;
+
+                List<DbParameter> par3 = new List<DbParameter>();
+                par3.Add(DbFactory.CreateDbParameter("@Ammeter_Number", rent.AmmeterNumber));
+                var ammeterPermission = database.FindEntityByWhere<Am_AmmeterPermission>(" and Ammeter_Number=@Ammeter_Number ", par3.ToArray());
+                ViewBag.ammeterPermission = ammeterPermission;
+
+                return View(rent);
+            }
+            return View();
+        }
+        /// <summary>
+        /// 退租
+        /// </summary>
+        /// <param name="number"></param>
+        /// <param name="remark"></param>
+        /// <param name="rentBillList"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult RentGenerate(string number, string remark, List<Am_RentBill> rentBillList)
+        {
+            var user = wbll.GetUserInfo(Request);
+            var sumMoney = rentBillList.Sum(o => o.Money);
+
+
+            List<DbParameter> parUser = new List<DbParameter>();
+            parUser.Add(DbFactory.CreateDbParameter("@Number", user.Number));
+
+            var partnerUser = database.FindEntityByWhere<Ho_PartnerUser>(" and Number=@Number ", parUser.ToArray());
+            if (partnerUser.Money < sumMoney)
+            {
+                return Json(new { res = "No", msg = "余额不足，请先充值" });
+            }
+
+            List<DbParameter> par = new List<DbParameter>();
+            par.Add(DbFactory.CreateDbParameter("@F_Number", user.Number));
+            par.Add(DbFactory.CreateDbParameter("@Number", number));
+            var rent = database.FindEntityByWhere<Am_Rent>(" and F_Number=@F_Number and Number=@Number ", par.ToArray());
+            if (rent != null && rent.Number != null)
+            {
+                List<DbParameter> par1 = new List<DbParameter>();
+                par1.Add(DbFactory.CreateDbParameter("@Ammeter_Number", rent.AmmeterNumber));
+                par1.Add(DbFactory.CreateDbParameter("@U_Number", rent.U_Number));
+                par1.Add(DbFactory.CreateDbParameter("@Status", "1"));
+
+                var ammeterPermission = database.FindEntityByWhere<Am_AmmeterPermission>(" and Ammeter_Number=@Ammeter_Number and U_Number=@U_Number and Status=@Status  ", par1.ToArray());
+                if (ammeterPermission != null && ammeterPermission.Number != null)
+                {
+                    List<DbParameter> par2 = new List<DbParameter>();
+                    par2.Add(DbFactory.CreateDbParameter("@Number", rent.AmmeterNumber));
+                    par2.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
+
+                    var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number=@Number and UY_Number=@UY_Number ", par2.ToArray());
+                    if (ammeter != null && ammeter.Number != null)
+                    {
+                        //电表制空用户信息
+                        ammeter.U_Name = "";
+                        ammeter.U_Number = "";
+                        ammeter.UserName = "";
+                        if (database.Update<Am_Ammeter>(ammeter) > 0)
+                        {
+                            //关联退房
+                            ammeterPermission.Status = 2;
+                            ammeterPermission.StatusStr = "已退房";
+                            if (database.Update<Am_AmmeterPermission>(ammeterPermission) > 0)
+                            {
+                                List<DbParameter> par3 = new List<DbParameter>();
+                                par3.Add(DbFactory.CreateDbParameter("@U_Number", rent.U_Number));
+                                par3.Add(DbFactory.CreateDbParameter("@Ammeter_Number", rent.AmmeterNumber));
+                                par3.Add(DbFactory.CreateDbParameter("@Status", "0"));
+                                var userDeposit = database.FindEntityByWhere<Am_UserDeposit>(" and U_Number=@U_Number and Ammeter_Number=@Ammeter_Number ", par3.ToArray());
+                                if (userDeposit != null && userDeposit.Number != null)
+                                {
+                                    //退还押金
+                                    userDeposit.Status = 1;
+                                    userDeposit.StatusStr = "已退";
+                                    userDeposit.PayTime = DateTime.Now;
+                                    if (database.Update<Am_UserDeposit>(userDeposit) > 0)
+                                    {
+                                        List<DbParameter> par4 = new List<DbParameter>();
+                                        par4.Add(DbFactory.CreateDbParameter("@Money", partnerUser.Money));
+                                        par4.Add(DbFactory.CreateDbParameter("@Number", user.Number));
+                                        par4.Add(DbFactory.CreateDbParameter("@NewMoney", sumMoney));
+
+                                        StringBuilder sql = new StringBuilder("update Ho_PartnerUser set Money=Money-@NewMoney where Number=@Number and Money=@Money");
+                                        //扣除业主金额
+                                        if (database.ExecuteBySql(sql, par4.ToArray()) > 0)
+                                        {
+
+                                            var moneyDetail = new Am_MoneyDetail
+                                            {
+                                                CreateTime = DateTime.Now,
+                                                CreateUserId = user.Number,
+                                                CreateUserName = user.Name,
+                                                Number = Utilities.CommonHelper.GetGuid,
+                                                CurrMoney = partnerUser.Money - sumMoney,
+                                                Money = sumMoney,
+                                                OperateType = 5,
+                                                OperateTypeStr = "退租账单支付",
+                                                Remark = "表号：" + ammeter.AM_Code,
+                                                UserName = user.Account,
+                                                U_Name = user.Name,
+                                                U_Number = user.Number
+                                            };
+                                            database.Insert<Am_MoneyDetail>(moneyDetail);
+                                            List<DbParameter> par5 = new List<DbParameter>();
+                                            par5.Add(DbFactory.CreateDbParameter("@Number", rent.U_Number));
+                                            var userTenant = database.FindEntityByWhere<Ho_PartnerUser>(" and Number=@Number ",par5.ToArray());
+                                            if (userTenant!=null && userTenant.Number!=null )
+                                            {
+                                                userTenant.Money = userTenant.Money + sumMoney;
+                                                if (database.Update<Ho_PartnerUser>(userTenant)>0)
+                                                {
+                                                    var tenantMoneyDetail= new Am_MoneyDetail
+                                                    {
+                                                        CreateTime = DateTime.Now,
+                                                        CreateUserId = user.Number,
+                                                        CreateUserName = user.Name,
+                                                        Number = Utilities.CommonHelper.GetGuid,
+                                                        CurrMoney = userTenant.Money,
+                                                        Money = sumMoney,
+                                                        OperateType = 5,
+                                                        OperateTypeStr = "退租账单支付",
+                                                        Remark = "表号：" + ammeter.AM_Code,
+                                                        UserName = userTenant.Account,
+                                                        U_Name = userTenant.Name,
+                                                        U_Number = userTenant.Number
+                                                    };
+                                                    database.Insert<Am_MoneyDetail>(tenantMoneyDetail);
+
+                                                    return Json(new { res = "Ok", msg = "退房成功" });
+                                                }
+                                                
+                                            }
+                                            
+                                        }
+
+                                    }
+                                }
+                                else
+                                {
+                                    return Json(new { res = "Ok", msg = "退房成功" });
+                                }
+
+                            }
+                        }
+                    }
+
+                }
+                return Json(new { res = "No", msg = "退房失败" });
+            }
+            return View();
+        }
     }
 }

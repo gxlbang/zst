@@ -9532,6 +9532,16 @@
     <Content Include="Views\Proprietor\RepairManagement.cshtml" />
     <Content Include="Views\Proprietor\RepairInfo.cshtml" />
     <Content Include="Views\Proprietor\BindUser.cshtml" />
+    <Content Include="Views\Proprietor\BasicBusiness.cshtml" />
+    <Content Include="Views\Proprietor\HistoricalBillNav.cshtml" />
+    <Content Include="Views\Proprietor\AmmeterBill.cshtml" />
+    <Content Include="Views\Proprietor\AmmeterBillList.cshtml" />
+    <Content Include="Views\Proprietor\UserList.cshtml" />
+    <Content Include="Views\Proprietor\UserBillList.cshtml" />
+    <Content Include="Views\Proprietor\RetireNav.cshtml" />
+    <Content Include="Views\Proprietor\RentingAuditList.cshtml" />
+    <Content Include="Views\Proprietor\RentGenerate.cshtml" />
+    <Content Include="Views\Proprietor\RentingDetails.cshtml" />
     <None Include="Views\Utility\PrintPage.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

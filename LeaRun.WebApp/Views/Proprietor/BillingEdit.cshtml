@@ -72,6 +72,9 @@
         node = oDiv.nextSibling;
 
     }
+    function test(test) {
+        test.parentNode.parentNode.removeChild(test.parentNode);
+    }
     function clearNoNum(obj) {
         obj.value = obj.value.replace(/[^\d.]/g, ""); //清除"数字"和"."以外的字符
         obj.value = obj.value.replace(/^\./g, ""); //验证第一个字符是数字
@@ -81,9 +84,7 @@
 
     }
 
-    function test(test) {
-        test.parentNode.parentNode.removeChild(test.parentNode);
-    }
+    
 
     $(function () {
 

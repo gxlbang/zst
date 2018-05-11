@@ -48,14 +48,7 @@
             <span class="bill-text fl">预警最低金额</span>
             @Html.TextBoxFor(model => model.FirstAlarm, new { @class = "l-input fl", placeholder = "0.00", })
         </div>
-        <div class="charge-bill add-ele bbot clear">
-            <span class="bill-text fl">关联用户</span>
-            @Html.TextBoxFor(model => model.UserName, new { @class = "l-input fl", placeholder = "手机号", })
-        </div>
-        <div class="charge-bill add-ele bbot clear">
-            <span class="bill-text fl">姓名</span>
-            @Html.TextBoxFor(model => model.U_Name, new { @class = "l-input fl", placeholder = "姓名" })
-        </div>
+ 
         <div class="charge-bill add-ele bbot clear">
             <span class="bill-text fl">单元</span>
             @Html.TextBoxFor(model => model.Cell, new { @class = "l-input fl", placeholder = "单元" })
@@ -113,18 +106,18 @@
             layer.msg('请输入地址');
             return;
         }
-        var phone = $('#UserName').val();
-        var strphone = /^1[3|4|5|7|8|9][0-9]\d{4,8}$/;
-        if ($("#UserName").val().length > 0) {
-            if (!phone.match(strphone) || phone.length != 11) {
-                layer.msg('请输入正确的手机号码');
-                return;
-            }
-            if ($("#U_Name").val().length <= 0) {
-                layer.msg('请输入姓名');
-                return;
-            }
-        }
+        //var phone = $('#UserName').val();
+        //var strphone = /^1[3|4|5|7|8|9][0-9]\d{4,8}$/;
+        //if ($("#UserName").val().length > 0) {
+        //    if (!phone.match(strphone) || phone.length != 11) {
+        //        layer.msg('请输入正确的手机号码');
+        //        return;
+        //    }
+        //    if ($("#U_Name").val().length <= 0) {
+        //        layer.msg('请输入姓名');
+        //        return;
+        //    }
+        //}
         
 
         $('#form').submit();

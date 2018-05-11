@@ -1,6 +1,6 @@
 ﻿@model LeaRun.Entity.Am_Bill
 @{
-    ViewBag.Title = "出账未付款账单详情";
+    ViewBag.Title = "账单详情";
     Layout = "~/Views/Shared/_Partial.cshtml";
 }
 @if (Model != null)
@@ -9,7 +9,7 @@
     <div class="all pro-all">
         <header class="header clear">
             <a href="javascript:history.go(-1);" class="return fl"></a>
-            <h1 class="title">已出账未付款账单</h1>
+            <h1 class="title">账单详情</h1>
         </header>
         <div class="list-index">
             <div class="pro">
@@ -31,12 +31,14 @@
                         var list = ViewBag.billContentList as List<LeaRun.Entity.Am_BillContent>;
                         foreach (var item in list)
                         {
-                            <span class="op-sshow his-show fl">@item.ChargeItem_Title：@Model.Money.Value.ToString("0.00") 元</span>
+                            <span class="op-sshow his-show fl">@item.ChargeItem_Title：@item.Money.Value.ToString("0.00") 元</span>
                         }
                     }
                 </div>
  
-                <div class="op-litwo his-all btop"><span class="op-sshow">合计：@Model.Money.Value.ToString("0.00") 元</span></div>
+                <div class="op-litwo his-all btop">
+                    <span class="op-sshow his-show fl">滞纳金：@Model.OtherFees.Value.ToString("0.00") 元</span>
+                <span class="op-sshow">合计：@Model.Money.Value.ToString("0.00") 元</span></div>
             </div>
             <div class="pro mt15">
                 <div class="pro-explain pro-tit bbot">备注</div>
@@ -44,7 +46,11 @@
                     <textarea class="acc-text" id="remark" placeholder="备注">@Model.Remark</textarea>
                 </div>
             </div>
-            <a href="javascript:;" onclick="sub()" class="btn-all">确定已收款</a>
+            @if (Model.Status.Equals(1))
+            {
+                <a href="javascript:;" onclick="sub()" class="btn-all">确定已收款</a>
+            }
+            
         </div>
     </div>
 }
