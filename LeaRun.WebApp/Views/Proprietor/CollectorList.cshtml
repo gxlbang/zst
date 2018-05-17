@@ -9,6 +9,7 @@
         <h1 class="title">采集器管理</h1>
     </header>
     <div class="tab-news-con all-pa" id="containerList">
+        <div class="mt20"></div>
   
     </div>
     <a href="/Proprietor/Collector" class="btn-all btn-col">+添加采集器</a>
@@ -36,7 +37,7 @@
                             lis.push("<span class=\"pen-span pen-time fl\">"+data[i].CollectorCode+"</span>");
                             lis.push("<span class=\"pen-span pen-z pen-co fl\">"+data[i].StatusStr+"</span>");
                             lis.push("<span class=\"repair-span fl\">关联电表："+data[i].AmCount+"个</span>");
-                            lis.push("<span class=\"repair-span fl\">"+data[i].Province+data[i].City+data[i].County+data[i].Address+"</span>");
+                            lis.push("<span class=\"repair-span fl\">"+data[i].Province+data[i].City+data[i].County+"   "+data[i].Address+"</span>");
                             lis.push("<a class=\"co-et\" href=\"/Proprietor/Collector?number="+data[i].Number+"\">编辑</a>");
                             //lis.push("<a class=\"co-et\" href=\"add-collector.html\">删除</a>");
                             lis.push("</div>");

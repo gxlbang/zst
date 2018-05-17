@@ -6,12 +6,12 @@ img { display: block; border: none; width: 100%;}
 ul,li,ol { list-style-type: none; margin: 0; padding: 0; }
 em,i { font-style: normal; }
 h1,h2,h3,h4,h5,h6,strong,b { font-weight: normal; }
-img,input,button,a,select,textarea {margin:0; padding:0; resize:none; border:none; outline: 0; font: inherit; vertical-align: baseline; } 
+img,input,button,a,select,textarea {margin:0; padding:0; resize:none; border:none; outline: 0; font: inherit; vertical-align: baseline; background: none; } 
 select,button { cursor: pointer; }
 .clear:before, .clear:after { display: table; content: '';}
 .clear:after { clear: both; }
 .mt20 { margin-top: 0.4rem; }
-.mt15 { margin-top: 0.3rem; }
+.mt15 { /*margin-top: 0.3rem;*/ margin-bottom:0.3rem; }
 .mt10 { margin-top: 0.2rem; }
 .fl { float: left; }
 .fr { float: right; }
@@ -34,19 +34,19 @@ select,button { cursor: pointer; }
 .tab-hd-index li.on { color:#0080ff; border-bottom: 0.04rem solid #0080ff; } 
 .tab-news { width: 100%; background: #fff; }
 .list-index { width: 100%; padding: 0.3rem; } 
-.l-p { display: block; width: 100%; border: 0.02rem solid #e0e0e0; border-radius: 0.1rem; padding-left: 0.8rem; height: 0.84rem; margin-bottom: 0.3rem; }
-.l-phone { display: block; width: 0.8rem; height: 0.8rem; background: url(../images/phone.png) center center no-repeat; background-size: 0.6rem 0.6rem; margin-left: -0.8rem; }
-.l-input { display: block; width: 90%; height: 0.8rem; line-height: 0.8rem; padding-left: 0.2rem; }
+.l-p { display: block; width: 100%; border: 0.02rem solid #e0e0e0; border-radius: 0.1rem; padding-left: 0.88rem; height: 0.92rem; margin-bottom: 0.3rem; }
+.l-phone { display: block; width: 0.88rem; height: 0.88rem; background: url(../images/phone.png) center center no-repeat; background-size: 0.6rem 0.6rem; margin-left: -0.88rem; }
+.l-input { display: block; width: 90%; height: 0.88rem; line-height: 0.88rem; padding-left: 0.2rem; }
 .l-pass { background: url(../images/password.png) center center no-repeat; background-size: 0.6rem 0.6rem; }
 .btn-all { display: block; width: 100%; height: 0.8rem; margin: 1rem auto 0.2rem auto; border-radius: 0.1rem; line-height: 0.8rem; text-align: center; background: #0080ff; color: #fff; font-size: 0.32rem; }
 .l-pnone { border: none; padding: 0; }
 .l-w { display: block; line-height: 0.6rem; color: #999; margin-left: 0.4rem; padding: 0.1rem; }
 .l-we { margin: 0; padding: 0.1rem 0 0.1rem 0.4rem; color: #50b674; background: url(../images/WeChat.png) center left no-repeat; background-size: 0.4rem 0.4rem; }
-.l-yan { display: block; width: 100%; height: 0.84rem; margin-bottom: 0.3rem; }
-.l-yan .l-p { width: 66%; border: 0.02rem solid #e0e0e0; border-radius: 0.1rem; padding-left: 0.8rem; height: 0.84rem; }
-.l-yz { display: block; width: 30%; height: 0.84rem; line-height: 0.84rem; text-align: center; background: #ccc; border-radius: 0.1rem; overflow: hidden; }
-.l-code { display: block; width: 100%; color: #999; }
-.l-ycode { background: url(../images/code.png) center center no-repeat; background-size: 0.6rem 0.6rem; }
+.l-yan { display: block; width: 100%; height: 0.92rem; margin-bottom: 0.3rem; }
+.l-yan .l-p { width: 66%; border: 0.02rem solid #e0e0e0; border-radius: 0.1rem; padding-left: 0.8rem; }
+.l-yz { display: block; width: 30%; height: 0.92rem; line-height: 0.92rem; text-align: center; background: #ccc; border-radius: 0.1rem; overflow: hidden; }
+.l-code { display: block; height: 0.92rem; line-height: 0.92rem; width: 100%; color: #999; background: #ccc; }
+.l-code { display: block; height: 0.92rem; line-height: 0.92rem; width: 100%; color: #999; }
 
 /*register 注册*/
 .l-deng { color: #f00; margin: 0; }
@@ -61,15 +61,15 @@ select,button { cursor: pointer; }
 /*binding-bank 绑定银行卡*/
 .bill-all { width: 100%; padding: 0; }
 .bill { display: block; width: 100%; padding-left: 1.7rem; }
-.bill-text { display: block; width: 1.6rem; height: 0.8rem; line-height: 0.8rem; margin-left: -1.6rem; text-align: right; }
+.bill-text { display: block; width: 1.6rem; height: 0.88rem; line-height: 0.88rem; margin-left: -1.6rem; text-align: right; }
 /*.bill .l-input { height: 0.8rem; line-height: 0.8rem; }*/
 .bill-in { width: 56%; }
-.bill .l-code { width: 36%; height: 0.8rem; line-height: 0.8rem; }
+.bill .l-code { width: 36%; height: 0.88rem; line-height: 0.88rem; }
 
 /*repair 报修*/
-.repair { display: block; width: 100%; line-height: 0.8rem; padding-left: 0.3rem; color: #333; }
+.repair { display: block; width: 100%; line-height: 0.88rem; padding-left: 0.3rem; color: #333; }
 .repair .bill-text { margin: 0; text-align: left; }
-.icon-next { display: block; width: 0.8rem; height: 0.8rem; text-align: center; background: url(../images/next.png) center center no-repeat; background-size: 0.5rem 0.5rem; }
+.icon-next { display: block; width: 0.88rem; height: 0.88rem; text-align: center; background: url(../images/next.png) center center no-repeat; background-size: 0.5rem 0.5rem; }
 
 /*repair-processing 报修反馈*/
 .pro { width: 100%; height: auto; border: 0.02rem solid #e0e0e0; border-radius: 0.1rem; box-shadow: 0.06rem 0.06rem 0.08rem #e0e0e0; background: #fff; }
@@ -96,10 +96,10 @@ select,button { cursor: pointer; }
 
 /*pending-list 待处理列表*/
 .all-pa { padding: 0 0.3rem 0.3rem; }
-.pen-li { display: block; width: 100%; line-height: 0.8rem; background: #fff; }
-.pen-span { display: block; width: 32%; height: 0.8rem; line-height: 0.8rem; padding-left: 0.2rem; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pen-li { display: block; width: 100%; line-height: 0.88rem; background: #fff; }
+.pen-span { display: block; width: 32%; line-height: 0.88rem; padding-left: 0.2rem; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pen-spanex { display: block; padding-right:0.3rem; width: 58%; height: 0.8rem; line-height: 0.8rem; padding-left: 0.2rem; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
+.pen-a .pen-span { height: 0.6rem; line-height: 0.6rem; }
 .pen-time { width: 43%; }
 /*.pen-a .pen-time { width: 43%; }*/
 .pen-z { width: 19%; color: #4b93db; }
@@ -115,7 +115,7 @@ select,button { cursor: pointer; }
 .pen-re { padding: 0 0.2rem; }
 .re-re { border: 0; box-shadow: none; padding: 0 0.2rem; display: block; width: 100%; position: relative; background: #fff; }
 .re-re .pen-z { width: 23%; }
-.re-re .icon-next { position: absolute; top: 50%; right: 0rem; margin-top: -0.4rem; }
+.re-re .icon-next { position: absolute; top: 50%; right: 0rem; margin-top: -0.44rem; }
 /*repair-page 报修页面*/
 .upload-ul{ position: relative;  display: inline-block; padding: 0.2rem;}
 .upload-ul li{ position: relative; float: left; display: inline-block; width: 1.5rem; height: 1.5rem; margin: 0 0.1rem 0.1rem 0; overflow: hidden; }
@@ -154,7 +154,7 @@ select,button { cursor: pointer; }
 .acc-se { display: block; width: 100%; padding: 0.2rem 0.3rem; background: #f8f8f8; }
 .acc-in { display: block; width: 34%; height: 0.8rem; border: 0.02rem solid #e0e0e0; padding-left: 0.2rem; line-height: 0.76rem; margin-right: 3%; border-radius: 0.1rem; }
 .acc-btn { display: block; width: 25%; height: 0.8rem; text-align: center; line-height: 0.8rem; border-radius: 0.1rem; background: #0080ff; color: #fff; }
-.acc-l .icon-next { position: absolute; top: 50%; right:0; margin-top: -0.4rem; }
+.acc-l .icon-next { width: 0.8rem; height: 0.8rem; position: absolute; top: 50%; right:0; margin-top: -0.4rem; }
 
 /*recharge-page 充值页面*/
 .re-all { display: block; padding: 0.3rem; }
@@ -166,15 +166,15 @@ select,button { cursor: pointer; }
 .re-fu .l-ch label:before { content: ""; position: absolute; left: 0rem; top: 50%; margin-top: -0.2rem; width: 0.4rem; height: 0.4rem; background:url(../images/error.png) center center no-repeat; background-size: 0.6rem 0.6rem; }
 .re-fu .l-ch input:checked ~ label:before { width: 0.4rem; height: 0.4rem; background: url(../images/right.png) center center no-repeat; background-size: 0.6rem 0.6rem; }
 .re-oth { padding-top: 0; }
-.re-pt { display: block; width: 100%; border-radius: 0.1rem; line-height: 0.8rem; border: 0.02rem solid #e0e0e0; padding-left: 0.4rem; background: #fff; }
-.re-y { display: block; width: 0.5rem; height: 0.8rem; margin-left: -0.4rem; font-size: 0.32rem; text-align: right; }
+.re-pt { display: block; width: 100%; border-radius: 0.1rem; line-height: 0.88rem; border: 0.02rem solid #e0e0e0; padding-left: 0.4rem; background: #fff; }
+.re-y { display: block; width: 0.5rem; height: 0.88rem; margin-left: -0.4rem; font-size: 0.32rem; text-align: right; }
 .re-pt .l-input { padding-left: 0.1rem; font-size: 0.32rem; }
 .re-whe { display: block; width: auto; padding-left: 0.5rem; background: url(../images/WeChat.png) center left no-repeat; background-size: 0.46rem 0.46rem; }
 
 /*recharge 充值*/
 /*details-account 待出账详情*/
 .acc-all { /*padding-bottom: 0.3rem;*/ }
-.acc-top { width: 100%; line-height: 0.8rem; padding: 0 0.3rem; background: #fff; }
+.acc-top { width: 100%; line-height: 0.88rem; padding: 0 0.3rem; background: #fff; }
 .acc-one { display: block; width: 30%; }
 .acc-two { width: 60%; padding: 0 0.2rem; }
 .acc-pa { padding: 0.2rem 0.3rem 0 0.3rem; }
@@ -197,7 +197,7 @@ select,button { cursor: pointer; }
 .op-long { width: 38%; }
 .op-top { width: 100%; }
 .op-list { padding: 0; position: relative; }
-.op-list .icon-next { position: absolute; top: 50%; right: 0; margin-top: -0.4rem; z-index: 9;
+.op-list .icon-next { width: 0.8rem; height: 0.8rem; position: absolute; top: 50%; right: 0; margin-top: -0.4rem; z-index: 9;
 	-webkit-transition: -webkit-transform 0.6s ease;
 	-moz-transition: -moz-transform 0.6s ease;
 	-o-transition: -o-transform 0.6s ease;
@@ -270,7 +270,7 @@ select,button { cursor: pointer; }
 .list-mi { width: 66%; }
 .list-mbill .pen-span { width: 30%; text-align: center; padding: 0; }
 .list-mbill { color: #333; position: relative; }
-.list-mbill .icon-next { position: absolute; top: 50%; right: 0; margin-top: -0.4rem; }
+.list-mbill .icon-next { position: absolute; top: 50%; right: 0; margin-top: -0.44rem; }
 /*list-meters 电表列表*/
 .l-a { display: inline-block; padding:  0 0.2rem; color: #0080ff; }
 .l-a:nth-child(2) { color: #999; }
@@ -300,14 +300,14 @@ select,button { cursor: pointer; }
 /*historical-user-query 历史电表用户查询*/
 .humq { display: block; width: 100%; color: #333; padding-right: 0; position: relative; }
 .humq .acc-one { padding: 0; }
-.humq .icon-next { position: absolute; top: 50%; right: 0; margin-top: -0.4rem; }
+.humq .icon-next { position: absolute; top: 50%; right: 0; margin-top: -0.44rem; }
 
 /*payment-inquiry 缴费查询*/
 .pay-in { background: #f8f8f8; padding: 0 0.3rem; }
 .pay-in .pen-span { width: 25%; padding-left: 0rem; }
 .pay-in .pen-time { width: 48%; }
 .pay-a { display: block; color: #333; padding: 0 0.3rem; border-radius: 0; border: none; box-shadow: none; position: relative; background: #fff; }
-.pay-a .icon-next { position: absolute; top: 50%; right: 0; margin-top: -0.4rem; }
+.pay-a .icon-next { position: absolute; top: 50%; right: 0; margin-top: -0.44rem; }
 /*electricity-price-setting 电价设置*/
 .ele-top { padding: 0.3rem; position: relative; }
 .ele-span { display: block; width: 100%; line-height: 0.8rem; }
@@ -341,8 +341,8 @@ select,button { cursor: pointer; }
 .charge-span { display: block; width: 100%; line-height: 0.8rem; }
 .charge-bill { display: block; width: 100%; padding: 0 0.3rem 0 2.3rem; }
 .charge-bill .bill-text { height: auto; width: 2rem; margin-left: -2rem; text-align: right; }
-.charge-se { display: block; width: 100%; height: 0.8rem; line-height: 0.8rem; padding-left: 0.2rem; }
-.charge-se option { line-height: 0.8rem; }
+.charge-se { display: block; width: 100%; height: 0.88rem; line-height: 0.88rem; padding-left: 0.2rem; }
+.chre-list .icon-next { position: absolute; top: 50%; right: 0; margin-top: -0.44rem; }
 
 /*equipment-deposit 设备押金*/
 .ep-de { display: block; width: 100%; padding: 0 0.3rem; background: #fff; }
@@ -350,15 +350,15 @@ select,button { cursor: pointer; }
 .ep-de .pen-time { width: 44%; }
 /*retiring-record 退租记录*/
 .reti-re { display: block; width: 100%; padding: 0 2.3rem 0 0.3rem; position: relative; color: #333; background: #fff; }
-.reti-re .icon-next { position: absolute; top: 50%; right: 0; margin-top: -0.4rem; }
+.reti-re .icon-next { position: absolute; top: 50%; right: 0; margin-top: -0.44rem; }
 .reti-re .pen-span { width: 100%; padding: 0; }
-.reti-re .reti-span { width: 1.6rem; color: #999; text-align: right; position: absolute; top: 0.02rem; right: 0.6rem; }
+.reti-re .reti-span { width: 1.6rem; color: #999; text-align: right; position: absolute; top: 0rem; right: 0.6rem; }
 
 /*add-repair 添加报修*/
 .add-repair { display: block; width: 100%; color: #333; padding: 0 0.3rem; position: relative; background: #fff; }
 .add-repair .pen-span { width: 18%; padding: 0; text-align: center; }
 .add-repair .pen-span:nth-child(1) { width: 25%; }
-.add-repair .icon-next { position: absolute; top: 50%; right: 0; margin-top: -0.4rem; }
+.add-repair .icon-next { position: absolute; top: 50%; right: 0; margin-top: -0.44rem; }
 /*charge-item-management 收费项管理*/
 .charge-form .acc-in { width: 30%; margin-right: 3.33%; }
 .charge-form .acc-btn { margin-top: 0.2rem; margin-right: 3.33%; }
@@ -430,8 +430,9 @@ modify-password 修改密码*/
 .my-border { display: block; width: 2.8rem; height: 2.8rem; border: 0.1rem solid #fff; opacity: 0.4; position: absolute; top: 0.6rem; left: 0.6rem; border-radius: 50%; }
 .my-img .jqthumb { width: 2.8rem; height: 2.8rem; border-radius: 50%; overflow: hidden; }
 .my-xing { display: block; width: 100%; line-height: 0.7rem; font-size: 0.36rem; position: relative; top: -0.3rem; text-align: center; color: #fff; }
-.my-list { display: block; width: 100%; line-height: 0.8rem; padding-left: 0.8rem; position: relative; font-size: 0.32rem; background: #fff; }
-.my-list .icon-next { position: absolute; top: 0; right: 0; }
+.my-list { display: block; width: 100%; line-height: 0.88rem; padding-left: 0.88rem; position: relative; font-size: 0.32rem; background: #fff; }
+.my-list .icon-next { height: 0.88rem; width: 0.88rem; position: absolute; top: 0; right: 0; }
+.icon { display: block; width: 0.88rem; height: 0.88rem; margin-left: -0.88rem; background-size: 0.6rem 0.6rem !important; }
 .icon { display: block; width: 0.8rem; height: 0.8rem; margin-left: -0.8rem; background-size: 0.6rem 0.6rem !important; }
 .icon-one { background: url(../images/mine-meter.png) center center no-repeat; }
 .icon-two { background: url(../images/mine-money.png) center center no-repeat; }

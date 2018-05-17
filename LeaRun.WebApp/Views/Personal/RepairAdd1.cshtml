@@ -20,9 +20,14 @@
                     <div class="my-bill my-de clear">
                         <span class="bill-span fl">@item.Cell 单元 @item.Floor 层 @item.Room 号</span>
                     </div>
-                    <i class="icon-next" style="background:none;width:100px;"><a href="/Personal/RepairAdd2?ammeterNumber=@item.Number">添加报修</a></i>
+                    <i class="icon-next" style="background:none;width:100px;"><a href="/Personal/RepairAdd2?ammeterNumber=@item.Number">添加</a></i>
                 </div>
             }
         }
+        else
+        {
+            <div class="layui-flow-more">没有更多了</div>
+        }
     </div>
 </div>
+<link href="~/Content/Scripts/layui/css/layui.css" rel="stylesheet" />

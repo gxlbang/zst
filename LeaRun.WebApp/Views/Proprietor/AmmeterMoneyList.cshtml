@@ -14,7 +14,7 @@
         {
             foreach (var item in Model)
             {
-                <div class="pro repair-m clear">
+                <div class="pro repair-m clear mt15">
                     <span class="ele-span fl">名称：@item.Name</span>
                     <span class="ele-span fl">电价：@item.FirstMoney.Value.ToString("0.00")元/度</span>
                     <span class="ele-span ele-pa clear"><a href="javascript:;" onclick="del('@item.Number')" class="ele-a fr">删除</a><a href="/Proprietor/AmmeterMoneyEidt?number=@item.Number" class="ele-a fr">编辑</a></span>

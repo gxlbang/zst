@@ -193,13 +193,13 @@ namespace LeaRun.Entity
         /// </summary>
         /// <returns></returns>
         [DisplayName("Money")]
-        public double? Money { get; set; }
+        public decimal? Money { get; set; }
         /// <summary>
         /// AllMoney
         /// </summary>
         /// <returns></returns>
         [DisplayName("AllMoney")]
-        public double? AllMoney { get; set; }
+        public decimal? AllMoney { get; set; }
         /// <summary>
         /// CurrPower
         /// </summary>
@@ -217,7 +217,7 @@ namespace LeaRun.Entity
         /// </summary>
         /// <returns></returns>
         [DisplayName("CurrMoney")]
-        public double? CurrMoney { get; set; }
+        public decimal? CurrMoney { get; set; }
         /// <summary>
         /// CM_Time
         /// </summary>

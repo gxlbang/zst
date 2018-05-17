@@ -34,7 +34,7 @@ namespace LeaRun.WebApp
                     {
                         filterContext.Result = new ContentResult()
                         {
-                            Content = "你无权进行此操作！",
+                            Content = "<script type='text/javascript'>alert('非法访问！');location.href='/Personal/Index';</script>",
                         };
                     }
 
