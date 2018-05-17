@@ -177,6 +177,7 @@ namespace LeaRun.WebApp.Controllers
 
                 try
                 {
+                    Business.Base_SysLogBll.Instance.WriteLog("", Business.OperationType.Query, "-1", retJson);
                     userinfo = JsonConvert.DeserializeObject<UserInfoR>(retJson);
                 }
                 catch (Exception ex)

@@ -39,6 +39,12 @@ namespace LeaRun.Entity
         [DisplayName("Number")]
         public string Number { get; set; }
         /// <summary>
+        /// ContractCode
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("ContractCode")]
+        public string ContractCode { get; set; }
+        /// <summary>
         /// AmmeterNumber
         /// </summary>
         /// <returns></returns>
