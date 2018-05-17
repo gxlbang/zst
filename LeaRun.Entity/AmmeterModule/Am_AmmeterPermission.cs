@@ -117,11 +117,24 @@ namespace LeaRun.Entity
         [DisplayName("BeginTime")]
         public DateTime? BeginTime { get; set; }
         /// <summary>
-        /// 到期日期
+        /// 到期日期LastPayBill
         /// </summary>
         /// <returns></returns>
         [DisplayName("EndTime")]
         public DateTime? EndTime { get; set; }
+        /// <summary>
+        /// 上次账单生成日期
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("LastPayBill")]
+        public DateTime? LastPayBill { get; set; }
+        /// <summary>
+        /// 账单周期
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("BillCyc")]
+        public int? BillCyc { get; set; }
+        
         /// <summary>
         /// Remark
         /// </summary>
