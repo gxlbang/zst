@@ -59,7 +59,7 @@
                             lis.push("<div class=\"pro mt15\">");
 
                             lis.push("<div class=\"pro-explain pro-tit bbot clear\">表号："+data[i].AM_Code+"");
-                            lis.push("<a href=\"operation-record.html\" class=\"l-a fr\">基本业务</a>");
+                            lis.push("<a href=\"/Proprietor/BasicBusiness?number="+data[i].Number+"\" class=\"l-a fr\">基本业务</a>");
                             lis.push("<a href=\"/Proprietor/BindUser?number="+data[i].Number+"\" class=\"l-a fr\">关联用户</a>");
                             lis.push("<a href=\"/Proprietor/AmmeterAdd?number="+data[i].Number+"\" class=\"l-a fr\">编辑</a>");
                             lis.push("</div>");
@@ -69,7 +69,7 @@
                             lis .push("<span class=\"op-sshow fl\">状态："+data[i].StatusStr+"</span></div>");
                             
                             lis.push("<div class=\"op-litwo op-lione clear\"><span class=\"op-sshow fl\">区域："+data[i].Province+data[i].City+data[i].County+data[i].Address+"</span></div>");
-                            lis .push("<div class=\"op-litwo op-lione clear\"><span class=\"op-sshow fl\">房号："+data[i].Cell+"单元 "+data[i].Floor+"层 "+data[i].Room+"号</span><a href=\"operation-record.html\" class=\"l-a fr\">合同模板</a><a href=\"operation-record.html\" class=\"l-a fr\">账单模板</a></div>");
+                            lis .push("<div class=\"op-litwo op-lione clear\"><span class=\"op-sshow fl\">房号："+data[i].Cell+"单元 "+data[i].Floor+"层 "+data[i].Room+"号</span><a href=\"operation-record.html\" class=\"l-a fr\">合同模板</a> </div>");
                             lis.push("</div></div>");
 
                         }

@@ -19,7 +19,7 @@ namespace LeaRun.DataAccess
         /// <summary>
         /// 调试日志
         /// </summary>
-        public static LogHelper log = LogFactory.GetLogger(typeof(DbHelper));
+       public static LogHelper log = LogFactory.GetLogger(typeof(DbHelper));
 
         /// <summary>
         /// 连接字符串

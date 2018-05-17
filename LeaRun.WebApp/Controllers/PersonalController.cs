@@ -708,6 +708,89 @@ namespace LeaRun.WebApp.Controllers
             return View();
         }
         /// <summary>
+        /// 抄表
+        /// </summary>
+        /// <param name="number"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public ActionResult AmmeterCheck(string number, int type)
+        {
+            var user = wbll.GetUserInfo(Request);
+            List<DbParameter> parAmmeter = new List<DbParameter>();
+            parAmmeter.Add(DbFactory.CreateDbParameter("@Number", number));
+            var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number=@Number ", parAmmeter.ToArray());
+
+            if (ammeter != null && ammeter.Number != null)
+            {
+                var item = CommonClass.AmmeterApi.ReadAmmeter(ammeter.Collector_Code, ammeter.AM_Code, type.ToString());
+                if (item.suc)
+                {
+                    var task = new Am_Task
+                    {
+                        Number = CommonHelper.GetGuid,
+                        AmmeterCode = ammeter.AM_Code,
+                        AmmeterNumber = ammeter.Number,
+                        CollectorCode = ammeter.Collector_Code,
+                        CollectorNumber = ammeter.Collector_Number,
+                        CreateTime = DateTime.Now,
+                        OperateType = 0,
+                        OperateTypeStr = "",
+                        OrderNumber = item.opr_id,
+                        OverTime = DateTime.Now,
+                        Remark = "",
+                        Status = 0,
+                        StatusStr = "队列中",
+                        TaskMark = "",
+                        UserName = user.Account,
+                        U_Name = user.Name,
+                        U_Number = user.Number
+                    };
+                    if (type == 20)
+                    {
+                        task.OperateType = 5;
+                        task.OperateTypeStr = "剩余电量";
+                        database.Insert<Am_Task>(task);
+                        CommonClass.AmmeterApi.InserOperateLog(user.Number, ammeter.Collector_Code, ammeter.AM_Code, 2, "剩余电量", task.Number, item.suc, item.result);
+                    }
+                    else if (type == 22)
+                    {
+                        task.OperateType = 6;
+                        task.OperateTypeStr = "剩余金额";
+                        database.Insert<Am_Task>(task);
+                        CommonClass.AmmeterApi.InserOperateLog(user.Number, ammeter.Collector_Code, ammeter.AM_Code, 3, "剩余金额", task.Number, item.suc, item.result);
+                    }
+                    return Json(new { res = "Ok", msg = item.result,pr_id= item .opr_id});
+                }
+            }
+            return Json(new { res = "No", msg = "操作失败" });
+        }
+
+        /// <summary>
+        /// 查询操作结果
+        /// </summary>
+        /// <param name="pr_id"></param>
+        /// <returns></returns>
+        public ActionResult OperationResult(string pr_id)
+        {
+            if (pr_id != null&&pr_id !="")
+            {
+                var user = wbll.GetUserInfo(Request);
+                List<DbParameter> parameter = new List<DbParameter>();
+                parameter.Add(DbFactory.CreateDbParameter("@OrderNumber", pr_id));
+
+                var task = database.FindEntityByWhere<Am_Task>(" and OrderNumber=@OrderNumber ", parameter.ToArray());
+                if (task != null && task.Number != null)
+                {
+                    if (task.Status > 0)
+                    {
+                        return Json(new { res = "Ok", msg = "操作成功" });
+                    }
+                }
+            }
+
+            return Json(new { res = "No", msg = "正在处理" });
+        }
+        /// <summary>
         /// 电表充值
         /// </summary>
         /// <param name="number"></param>
@@ -1091,9 +1174,6 @@ namespace LeaRun.WebApp.Controllers
                 parameter.Add(DbFactory.CreateDbParameter("@EndTime", end));
             }
 
-
-
-
             var billList = database.FindListPage<Am_Bill>(whereSb.ToString(), parameter.ToArray(), "Number", "desc", pageIndex, pageSize, ref recordCount);
             ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize); ;
             if (Request.IsAjaxRequest())
@@ -1281,7 +1361,7 @@ namespace LeaRun.WebApp.Controllers
                                 System.IO.Directory.CreateDirectory(phyPath);
                             }
                             bmp.Save(phyPath + saveName);
-                            imagePath = phyPath + saveName;
+                            imagePath = path + saveName;
                         }
                          
                         var model = new Am_RepairImage

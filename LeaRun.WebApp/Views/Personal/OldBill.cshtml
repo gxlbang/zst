@@ -69,7 +69,7 @@
                     $.post("/Personal/OldBill",data, function (data) {
                         var lis = [];
                         for (var i in data) {
-                            lis.push("<a class=\"pro repair-m his-li\" href=\"/Personal/OldBillDetails?number="+data[i].Number+"\">");
+                            lis.push("<a class=\"pro repair-m his-li mt15\" href=\"/Personal/OldBillDetails?number="+data[i].Number+"\">");
                             lis.push("<div class=\"my-bill clear\">");
                             lis.push("<span class=\"bill-span fl\">账单号："+data[i].BillCode+"</span>");
                             lis.push("<span class=\"bill-span fr\">"+parseFloat(data[i].Money).toFixed(2)+"元</span></div>");

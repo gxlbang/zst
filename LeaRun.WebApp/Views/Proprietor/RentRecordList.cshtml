@@ -1,20 +1,20 @@
 ﻿@{
-    ViewBag.Title = "退租审核列表";
+    ViewBag.Title = "退租历史记录";
     Layout = "~/Views/Shared/_Partial.cshtml";
 }
 
 <div class="all">
     <header class="header clear">
         <a href="javascript:history.go(-1);" class="return fl"></a>
-        <h1 class="title">退房审核列表</h1>
+        <h1 class="title">退租历史记录</h1>
     </header>
     <div class="acc-se bbot clear">
-        <form action="/Proprietor/RentingAuditList" method="get">
+        <form action="/Proprietor/RentRecordList" method="get">
             <input w type="text" class="acc-in list-mi fl" placeholder="租户" name="name" id="name" />
-            <button class="acc-btn fr" type="submit">搜索</button> 
+            <button class="acc-btn fr" type="submit">搜索</button>
         </form>
     </div>
-    <div  class="list-index" id="containerList">
+    <div class="list-index" id="containerList">
 
     </div>
 </div>
@@ -49,11 +49,11 @@
                     for (var i in parList) {
                         data+=i+"="+parList[i]+"&";
                     }
-                    $.post("/Proprietor/RentingAuditList",data, function (data) {
+                    $.post("/Proprietor/RentRecordList",data, function (data) {
                         var lis = [];
                         for (var i in data) {
                             lis.push("<div class=\"list-index\"  >");
-                            lis.push("<a class=\"pro repair-m\" href=\"/Proprietor/RentingDetails?number="+data[i].Number+"\">");
+                            lis.push("<a class=\"pro repair-m\" href=\"/Proprietor/RentRecorDetails?number="+data[i].Number+"\">");
                             lis.push("<table>");
                             lis.push("<tr><td style=\"width:50%\">表号："+data[i].AmmeterCode+"</td><td>时间："+formatDate(data[i].CreateTime,"yyyy-MM-dd")+"</td></tr>");
                             lis.push("<tr><td>姓名："+data[i].U_Name+"</td><td>手机号："+data[i].UserName+"</td></tr>");
@@ -72,4 +72,3 @@
         });
     });
 </script>
-

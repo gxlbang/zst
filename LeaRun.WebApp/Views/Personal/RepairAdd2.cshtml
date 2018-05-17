@@ -64,7 +64,7 @@ $(function(){
 			fileNumLimit: 2
 		}
 	});
-	 
+
 });
 
 function myfunction() {
@@ -80,15 +80,21 @@ function myfunction() {
         type: "POST",
         url: "/Personal/RepairAdd",
         traditional: true,
-        data: _list,// $.param(result.serializeObject("result")),
+        data: _list,
         success: function (data) {
-            console.log("successfully processed.");
+            if (data.res == "Ok") {
+                layer.msg(data.msg, {time: 2000, end: function myfunction() {
+                        window.location.href = '@Url.Action("RepairRecord", "Personal")';
+                    }
+                });
+            } else {
+                layer.msg(data.msg, { time: 2000 });
+            }
         },
         error: function (data) {
-            console.log("error occurred.");
+            layer.msg(data.msg, { time: 2000 });
         }
     });
-
 }
 </script>
 

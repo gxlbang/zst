@@ -16,10 +16,10 @@
             </ul>
         </div>
         <div class="tab-news-con pro-all">
-            <div id="con_1" class="list-index all-pa on">
+            <div id="con_1" class="list-index all-pa on mt20">
                  
             </div>
-            <div id="con_2" class="list-index all-pa" style="display:none">
+            <div id="con_2" class="list-index all-pa mt20 " style="display:none">
 
             </div>
         </div>
@@ -58,9 +58,9 @@
                             lis.push("<a class=\"pro repair-m pen-a mt15 clear\" href=\"/Personal/RepairInfo?number="+ data[i].Number+"\">");
                             lis.push("<span class=\"pen-span fl\">报修单："+data[i].RepairCode+"</span>");
                             lis.push("<span class=\"pen-spanex fr\">"+formatDate(data[i].CreateTime,"yyyy-MM-dd hh:mm:ss")+"</span>");
-                            lis.push("<span class=\"pen-span fr\"></span>");
-                            lis.push("<span class=\"repair-span fl\">"+data[i].Province+data[i].City+data[i].County+    data[i].Address+"</span>");
-                            lis.push("<span class=\"repair-span fl\">"+data[i].Cell+"单元  "+data[i].Floor+"楼层  "+data[i].Room+"号</span>");
+               
+                            lis.push("<span class=\"repair-span fl\">"+data[i].Province+data[i].City+data[i].County+    "</span>");
+                            lis.push("<span class=\"repair-span fl\">"+data[i].Address+"   "+ data[i].Cell+"单元  "+data[i].Floor+"楼层  "+data[i].Room+"号</span>");
                             lis.push("<i class=\"icon-next\"></i>");
                             lis.push("</a>");
                         }

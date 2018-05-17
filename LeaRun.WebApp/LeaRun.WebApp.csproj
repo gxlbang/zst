@@ -207,6 +207,7 @@
     <Compile Include="Areas\WebModule\Controllers\Ho_OnePageController.cs" />
     <Compile Include="Areas\WebModule\WebModuleAreaRegistration.cs" />
     <Compile Include="Attributes\WeixinOAuthAuthorizeAttribute.cs" />
+    <Compile Include="CommonClass\AmmeterApi.cs" />
     <Compile Include="CommonClass\CacheFilterAttribute.cs" />
     <Compile Include="CommonClass\CompressFilter.cs" />
     <Compile Include="CommonClass\DomainData.cs" />
@@ -8110,6 +8111,12 @@
     <Content Include="Content\Scripts\ckeditor\config.js" />
     <Content Include="Content\Scripts\ckeditor\plugins\image\dialogs\image - 复制.js" />
     <Content Include="Content\Scripts\diyUpload.js" />
+    <Content Include="Content\Scripts\Drop-downRefresh\res\loading.gif" />
+    <Content Include="Content\Scripts\Drop-downRefresh\res\t1.png" />
+    <Content Include="Content\Scripts\Drop-downRefresh\script\lib\jquery-1.11.0.js" />
+    <Content Include="Content\Scripts\Drop-downRefresh\script\lib\touche.js" />
+    <Content Include="Content\Scripts\Drop-downRefresh\script\p-pull-refresh.js" />
+    <Content Include="Content\Scripts\Drop-downRefresh\style\main.css" />
     <Content Include="Content\Scripts\image\demo.js" />
     <Content Include="Content\Scripts\inkage.js" />
     <Content Include="Content\Scripts\jqthumb.min.js" />
@@ -9542,6 +9549,9 @@
     <Content Include="Views\Proprietor\RentingAuditList.cshtml" />
     <Content Include="Views\Proprietor\RentGenerate.cshtml" />
     <Content Include="Views\Proprietor\RentingDetails.cshtml" />
+    <Content Include="Views\Proprietor\RentRecordList.cshtml" />
+    <Content Include="Views\Proprietor\RentRecorDetails.cshtml" />
+    <Content Include="Views\Personal\RentList.cshtml" />
     <None Include="Views\Utility\PrintPage.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
