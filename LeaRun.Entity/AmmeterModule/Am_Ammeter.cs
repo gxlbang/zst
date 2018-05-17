@@ -243,6 +243,18 @@ namespace LeaRun.Entity
         [DisplayName("UY_Name")]
         public string UY_Name { get; set; }
         /// <summary>
+        /// Count
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("Count")]
+        public int? Count { get; set; }
+        /// <summary>
+        /// Acount_Id
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("Acount_Id")]
+        public int? Acount_Id { get; set; }
+        /// <summary>
         /// Remark
         /// </summary>
         /// <returns></returns>

@@ -10,7 +10,7 @@
 
         <div class="my-img">
             <div class="my-border"></div>
-            <img src="images/top.png" alt="" />
+            <img src="/Content/Images/top.png" alt="" />
         </div>
         <span class="my-xing">@User.Identity.Name</span>
     </div>
@@ -95,13 +95,14 @@
 </div>
 <div id="dialogBg"></div>
 <div id="dialog" class="animated">
-    <a href="modify-password.html" class="my-paw bbot">修改密码</a>
-    <a href="javascript:;" class="my-paw btn-close">退出</a>
+    <a href="/Account/ForgetPwd" class="my-paw bbot">修改密码</a>
+    @*<a href="javascript:;" onclick="Exit()" class="my-paw btn-close">退出</a>*@
     <i class="icon-top"></i>
 </div>
 <script src="~/Content/Scripts/jqthumb.min.js"></script>
 <script src="~/Content/Scripts/menu.js"></script>
 <script src="~/Content/Scripts/leftnav.js"></script>
+<script src="~/Content/Scripts/layer/layer.js"></script>
 <script>
     $(function () {
         $('.my-img img').jqthumb({
@@ -109,7 +110,16 @@
             height: 2.8,
         });
     });
+    function Exit() {
+        $.post("/Account/Exit",null,  function (data) {
+            if (data.res == "Ok") {
+                window.location.href = '@Url.Action("Login", "Account")';
+            } else {
+                layer.msg(data.msg, { time: 2000 });
+            }
 
+        });
+    }
     var w, h, className;
     function getSrceenWH() {
         w = $(window).width();

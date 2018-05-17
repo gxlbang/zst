@@ -40,6 +40,13 @@ namespace LeaRun.WebApp.Controllers
         {
             return View();
         }
+
+        public ActionResult Exit()
+        {
+            CookieHelper.DelCookie("WebUserInfo");
+            return Json(new { res = "Ok", msg = "提交成功" });
+        }
+
         /// <summary>
         /// 提交完善信息
         /// </summary>

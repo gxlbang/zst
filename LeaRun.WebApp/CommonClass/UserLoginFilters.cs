@@ -17,7 +17,7 @@ namespace LeaRun.WebApp
             {
                 filterContext.Result = new ContentResult()
                 {
-                    Content = "<script type='text/javascript'>alert('未登录或登录超时,请重新登录!');location.href='/Ui/Index';</script>",
+                    Content = "<script type='text/javascript'>alert('未登录或登录超时,请重新登录!');location.href='/Account/Login';</script>",
                 };
             }
         }
