@@ -39,7 +39,7 @@ namespace LeaRun.Entity
         [DisplayName("Number")]
         public string Number { get; set; }
         /// <summary>
-        /// Ammeter_Number
+        /// µç±í±àºÅ
         /// </summary>
         /// <returns></returns>
         [DisplayName("Ammeter_Number")]
