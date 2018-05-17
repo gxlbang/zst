@@ -71,6 +71,7 @@
                 </span>
                 我已仔细阅读并接受<a href="" class="l-lv">至善堂服务条款</a>
             </div>
+            <input type="hidden" id="Openid" name="Openid" value="@ViewBag.Openid" />
             <a href="javascript:;" onclick="sumbit()" class="btn-all">注册</a>
             <div class="l-p l-pnone clear"><a href="/account/login" class="l-w l-deng fr">登录</a><a class="l-w fr">已注册！</a></div>
         </div>
@@ -98,7 +99,7 @@
         }
     }
     function jump() {
-        window.location.href = '@Url.Action("Index", "Home")';
+        window.location.href = '@Url.Action("Index", "Personal")';
     }
     function sumbit() {
         var phone = $('#Name').val();

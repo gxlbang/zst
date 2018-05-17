@@ -457,4 +457,237 @@ namespace FJCWebApp.CommonClass
 
         }
     }
+    #region 调用返回数据包
+    [Serializable]
+    public class AccessTokenR
+    {
+        private string _access_token;
+        private int _expires_in;
+        private int _errcode;
+        private string _errmsg;
+
+        public string access_token
+        {
+            get { return _access_token; }
+            set { _access_token = value; }
+        }
+        public int expires_in
+        {
+            get { return _expires_in; }
+            set { _expires_in = value; }
+        }
+        public int errcode
+        {
+            get { return _errcode; }
+            set { _errcode = value; }
+        }
+        public string errmsg
+        {
+            get { return _errmsg; }
+            set { _errmsg = value; }
+        }
+    }
+
+    [Serializable]
+    public class Long2ShortR
+    {
+        private int _errcode;
+        private string _errmsg;
+        private string _short_url;
+
+        public int errcode
+        {
+            get { return _errcode; }
+            set { _errcode = value; }
+        }
+        public string errmsg
+        {
+            get { return _errmsg; }
+            set { _errmsg = value; }
+        }
+        public string short_url
+        {
+            get { return _short_url; }
+            set { _short_url = value; }
+        }
+
+    }
+
+    [Serializable]
+    public class JsApiTicketR
+    {
+        private string _ticket;
+        private int _expires_in;
+        private int _errcode;
+        private string _errmsg;
+
+        public string ticket
+        {
+            get { return _ticket; }
+            set { _ticket = value; }
+        }
+        public int expires_in
+        {
+            get { return _expires_in; }
+            set { _expires_in = value; }
+        }
+        public int errcde
+        {
+            get { return _errcode; }
+            set { _errcode = value; }
+        }
+        public string errmsg
+        {
+            get { return _errmsg; }
+            set { _errmsg = value; }
+        }
+
+    }
+
+    [Serializable]
+    public class UserInfoR
+    {
+        private int _subscribe;
+        private string _openid;
+        private string _nickname;
+        private int _sex;
+        private string _city;
+        private string _country;
+        private string _province;
+        private string _language;
+        private string _headimgurl;
+        private int _subscribe_time;
+        private string _unionid;
+        private string _remark;
+        private int _groupid;
+
+        public int subscribe
+        {
+            get { return _subscribe; }
+            set { _subscribe = value; }
+        }
+        public string openid
+        {
+            get { return _openid; }
+            set { _openid = value; }
+        }
+        public string nickname
+        {
+            get { return _nickname; }
+            set { _nickname = value; }
+        }
+        public int sex
+        {
+            get { return _sex; }
+            set { _sex = value; }
+        }
+        public string city
+        {
+            get { return _city; }
+            set { _city = value; }
+        }
+        public string country
+        {
+            get { return _country; }
+            set { _country = value; }
+        }
+        public string province
+        {
+            get { return _province; }
+            set { _province = value; }
+        }
+        public string language
+        {
+            get { return _language; }
+            set { _language = value; }
+        }
+        public string headimgurl
+        {
+            get { return _headimgurl; }
+            set { _headimgurl = value; }
+        }
+        public int subscribe_time
+        {
+            get { return _subscribe_time; }
+            set { _subscribe_time = value; }
+        }
+        public string unionid
+        {
+            get { return _unionid; }
+            set { _unionid = value; }
+        }
+        public string remark
+        {
+            get { return _remark; }
+            set { _remark = value; }
+        }
+        public int groupid
+        {
+            get { return _groupid; }
+            set { _groupid = value; }
+        }
+
+    }
+
+    [Serializable]
+    public class OAuthResponeData
+    {
+        private string _access_token = string.Empty;
+        private int _expires_in;
+        private string _refresh_token = string.Empty;
+        private string _openid = string.Empty;
+        private string _scope = string.Empty;
+
+        public string access_token
+        {
+            get { return _access_token; }
+            set { _access_token = value; }
+        }
+        public int expires_in
+        {
+            get { return _expires_in; }
+            set { _expires_in = value; }
+        }
+        public string refresh_token
+        {
+            get { return _refresh_token; }
+            set { _refresh_token = value; }
+        }
+        public string openid
+        {
+            get { return _openid; }
+            set { _openid = value; }
+        }
+        public string scope
+        {
+            get { return _scope; }
+            set { _scope = value; }
+        }
+    }
+
+    [Serializable]
+    public class TemplateMessageR
+    {
+        private int _errcode;
+        private string _errmsg;
+        private string _msgid;
+
+        public int errcode
+        {
+            get { return _errcode; }
+            set { _errcode = value; }
+        }
+        public string errmsg
+        {
+            get { return _errmsg; }
+            set { _errmsg = value; }
+        }
+        public string msgid
+        {
+            get { return _msgid; }
+            set { _msgid = value; }
+        }
+    }
+
+    #endregion
 }
