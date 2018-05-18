@@ -129,6 +129,12 @@ namespace LeaRun.Entity
         [DisplayName("BillDate")]
         public int? BillDate { get; set; }
         /// <summary>
+        /// SendBillDate
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("SendBillDate")]
+        public int? SendBillDate { get; set; }
+        /// <summary>
         /// ChargeFee
         /// </summary>
         /// <returns></returns>
