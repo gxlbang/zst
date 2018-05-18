@@ -182,6 +182,18 @@ namespace LeaRun.Entity
         /// <returns></returns>
         [DisplayName("Remark")]
         public string Remark { get; set; }
+        /// <summary>
+        /// BeginTime
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("BeginTime")]
+        public DateTime? BeginTime { get; set; }
+        /// <summary>
+        /// EndTime
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("EndTime")]
+        public DateTime? EndTime { get; set; }
         #endregion
 
         #region À©Õ¹²Ù×÷
