@@ -269,7 +269,8 @@ namespace LeaRun.Entity
         public override void Create()
         {
             this.AmmeterMoney_Number = CommonHelper.GetGuid;
-                                            }
+            this.Acount_Id = null;
+        }
         /// <summary>
         /// ±à¼­µ÷ÓÃ
         /// </summary>
@@ -277,7 +278,8 @@ namespace LeaRun.Entity
         public override void Modify(string KeyValue)
         {
             this.AmmeterMoney_Number = KeyValue;
-                                            }
+            this.Acount_Id = null;
+        }
         #endregion
     }
 }

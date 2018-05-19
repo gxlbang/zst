@@ -12,15 +12,19 @@
 * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 */
 using LeaRun.Business;
+using LeaRun.DataAccess;
 using LeaRun.Entity;
+using LeaRun.Repository;
 using LeaRun.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 
@@ -31,6 +35,51 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
     /// </summary>
     public class Am_CollectorController : PublicController<Am_Collector>
     {
+        /// <summary>
+        /// 删除电表
+        /// </summary>
+        /// <param name="KeyValue"></param>
+        /// <returns></returns>
+        public ActionResult DeleteCollector(string KeyValue)
+        {
+            var Message = "删除失败。";
+            IDatabase database = DataFactory.Database();
+            DbTransaction isOpenTrans = database.BeginTrans();
+            try
+            {
+                var acount = database.FindCountBySql("select count(*) from Am_Ammeter where Collector_Number = '" + KeyValue + "' and Status != 9");
+                if (acount > 0)
+                {
+                    Message = "有正常使用的电表,不能删除!";
+                    WriteLog(1, KeyValue, Message);
+                    return Content(new JsonMessage { Success = false, Code = "-1", Message = Message }.ToString());
+                }
+                else
+                {
+                    var model = database.FindEntity<Am_Collector>(KeyValue);
+                    if (model == null && string.IsNullOrEmpty(model.Number))
+                    {
+                        Message = "数据异常";
+                    }
+                    model.STATUS = 9;
+                    model.StatusStr = "已删除";
+                    model.Modify(model.Number);
+                    if (database.Update(model, isOpenTrans) < 1)
+                    {
+                        isOpenTrans.Rollback();
+                    }
+                    isOpenTrans.Commit();
+                    WriteLog(1, KeyValue, Message);
+                    return Content(new JsonMessage { Success = true, Code = "1", Message = Message }.ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                isOpenTrans.Rollback();
+                WriteLog(-1, KeyValue, "操作失败：" + ex.Message);
+                return Content(new JsonMessage { Success = false, Code = "-1", Message = "操作失败：" + ex.Message }.ToString());
+            }
+        }
         /// <summary>
         /// 搜索
         /// </summary>
@@ -70,7 +119,7 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
             {
                 var model = new Am_CollectorNew();
                 model.Address = item.Address;
-                model.AmCount = item.AmCount;
+                model.AmCount = item.AmCount.ToString();
                 model.City = item.City;
                 model.CollectorCode = item.CollectorCode;
                 model.County = item.County;

@@ -666,7 +666,7 @@ namespace LeaRun.WebApp.Controllers
                     List<DbParameter> par1 = new List<DbParameter>();
                     par1.Add(DbFactory.CreateDbParameter("@Collector_Number", item.Number));
                     var count = database.FindCount<Am_Ammeter>(" and Collector_Number=@Collector_Number", par1.ToArray());
-                    item.AmCount = count.ToString();
+                    item.AmCount = count;
                 }
             }
             if (Request.IsAjaxRequest())

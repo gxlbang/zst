@@ -1,8 +1,8 @@
 /*
 * 姓名:gxlbang
-* 类名:Am_Collector
+* 类名:Am_Task
 * CLR版本：
-* 创建时间:2018-04-15 17:09:58
+* 创建时间:2018-04-17 19:08:19
 * 功能描述:
 *
 * 修改历史：
@@ -21,15 +21,15 @@ using System.Text;
 namespace LeaRun.Entity
 {
     /// <summary>
-    /// Am_Collector
+    /// Am_Task
     /// <author>
     ///		<name>she</name>
-    ///		<date>2018.04.15 17:09</date>
+    ///		<date>2018.04.17 19:08</date>
     /// </author>
     /// </summary>
-    [Description("Am_Collector")]
+    [Description("Am_BackstageTask")]
     [PrimaryKey("Number")]
-    public class Am_Collector : BaseEntity
+    public class Am_BackstageTask : BaseEntity
     {
         #region 获取/设置 字段值
         /// <summary>
@@ -39,11 +39,17 @@ namespace LeaRun.Entity
         [DisplayName("Number")]
         public string Number { get; set; }
         /// <summary>
-        /// UNumber
+        /// OrderNumber
         /// </summary>
         /// <returns></returns>
-        [DisplayName("UNumber")]
-        public string UNumber { get; set; }
+        [DisplayName("OrderNumber")]
+        public string OrderNumber { get; set; }
+        /// <summary>
+        /// U_Number
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("U_Number")]
+        public string U_Number { get; set; }
         /// <summary>
         /// UserName
         /// </summary>
@@ -51,11 +57,17 @@ namespace LeaRun.Entity
         [DisplayName("UserName")]
         public string UserName { get; set; }
         /// <summary>
-        /// URealName
+        /// U_Name
         /// </summary>
         /// <returns></returns>
-        [DisplayName("URealName")]
-        public string URealName { get; set; }
+        [DisplayName("U_Name")]
+        public string U_Name { get; set; }
+        /// <summary>
+        /// CollectorNumber
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("CollectorNumber")]
+        public string CollectorNumber { get; set; }
         /// <summary>
         /// CollectorCode
         /// </summary>
@@ -63,47 +75,29 @@ namespace LeaRun.Entity
         [DisplayName("CollectorCode")]
         public string CollectorCode { get; set; }
         /// <summary>
-        /// Province
+        /// AmmeterNumber
         /// </summary>
         /// <returns></returns>
-        [DisplayName("Province")]
-        public string Province { get; set; }
+        [DisplayName("AmmeterNumber")]
+        public string AmmeterNumber { get; set; }
         /// <summary>
-        /// City
+        /// AmmeterCode
         /// </summary>
         /// <returns></returns>
-        [DisplayName("City")]
-        public string City { get; set; }
+        [DisplayName("AmmeterCode")]
+        public string AmmeterCode { get; set; }
         /// <summary>
-        /// County
+        /// OperateType
         /// </summary>
         /// <returns></returns>
-        [DisplayName("County")]
-        public string County { get; set; }
+        [DisplayName("OperateType")]
+        public int? OperateType { get; set; }
         /// <summary>
-        /// Address
+        /// OperateTypeStr
         /// </summary>
         /// <returns></returns>
-        [DisplayName("Address")]
-        public string Address { get; set; }
-        /// <summary>
-        /// AmCount
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("AmCount")]
-        public int? AmCount { get; set; }
-        /// <summary>
-        /// STATUS
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("STATUS")]
-        public int? STATUS { get; set; }
-        /// <summary>
-        /// StatusStr
-        /// </summary>
-        /// <returns></returns>
-        [DisplayName("StatusStr")]
-        public string StatusStr { get; set; }
+        [DisplayName("OperateTypeStr")]
+        public string OperateTypeStr { get; set; }
         /// <summary>
         /// CreateTime
         /// </summary>
@@ -111,11 +105,29 @@ namespace LeaRun.Entity
         [DisplayName("CreateTime")]
         public DateTime? CreateTime { get; set; }
         /// <summary>
-        /// LastConnectTime
+        /// Status
         /// </summary>
         /// <returns></returns>
-        [DisplayName("LastConnectTime")]
-        public DateTime? LastConnectTime { get; set; }
+        [DisplayName("Status")]
+        public int? Status { get; set; }
+        /// <summary>
+        /// StatusStr
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("StatusStr")]
+        public string StatusStr { get; set; }
+        /// <summary>
+        /// TaskMark
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("TaskMark")]
+        public string TaskMark { get; set; }
+        /// <summary>
+        /// OverTime
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("OverTime")]
+        public DateTime? OverTime { get; set; }
         /// <summary>
         /// Remark
         /// </summary>
@@ -130,7 +142,7 @@ namespace LeaRun.Entity
         /// </summary>
         public override void Create()
         {
-            this.Number = CommonHelper.GetGuid;
+            this.AmmeterNumber = CommonHelper.GetGuid;
                                             }
         /// <summary>
         /// 编辑调用
@@ -138,7 +150,7 @@ namespace LeaRun.Entity
         /// <param name="KeyValue"></param>
         public override void Modify(string KeyValue)
         {
-            this.Number = KeyValue;
+            this.AmmeterNumber = KeyValue;
                                             }
         #endregion
     }

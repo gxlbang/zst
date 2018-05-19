@@ -85,6 +85,7 @@
     <Compile Include="AmmeterModule\Am_Repair.cs" />
     <Compile Include="AmmeterModule\Am_RepairAnswer.cs" />
     <Compile Include="AmmeterModule\Am_RepairImage.cs" />
+    <Compile Include="AmmeterModule\Am_BackstageTask.cs" />
     <Compile Include="AmmeterModule\Am_Task.cs" />
     <Compile Include="AmmeterModule\Am_Template.cs" />
     <Compile Include="AmmeterModule\Am_TemplateContent.cs" />
