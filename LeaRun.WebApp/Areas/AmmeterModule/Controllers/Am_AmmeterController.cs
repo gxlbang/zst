@@ -21,8 +21,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 
@@ -40,16 +42,74 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
             return View();
         }
         /// <summary>
+        /// 删除电表
+        /// </summary>
+        /// <param name="KeyValue"></param>
+        /// <returns></returns>
+        public ActionResult DeleteAmmeter(string KeyValue)
+        {
+            var Message = "删除失败。";
+            IDatabase database = DataFactory.Database();
+            DbTransaction isOpenTrans = database.BeginTrans();
+            try
+            {
+                var model = database.FindEntity<Am_Ammeter>(KeyValue);
+                if (model == null && string.IsNullOrEmpty(model.Number))
+                {
+                    Message = "数据异常";
+                    WriteLog(-1, KeyValue, Message);
+                    return Content(new JsonMessage { Success = false, Code = "-1", Message= Message }.ToString());
+                }
+                model.Status = 9;
+                model.StatusStr = "已删除";
+                model.UpdateTime = DateTime.Now;
+                model.Modify(model.Number);
+                var isok = database.Update(model, isOpenTrans);
+                if (isok < 1)
+                {
+                    isOpenTrans.Rollback();
+                    WriteLog(-1, KeyValue, Message);
+                    return Content(new JsonMessage { Success = false, Code = "-1", Message = Message }.ToString());
+                }
+                //更细采集器下属电表数量
+                var cmodel = database.FindEntity<Am_Collector>(model.Collector_Number);
+                if (cmodel != null && !string.IsNullOrEmpty(cmodel.Number))
+                {
+                    cmodel.AmCount = (cmodel.AmCount != null && cmodel.AmCount > 0) ? cmodel.AmCount - 1 : 0;
+                    if (database.Update(cmodel, isOpenTrans) < 1)
+                    {
+                        isOpenTrans.Rollback();
+                        WriteLog(-1, KeyValue, Message);
+                        return Content(new JsonMessage { Success = false, Code = "-1", Message = Message }.ToString());
+                    }
+                }
+                //更新关系表
+                StringBuilder sql = new StringBuilder();
+                sql.Append("update Am_AmmeterPermission set Status = 9,StatusStr='已删除' where Ammeter_Number = '" + model.Number + "'");
+                database.ExecuteBySql(sql, isOpenTrans);
+                isOpenTrans.Commit();
+                WriteLog(1, KeyValue, Message);
+                return Content(new JsonMessage { Success = true, Code = "1", Message = Message }.ToString());
+            }
+            catch (Exception ex)
+            {
+                isOpenTrans.Rollback();
+                WriteLog(-1, KeyValue, "操作失败：" + ex.Message);
+                return Content(new JsonMessage { Success = false, Code = "-1", Message = "操作失败：" + ex.Message }.ToString());
+            }
+        }
+
+        /// <summary>
         /// 搜索
         /// </summary>
         /// <returns></returns>
-        public ActionResult GridPageListJson(JqGridParam jqgridparam,string Number, string keywords, [DefaultValue(-1)]int Stuts, string ProvinceId, string CityId, string CountyId)
+        public ActionResult GridPageListJson(JqGridParam jqgridparam, string Number, string keywords, [DefaultValue(-1)]int Stuts, string ProvinceId, string CityId, string CountyId)
         {
             try
             {
                 Stopwatch watch = CommonHelper.TimerStart();
                 Am_AmmeterBll bll = new Am_AmmeterBll();
-                var ListData = bll.GetPageList(ref jqgridparam,Number, keywords, Stuts, ProvinceId, CityId, CountyId);
+                var ListData = bll.GetPageList(ref jqgridparam, Number, keywords, Stuts, ProvinceId, CityId, CountyId);
                 var JsonData = new
                 {
                     total = jqgridparam.total,
@@ -72,7 +132,7 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
         public void ExportExcel([DefaultValue(-1)]int Stuts, string keywords, string Number, string ProvinceId, string CityId, string CountyId)
         {
             Am_AmmeterBll bll = new Am_AmmeterBll();
-            var ListData = bll.GetPageList(keywords,Number, Stuts, ProvinceId, CityId, CountyId);
+            var ListData = bll.GetPageList(keywords, Number, Stuts, ProvinceId, CityId, CountyId);
             var newlist = new List<Am_AmmeterNew>();
             foreach (var item in ListData)
             {
@@ -149,7 +209,7 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
                     tree1.AttributeValue = "Collector";
                     tree1.isexpand = true;
                     tree1.complete = true;
-                    tree1.hasChildren = false; 
+                    tree1.hasChildren = false;
                     tree1.img = "/Content/Images/Icon16/report.png";
                     TreeList.Add(tree1);
                 }
