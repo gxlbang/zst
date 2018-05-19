@@ -1,5 +1,10 @@
-﻿using System;
+﻿using LeaRun.DataAccess;
+using LeaRun.Entity;
+using LeaRun.Repository;
+using LeaRun.Utilities;
+using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.IO;
 using System.ServiceProcess;
 
@@ -8,6 +13,9 @@ namespace ZstDataHandle
     public partial class Service1 : ServiceBase
     {
         System.Timers.Timer timer = new System.Timers.Timer();
+        System.Timers.Timer BIllTimer = new System.Timers.Timer();
+        IDatabase database = DataFactory.Database();
+
         public Service1()
         {
             InitializeComponent();
@@ -19,6 +27,10 @@ namespace ZstDataHandle
             timer.Elapsed += new System.Timers.ElapsedEventHandler(TimedEvent);
             timer.Interval = 5000;//每5秒执行一次
             timer.Enabled = true;
+
+            BIllTimer.Elapsed += new System.Timers.ElapsedEventHandler(BIllTimerdEvent);
+            BIllTimer.Interval = 5000;//每5秒执行一次
+            BIllTimer.Enabled = true;
         }
         /// <summary>
         /// 异步处理
@@ -33,17 +45,21 @@ namespace ZstDataHandle
             {
                 var result = GetResult(item.OrderNumber);
                 var root = LeaRun.Utilities.JsonHelper.JonsToList<Root>(result);
-                if (root!=null )
+                if (root != null)
                 {
-                    if (root.Count==1)
+                    if (root.Count == 1)
                     {
                         var example = root[0];
                         item.TaskMark = example.status;
-                        if (example.status== "SUCCESS")
+                        if (example.status == "SUCCESS")
                         {
                             item.Status = 1;
                             item.StatusStr = "成功";
-                            item.Remark = example.data[0].dsp;
+                            if (example.data != null)
+                            {
+                                item.Remark = example.data[0].dsp;
+                            }
+
                             item.OverTime = DateTime.Parse(example.resolve_time);
                         }
                         else if (example.status == "FAIL")
@@ -72,17 +88,17 @@ namespace ZstDataHandle
                         {
                             item.StatusStr = "调度状态";
                         }
-                        else if (example.status=="PROCESSING")
+                        else if (example.status == "PROCESSING")
                         {
                             item.StatusStr = "正在处理中";
                         }
                         DbHelper.UpdateTask(item);
                     }
                 }
-                if (item.Status>0&& item.Status<4)
+                if (item.Status > 0 && item.Status < 4)
                 {
                     var log = DbHelper.GetLog(item.Number);
-                    if (log !=null )
+                    if (log != null)
                     {
                         log.Result = item.StatusStr;
                         DbHelper.UpdateLog(log);
@@ -90,14 +106,14 @@ namespace ZstDataHandle
                     if (root.Count == 1)
                     {
                         var example = root[0];
-                        if (example.data !=null&&example.data.Count>0)
+                        if (example.data != null && example.data.Count > 0)
                         {
                             int type = example.data[0].type;
                             //查询余额
-                            if (type==22)
+                            if (type == 22)
                             {
                                 var ammeter = DbHelper.GetAmmeter(item.AmmeterNumber);
-                                if (ammeter!=null )
+                                if (ammeter != null)
                                 {
                                     ammeter.CurrMoney = decimal.Parse(example.data[0].value[0].ToString());
                                     ammeter.CM_Time = DateTime.Parse(example.resolve_time);
@@ -105,7 +121,7 @@ namespace ZstDataHandle
                                 }
                             }
                             //查询电量
-                            if (type==20)
+                            if (type == 20)
                             {
                                 var ammeter = DbHelper.GetAmmeter(item.AmmeterNumber);
                                 if (ammeter != null)
@@ -124,6 +140,123 @@ namespace ZstDataHandle
 
             //业务逻辑代码
         }
+        /// <summary>
+        /// 账单生成
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BIllTimerdEvent(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            BIllTimer.Stop();
+            var config = database.FindEntityByWhere<Fx_WebConfig>("");
+
+            if (config != null && config.BillDate > 0)
+            {
+                var time = DateTime.Now.Date.AddDays(config.BillDate.Value);
+                var pList = DbHelper.GetAmmeterPermissionList(time);
+                foreach (var item in pList)
+                {
+                    var ammeter = DbHelper.GetAmmeter(item.Ammeter_Number);
+                    if (ammeter != null)
+                    {
+                        List<DbParameter> par = new List<DbParameter>();
+                        par.Add(DbFactory.CreateDbParameter("@Ammeter_Number", ammeter.Number));
+
+
+                        var templateContentList = database.FindList<Am_TemplateContent>(" and  Template_Number =(select top(1) number from  Am_Template  where Ammeter_Number=@Ammeter_Number ) ", par.ToArray());
+                        double money = 0.00;
+                        foreach (var centent in templateContentList)
+                        {
+                            //一次性账单
+                            if (centent.ChargeItem_ChargeType == 1)
+                            {
+                                if (item.BeginTime == item.LastPayBill)
+                                {
+                                    money = money + centent.Money.Value;
+                                }
+                            }
+                            else
+                            {
+                                money = money + centent.Money.Value;
+                            }
+                        }
+                        //推送时间
+                        var sendTime = DateTime.Now;
+                        if (item.BeginTime == item.LastPayBill)
+                        {
+                            sendTime = item.BeginTime.Value;
+                        }
+                        else
+                        {
+                            sendTime = item.LastPayBill.Value.AddDays(-config.SendBillDate.Value);
+                        }
+
+                        var bill = new LeaRun.Entity.Am_Bill
+                        {
+                            Address = ammeter.Address,
+                            AmmeterCode = item.Ammeter_Code,
+                            AmmeterNumber = item.Ammeter_Number,
+                            Cell = ammeter.Cell,
+                            City = ammeter.City,
+                            County = ammeter.County,
+                            CreateTime = DateTime.Now,
+                            Floor = ammeter.Floor,
+                            F_UserName = item.UserName,
+                            F_U_Name = item.U_Name,
+                            F_U_Number = item.U_Number,
+                            Money = money,
+                            Number = CommonHelper.GetGuid,
+                            OtherFees = 0,
+                            PayTime = DateTime.Now,
+                            Province = ammeter.Province,
+                            Remark = "",
+                            Room = ammeter.Room,
+                            SendTime = sendTime,
+                            Status = 0,
+                            StatusStr = "待支付",
+                            T_UserName = item.UY_UserName,
+                            T_U_Name = item.UY_Name,
+                            T_U_Number = item.UY_Number,
+                            BeginTime = item.LastPayBill,
+                            EndTime = item.LastPayBill.Value.AddMonths(item.BillCyc.Value)
+                        };
+                        var count = 100000 + database.FindCount<Am_Bill>() + 1;
+                        var code = item.LastPayBill.Value.ToString("yyyyMMdd") + "-" + count;
+                        bill.BillCode = code;
+                        if (database.Insert<Am_Bill>(bill) > 0)
+                        {
+                            //账单收费项
+                            foreach (var content in templateContentList)
+                            {
+                                var contentModel = new Am_BillContent
+                                {
+                                    ChargeItem_ChargeType = content.ChargeItem_ChargeType,
+                                    ChargeItem_Number = content.ChargeItem_Number,
+                                    ChargeItem_Title = content.ChargeItem_Title,
+                                    Money = content.Money,
+                                    Bill_Code = bill.BillCode,
+                                    Bill_Number = bill.Number,
+                                    Number = CommonHelper.GetGuid,
+                                    Remark = "",
+                                    UMark = ""
+                                };
+                                database.Insert<Am_BillContent>(contentModel);
+                            }
+
+                            if (item.BeginTime != item.LastPayBill)
+                            {
+                                item.LastPayBill = item.LastPayBill.Value.AddMonths(item.BillCyc.Value);
+                                database.Update<Am_AmmeterPermission>(item);
+                            }
+                        }
+                    }
+
+
+                }
+            }
+            BIllTimer.Start();
+        }
+
 
         /// <summary>
         /// 获取操作结果
@@ -140,7 +273,7 @@ namespace ZstDataHandle
             var result = api.Request(AmmeterSDK.ApiUrl.OPRATIONSTATUS, list, false);
             return result;
         }
-       
+
         protected override void OnStart(string[] args)
         {
             this.WriteLog("至善堂数据处理：【服务启动】");

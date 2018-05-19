@@ -141,6 +141,7 @@ namespace LeaRun.WebApp.Controllers
                     ammeter.SencondAlarm = model.SencondAlarm;
                     ammeter.UpdateTime = DateTime.Now;
                     ammeter.Remark = model.Remark;
+                    ammeter.Acount_Id = null;
 
                     var status = database.Update<Am_Ammeter>(ammeter);
                     if (status > 0)
@@ -258,6 +259,8 @@ namespace LeaRun.WebApp.Controllers
                 var status = database.Insert<Am_Ammeter>(insertModel);
                 if (status > 0)
                 {
+                    collector.AmCount = collector.AmCount + 1;
+                    database.Update<Am_Collector>(collector);
                     return Json(new { res = "Ok", msg = "添加成功" });
                 }
             }
@@ -349,7 +352,7 @@ namespace LeaRun.WebApp.Controllers
                 List<DbParameter> par = new List<DbParameter>();
                 par.Add(DbFactory.CreateDbParameter("@U_Number", "System"));
                 par.Add(DbFactory.CreateDbParameter("@AmmeterNumber", ammeter.Number));
-                var count = database.FindCount<Am_Task>(" and U_Number!=@U_Number and AmmeterNumber=@AmmeterNumber ", par.ToArray() );
+                var count = database.FindCount<Am_Task>(" and U_Number!=@U_Number and AmmeterNumber=@AmmeterNumber ", par.ToArray());
                 int pageSize = 5;
                 ViewBag.recordCount = (int)Math.Ceiling(1.0 * count / pageSize);
 
@@ -426,7 +429,7 @@ namespace LeaRun.WebApp.Controllers
                     U_Name = user.Name,
                     U_Number = user.Number
                 };
-                
+
                 if (type == 10)
                 {
                     task.OperateType = 2;
@@ -1329,13 +1332,16 @@ namespace LeaRun.WebApp.Controllers
                                         UY_Number = user.Number,
                                         UY_UserName = user.Account,
                                         U_Name = tenant.Name,
-                                        U_Number = tenant.Number
+                                        U_Number = tenant.Number,
+                                        BillCyc = int.Parse(cycle),
+                                        LastPayBill = DateTime.Parse(starTime).Date
                                     };
                                     if (database.Insert<Am_AmmeterPermission>(newAmmeterPermission) > 0)
                                     {
                                         ammeter.UserName = isTenant.Account;
                                         ammeter.U_Name = isTenant.Name;
                                         ammeter.U_Number = isTenant.Number;
+                                        ammeter.Acount_Id = null;
                                         database.Update<Am_Ammeter>(ammeter);
                                     }
                                 }
@@ -1372,13 +1378,16 @@ namespace LeaRun.WebApp.Controllers
                                 UY_Number = user.Number,
                                 UY_UserName = user.Account,
                                 U_Name = tenant.Name,
-                                U_Number = tenant.Number
+                                U_Number = tenant.Number,
+                                BillCyc = int.Parse(cycle),
+                                LastPayBill = DateTime.Parse(starTime)
                             };
                             if (database.Insert<Am_AmmeterPermission>(newAmmeterPermission) > 0)
                             {
                                 ammeter.UserName = isTenant.Account;
                                 ammeter.U_Name = isTenant.Name;
                                 ammeter.U_Number = isTenant.Number;
+                                ammeter.Acount_Id = null;
                                 database.Update<Am_Ammeter>(ammeter);
                             }
                         }
@@ -1923,6 +1932,9 @@ namespace LeaRun.WebApp.Controllers
                         ammeter.U_Name = "";
                         ammeter.U_Number = "";
                         ammeter.UserName = "";
+
+                        ammeter.Acount_Id = null;
+
                         if (database.Update<Am_Ammeter>(ammeter) > 0)
                         {
                             //关联退房
@@ -1993,6 +2005,11 @@ namespace LeaRun.WebApp.Controllers
                                                         U_Number = userTenant.Number
                                                     };
                                                     database.Insert<Am_MoneyDetail>(tenantMoneyDetail);
+                                                    rent.Status = 1;
+                                                    rent.StatusStr = "已退租";
+                                                    rent.SucTime = DateTime.Now;
+
+                                                    database.Update<Am_Rent>(rent);
 
                                                     return Json(new { res = "Ok", msg = "退租成功" });
                                                 }
@@ -2005,14 +2022,16 @@ namespace LeaRun.WebApp.Controllers
                                 }
                                 else
                                 {
+                                    rent.Status = 1;
+                                    rent.StatusStr = "已退租";
+                                    rent.SucTime = DateTime.Now;
+
+                                    database.Update<Am_Rent>(rent);
+
                                     return Json(new { res = "Ok", msg = "退租成功" });
                                 }
 
-                                rent.Status = 1;
-                                rent.StatusStr = "已退租";
-                                rent.SucTime = DateTime.Now;
-
-                                database.Update<Am_Rent>(rent);
+                               
 
                             }
                         }

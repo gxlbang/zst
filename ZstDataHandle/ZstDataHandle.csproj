@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="log4net.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ProjectInstaller.resx">
@@ -78,6 +79,10 @@
     <ProjectReference Include="..\AmmeterSDK\AmmeterSDK.csproj">
       <Project>{5dce796b-eaac-439e-b332-556dc4ac2469}</Project>
       <Name>AmmeterSDK</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LB.DataAccess\LB.DataAccess.csproj">
+      <Project>{597d82d4-f996-4b7b-8fc5-242ac5f76300}</Project>
+      <Name>LB.DataAccess</Name>
     </ProjectReference>
     <ProjectReference Include="..\LeaRun.Entity\LeaRun.Entity.csproj">
       <Project>{fe90ed79-3221-4c96-9361-9019a17be9f7}</Project>
