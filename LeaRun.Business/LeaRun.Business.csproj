@@ -115,6 +115,7 @@
     <Compile Include="NewsModule\Fx_NewsBll.cs" />
     <Compile Include="NewsModule\Fx_NewsClassBll.cs" />
     <Compile Include="NewsModule\Fx_WebNoticeBll.cs" />
+    <Compile Include="ProductModule\Am_TestBll.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BaseUtility\BaseFactory.cs" />
     <Compile Include="BaseUtility\BaseManager.cs" />
