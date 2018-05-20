@@ -142,6 +142,7 @@ namespace LeaRun.WebApp.Controllers
                     ammeter.UpdateTime = DateTime.Now;
                     ammeter.Remark = model.Remark;
                     ammeter.Acount_Id = null;
+                    ammeter.Count = 1;
 
                     var status = database.Update<Am_Ammeter>(ammeter);
                     if (status > 0)
@@ -270,6 +271,107 @@ namespace LeaRun.WebApp.Controllers
         public ActionResult AmmeterManage()
         {
             return View();
+        }
+        /// <summary>
+        /// 电表开户
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public ActionResult AmmeterOpenAccount(string number )
+        {
+            //var user = wbll.GetUserInfo(Request);
+            List<DbParameter> parAmmeter = new List<DbParameter>();
+            parAmmeter.Add(DbFactory.CreateDbParameter("@Number", number));
+            parAmmeter.Add(DbFactory.CreateDbParameter("@Status", "0"));
+            var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number=@Number and Status=@Status ", parAmmeter.ToArray());
+
+            if (ammeter != null && ammeter.Number != null)
+            {
+              var result=  CommonClass.AmmeterApi.AmmeterOpen(ammeter.Collector_Code, ammeter.AM_Code,ammeter.Acount_Id.Value, ammeter.Count.Value, 0);
+                if (result.suc)
+                {
+                    var user = wbll.GetUserInfo(Request);
+                    var task = new Am_Task
+                    {
+                        Number = result.opr_id,
+                        AmmeterCode = ammeter.AM_Code,
+                        AmmeterNumber = ammeter.Number,
+                        CollectorCode = ammeter.Collector_Code,
+                        CollectorNumber = ammeter.Collector_Number,
+                        CreateTime = DateTime.Now,
+                        OperateType = 0,
+                        OperateTypeStr = "",
+                        OrderNumber = "",
+                        OverTime = DateTime.Now,
+                        Remark = "",
+                        Status = 0,
+                        StatusStr = "队列",
+                        TaskMark = "",
+                        UserName = user.Account,
+                        U_Name = user.Name,
+                        U_Number = user.Number
+                    };
+
+                     
+                        task.OperateType = 8;
+                        task.OperateTypeStr = "开户";
+                        database.Insert<Am_Task>(task);
+                        CommonClass.AmmeterApi.InserOperateLog(user.Number, ammeter.Collector_Code, ammeter.AM_Code, 8, "开户", task.Number, result.suc, result.result);
+                    return Json(new { res = "Ok", msg = "提交成功" });
+
+                }
+            }
+            return Json(new { res = "No", msg = "提交失败" });
+        }
+        /// <summary>
+        /// 电表充值
+        /// </summary>
+        /// <param name="number"></param>
+        /// <param name="money"></param>
+        /// <returns></returns>
+        public ActionResult AmmeterRecharge(string number,int money)
+        {
+            List<DbParameter> parAmmeter = new List<DbParameter>();
+            parAmmeter.Add(DbFactory.CreateDbParameter("@Number", number));
+            var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number=@Number ", parAmmeter.ToArray());
+
+            if (ammeter != null && ammeter.Number != null)
+            {
+                var result = CommonClass.AmmeterApi.AmmeterRecharge(ammeter.Collector_Code, ammeter.AM_Code, ammeter.Acount_Id.Value, ammeter.Count.Value, money);
+                if (result.suc)
+                {
+                    var user = wbll.GetUserInfo(Request);
+                    var task = new Am_Task
+                    {
+                        Number = result.opr_id,
+                        AmmeterCode = ammeter.AM_Code,
+                        AmmeterNumber = ammeter.Number,
+                        CollectorCode = ammeter.Collector_Code,
+                        CollectorNumber = ammeter.Collector_Number,
+                        CreateTime = DateTime.Now,
+                        OperateType = 0,
+                        OperateTypeStr = "",
+                        OrderNumber = "",
+                        OverTime = DateTime.Now,
+                        Remark = "",
+                        Status = 0,
+                        StatusStr = "队列",
+                        TaskMark = "",
+                        UserName = user.Account,
+                        U_Name = user.Name,
+                        U_Number = user.Number
+                    };
+
+
+                    task.OperateType = 9;
+                    task.OperateTypeStr = "充值";
+                    database.Insert<Am_Task>(task);
+                    CommonClass.AmmeterApi.InserOperateLog(user.Number, ammeter.Collector_Code, ammeter.AM_Code, 9, "充值", task.Number, result.suc, result.result);
+                    return Json(new { res = "Ok", msg = "提交成功" });
+
+                }
+            }
+            return Json(new { res = "No", msg = "提交失败" });
         }
         /// <summary>
         /// 电表列表
@@ -411,7 +513,7 @@ namespace LeaRun.WebApp.Controllers
                 }
                 var task = new Am_Task
                 {
-                    Number = CommonHelper.GetGuid,
+                    Number = pullOff.opr_id,
                     AmmeterCode = ammeter.AM_Code,
                     AmmeterNumber = ammeter.Number,
                     CollectorCode = ammeter.Collector_Code,
@@ -419,7 +521,7 @@ namespace LeaRun.WebApp.Controllers
                     CreateTime = DateTime.Now,
                     OperateType = 0,
                     OperateTypeStr = "",
-                    OrderNumber = pullOff.opr_id,
+                    OrderNumber = "",
                     OverTime = DateTime.Now,
                     Remark = "",
                     Status = 0,
@@ -471,10 +573,9 @@ namespace LeaRun.WebApp.Controllers
                 var item = CommonClass.AmmeterApi.ReadAmmeter(ammeter.Collector_Code, ammeter.AM_Code, type.ToString());
                 if (item.suc)
                 {
-
                     var task = new Am_Task
                     {
-                        Number = CommonHelper.GetGuid,
+                        Number = item.opr_id,
                         AmmeterCode = ammeter.AM_Code,
                         AmmeterNumber = ammeter.Number,
                         CollectorCode = ammeter.Collector_Code,
@@ -482,7 +583,7 @@ namespace LeaRun.WebApp.Controllers
                         CreateTime = DateTime.Now,
                         OperateType = 0,
                         OperateTypeStr = "",
-                        OrderNumber = item.opr_id,
+                        OrderNumber ="",
                         OverTime = DateTime.Now,
                         Remark = "",
                         Status = 0,
@@ -1309,7 +1410,7 @@ namespace LeaRun.WebApp.Controllers
                             {
                                 List<DbParameter> parTenant = new List<DbParameter>();
                                 parTenant.Add(DbFactory.CreateDbParameter("@Name", name));
-                                parTenant.Add(DbFactory.CreateDbParameter("@Accout", phone));
+                                parTenant.Add(DbFactory.CreateDbParameter("@Account", phone));
                                 parTenant.Add(DbFactory.CreateDbParameter("@Status", "3"));
 
                                 var tenant = database.FindEntityByWhere<Ho_PartnerUser>(" and Name=@Name and Account=@Account and Status=@Status", parTenant.ToArray());

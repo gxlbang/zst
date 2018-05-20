@@ -11,7 +11,7 @@
     <div class="acc-se clear">
         <form action="/Proprietor/AmmeterList" method="get">
             <input type="text" name="ammeterCode" id="ammeterCode" class="acc-in fl" placeholder="表号" />
-            <input type="text" name="name"  id="name" class="acc-in fl" placeholder="姓名" />
+            <input type="text" name="name" id="name" class="acc-in fl" placeholder="姓名" />
             <button class="acc-btn fr">查询</button>
         </form>
     </div>
@@ -66,8 +66,12 @@
 
                             lis.push("<div class=\"op-litwo op-lione clear\">");
                             lis .push("<span class=\"op-sshow fl\">用户："+s+"</span>");
-                            lis .push("<span class=\"op-sshow fl\">状态："+data[i].StatusStr+"</span></div>");
-                            
+                            lis .push("<span class=\"op-sshow fl\">状态：<lable id=\""+data[i].AM_Code+"\"  >"+data[i].StatusStr+" </lable></span><span class=\"op-sshow fl\">");
+                            if (data[i].Status=="0") {
+                                lis.push("<input type=\"button\" class=\"l-a fr\"\ onclick=\"btn(this,'"+data[i].Number+"')\" value=\"开户\">");
+                            }
+                            lis.push("</span></div>");
+
                             lis.push("<div class=\"op-litwo op-lione clear\"><span class=\"op-sshow fl\">区域："+data[i].Province+data[i].City+data[i].County+data[i].Address+"</span></div>");
                             lis .push("<div class=\"op-litwo op-lione clear\"><span class=\"op-sshow fl\">房号："+data[i].Cell+"单元 "+data[i].Floor+"层 "+data[i].Room+"号</span><a href=\"operation-record.html\" class=\"l-a fr\">合同模板</a> </div>");
                             lis.push("</div></div>");
@@ -80,4 +84,17 @@
             }
         });
     });
+
+    function btn(obj,number) {
+        $(obj).attr('disabled',"true");
+        $(obj).val("开户中...");
+        $.post("/Proprietor/AmmeterOpenAccount", { number:number}, function (data) {
+            if (data.res = "Ok") {
+
+            } else {
+                layer.msg(data.msg);
+            }
+        });
+
+    }
 </script>

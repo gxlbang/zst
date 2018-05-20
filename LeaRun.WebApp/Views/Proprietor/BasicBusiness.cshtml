@@ -51,9 +51,9 @@
                         <span class="op-ju clear">当前剩余余额：@Model.CurrMoney.Value.ToString("0.00") 元<a href="javascript:;" onclick="checkAmmeter('@Model.Number',22)"  class="op-cha fr">立即查询剩余余额</a></span>
                         <span class="op-ju">剩余余额同步时间：@Model.CM_Time.Value.ToString("yyyy-MM-dd HH:mm:ss")</span>
                         <span class="op-ju">总充值金额：@Model.AllMoney.Value.ToString("0.00") 元</span>
-                        <span class="op-ju clear">充值金额：<input type="text" class="money fr" placeholder="0.00" /></span>
+                        <span class="op-ju clear">充值金额：<input type="text" class="money fr" placeholder="0"  id="money"/></span>
                         <div class="op-btnall op-cho clear">
-                            <a href="" class="btn-all fl">充值</a>
+                            <a href="javascript;;"  onclick="recharge('@Model.Number')" class="btn-all fl">充值</a>
                             <a href="" class="op-abtn fl">返回</a>
                             <a href="" class="op-abtn fr">刷新</a>
                         </div>
@@ -72,6 +72,10 @@
 </div>
 <script src="~/Content/Scripts/menu.js"></script>
 <script>
+    $(function() {
+        binList();
+    });  
+    
     //<!--
     /*第一种形式 第二种形式 更换显示样式*/
     function setTab(name, cursel, n) {
@@ -80,6 +84,9 @@
             var con = document.getElementById("con_" + i);
             menu.className = i == cursel ? "on" : "";
             con.style.display = i == cursel ? "block" : "none";
+        }
+        if (cursel==3) {
+            binList(); 
         }
     }
     //-->
@@ -101,62 +108,73 @@
             }
         });
     }
+    function binList() {
+        $("#name").val(GetQuery("name"));
+        layui.use('flow', function(){
+            var flow = layui.flow;
+            var count=0;
+            if (@ViewBag.recordCount!=null) {
+                count=@ViewBag.recordCount;
+            }
+            flow.load({
+                elem: '#containerList', //流加载容器
+                scrollElem: '',
+                done: function(page, next){ //执行下一页的回调
+                    //模拟数据插入
+                    setTimeout(function () {
+
+                        var par=window.location.search.replace("?","").split('&');
+                        var parList=[];
+                        for (var i in par) {
+                            var arr=par[i].split('=');
+                            if (arr.length>0) {
+                                parList[arr[0]]=arr[1];
+                            }
+                        }
+                        parList["pageIndex"]=page;
+                        var data='';
+                        for (var i in parList) {
+                            data+=i+"="+parList[i]+"&";
+                        }
+                        $.post("/Proprietor/AmmeterTaskList",data, function (data) {
+                            var lis = [];
+                            for (var i in data) {
+                                lis.push("<div class=\"list-index\">");
+                                lis.push("<a class=\"pro repair-m\" href=\"javascript:;\">");
+                                lis.push("<table >");
+                                lis.push("<tr><td >操作者："+data[i].U_Name+"</td><td style=\"width:60%\" >状态："+data[i].StatusStr+"</td></tr>");
+                                lis.push("<tr><td colspan=\"2\">操作类型："+data[i].OperateTypeStr+"</td></tr>");
+                                lis.push("<tr><td colspan=\"2\">提交时间:"+formatDate(data[i].CreateTime,"yyyy-MM-dd hh:mm:ss")+"</td></tr>");
+                                lis.push("<tr><td colspan=\"2\">完成时间:"+formatDate(data[i].OverTime,"yyyy-MM-dd hh:mm:ss")+"</td></tr>");
+                                lis.push("<tr><td colspan=\"2\">备注:"+data[i].Remark+"</td></tr>");
+                             
+                                lis.push("</table>");
+                                lis.push("</a>");
+                                lis.push("</div>");
+                            }
+                            next(lis.join(''), page < count);
+                        });
+
+                    }, 500);
+                }
+            });
+        });
+    }
+    function recharge(number) {
+        var money=$("#money").val();
+        $.post("/Proprietor/AmmeterRecharge", { number: number, money: money }, function (data) {
+            if (data.res == "Ok") {
+                layer.msg(data.msg, { time: 2000,end:function data() {
+                    setTab('one',3,3);
+                } });
+            } else {
+                layer.msg(data.msg, { time: 2000 });
+            }
+        });
+    }
 </script>
 
 
 <link href="~/Content/Scripts/layui/css/layui.css" rel="stylesheet" />
 <script src="~/Content/Scripts/layui/layui.js"></script>
- 
-<script>
-    $("#name").val(GetQuery("name"));
-    layui.use('flow', function(){
-        var flow = layui.flow;
-        var count=0;
-        if (@ViewBag.recordCount!=null) {
-            count=@ViewBag.recordCount;
-        }
-        flow.load({
-            elem: '#containerList', //流加载容器
-            scrollElem: '',
-            done: function(page, next){ //执行下一页的回调
-                //模拟数据插入
-                setTimeout(function () {
-
-                    var par=window.location.search.replace("?","").split('&');
-                    var parList=[];
-                    for (var i in par) {
-                        var arr=par[i].split('=');
-                        if (arr.length>0) {
-                            parList[arr[0]]=arr[1];
-                        }
-                    }
-                    parList["pageIndex"]=page;
-                    var data='';
-                    for (var i in parList) {
-                        data+=i+"="+parList[i]+"&";
-                    }
-                    $.post("/Proprietor/AmmeterTaskList",data, function (data) {
-                        var lis = [];
-                        for (var i in data) {
-                            lis.push("<div class=\"list-index\">");
-                            lis.push("<a class=\"pro repair-m\" href=\"javascript:;\">");
-                            lis.push("<table >");
-                            lis.push("<tr><td >操作者："+data[i].U_Name+"</td><td style=\"width:60%\" >状态："+data[i].StatusStr+"</td></tr>");
-                            lis.push("<tr><td colspan=\"2\">操作类型："+data[i].OperateTypeStr+"</td></tr>");
-                            lis.push("<tr><td colspan=\"2\">提交时间:"+formatDate(data[i].CreateTime,"yyyy-MM-dd hh:mm:ss")+"</td></tr>");
-                            lis.push("<tr><td colspan=\"2\">完成时间:"+formatDate(data[i].OverTime,"yyyy-MM-dd hh:mm:ss")+"</td></tr>");
-                            lis.push("<tr><td colspan=\"2\">备注:"+data[i].Remark+"</td></tr>");
-                             
-                            lis.push("</table>");
-                            lis.push("</a>");
-                            lis.push("</div>");
-                        }
-                        next(lis.join(''), page < count);
-                    });
-
-                }, 500);
-            }
-        });
-    });
-</script>
  

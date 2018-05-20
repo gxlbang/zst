@@ -766,7 +766,7 @@ namespace LeaRun.WebApp.Controllers
                         database.Insert<Am_Task>(task);
                         CommonClass.AmmeterApi.InserOperateLog(user.Number, ammeter.Collector_Code, ammeter.AM_Code, 3, "剩余金额", task.Number, item.suc, item.result);
                     }
-                    return Json(new { res = "Ok", msg = item.result,pr_id= item .opr_id});
+                    return Json(new { res = "Ok", msg = item.result, pr_id = item.opr_id });
                 }
             }
             return Json(new { res = "No", msg = "操作失败" });
@@ -779,7 +779,7 @@ namespace LeaRun.WebApp.Controllers
         /// <returns></returns>
         public ActionResult OperationResult(string pr_id)
         {
-            if (pr_id != null&&pr_id !="")
+            if (pr_id != null && pr_id != "")
             {
                 var user = wbll.GetUserInfo(Request);
                 List<DbParameter> parameter = new List<DbParameter>();
@@ -937,7 +937,36 @@ namespace LeaRun.WebApp.Controllers
                                 var st = database.Update<Am_Charge>(charge);
                                 if (st > 0)
                                 {
-                                    return Json(new { res = "Ok", msg = "充值成功" });
+                                    var item = CommonClass.AmmeterApi.ReadAmmeter(ammeter.Collector_Code, ammeter.AM_Code, type.ToString());
+                                    if (item.suc)
+                                    {
+                                        var task = new Am_Task
+                                        {
+                                            AmmeterCode = ammeter.AM_Code,
+                                            AmmeterNumber = ammeter.Number,
+                                            Number = CommonHelper.GetGuid,
+                                            CollectorCode = ammeter.Collector_Code,
+                                            CollectorNumber = ammeter.Collector_Number,
+                                            CreateTime = DateTime.Now,
+                                            OperateType = 4,
+                                            OperateTypeStr = "充值",
+                                            OrderNumber = charge.OrderNumber,
+                                            OverTime = DateTime.Now,
+                                            Remark = "",
+                                            Status = 0,
+                                            StatusStr = "队列中",
+                                            TaskMark = "",
+                                            UserName = user.Account,
+                                            U_Name = user.Name,
+                                            U_Number = user.Number
+                                        };
+                                        database.Insert<Am_Task>(task);
+                                        return Json(new { res = "Ok", msg = "提交成功" });
+                                    }
+                                    else
+                                    {
+                                        return Json(new { res = "No", msg = "接口异常" });
+                                    }
                                 }
                             }
                         }
@@ -1370,7 +1399,7 @@ namespace LeaRun.WebApp.Controllers
                             bmp.Save(phyPath + saveName);
                             imagePath = path + saveName;
                         }
-                         
+
                         var model = new Am_RepairImage
                         {
                             Number = Utilities.CommonHelper.GetGuid,
@@ -1393,16 +1422,16 @@ namespace LeaRun.WebApp.Controllers
         /// <param name="pageIndex"></param>
         /// <param name="pageSize"></param>
         /// <returns></returns>
-        public ActionResult RepairRecord( int pageSize = 5)
+        public ActionResult RepairRecord(int pageSize = 5)
         {
             var user = wbll.GetUserInfo(Request);
             List<DbParameter> parameter = new List<DbParameter>();
             parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
 
-           var pending= database.FindCount<Am_Repair>(" and U_Number=@U_Number and  Status=0", parameter.ToArray());
+            var pending = database.FindCount<Am_Repair>(" and U_Number=@U_Number and  Status=0", parameter.ToArray());
             ViewBag.recordCount = (int)Math.Ceiling(1.0 * pending / pageSize);
 
-            var processed= database.FindCount<Am_Repair>(" and U_Number=@U_Number and  Status=1", parameter.ToArray());
+            var processed = database.FindCount<Am_Repair>(" and U_Number=@U_Number and  Status=1", parameter.ToArray());
             ViewBag.recordCount1 = (int)Math.Ceiling(1.0 * processed / pageSize);
             return View();
         }
@@ -1413,7 +1442,7 @@ namespace LeaRun.WebApp.Controllers
         /// <param name="pageIndex"></param>
         /// <param name="pageSize"></param>
         /// <returns></returns>
-        public ActionResult RepairRecordList(int type,int pageIndex = 1, int pageSize = 5)
+        public ActionResult RepairRecordList(int type, int pageIndex = 1, int pageSize = 5)
         {
             var user = wbll.GetUserInfo(Request);
             int recordCount = 0;
