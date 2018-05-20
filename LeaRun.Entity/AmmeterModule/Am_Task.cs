@@ -99,6 +99,12 @@ namespace LeaRun.Entity
         [DisplayName("OperateTypeStr")]
         public string OperateTypeStr { get; set; }
         /// <summary>
+        /// ³äÖµ½ð¶î
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("Money")]
+        public double? Money { get; set; }
+        /// <summary>
         /// CreateTime
         /// </summary>
         /// <returns></returns>
