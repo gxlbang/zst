@@ -67,7 +67,7 @@ namespace LeaRun.Entity
         /// </summary>
         /// <returns></returns>
         [DisplayName("Money")]
-        public double? Money { get; set; }
+        public double? Money { get;  set; }
         /// <summary>
         /// UMark
         /// </summary>
