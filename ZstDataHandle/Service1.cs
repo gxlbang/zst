@@ -56,7 +56,7 @@ namespace ZstDataHandle
         private void TimedEvent(object sender, System.Timers.ElapsedEventArgs e)
         {
             timer.Stop();
-            var taskList = DbHelper.GetTaskList(0);
+            var taskList = database.FindList<Am_Task>(" and Status=0 ");
             foreach (var item in taskList)
             {
                 var result = GetResult(item.Number);
@@ -220,6 +220,24 @@ namespace ZstDataHandle
                     var user = database.FindEntityByWhere<Ho_PartnerUser>(" and Number =@Number and Status=@Status ", par.ToArray());
                     if (user != null && user.Number != null)
                     {
+                        user.Money = user.Money + item.Money;
+                        database.Update<Ho_PartnerUser>(user);
+                        var moneyDetail = new Am_MoneyDetail
+                        {
+                            Number = CommonHelper.GetGuid,
+                            CreateTime = DateTime.Now,
+                            CreateUserId = user.Number,
+                            CreateUserName = user.Name,
+                            CurrMoney = user.Money,
+                            Money = item.Money,
+                            OperateType = 6,
+                            OperateTypeStr = "电费充值退款",
+                            Remark = "",
+                            UserName = user.Account,
+                            U_Number = user.Number
+                        };
+                        database.Insert<Am_MoneyDetail>(moneyDetail);
+
 
                     }
                 }
@@ -379,7 +397,7 @@ namespace ZstDataHandle
             var taskList = database.FindList<Am_BackstageTask>(" and Status=0");
             foreach (var item in taskList)
             {
-                var result = GetResult(item.OrderNumber);
+                var result = GetResult(item.Number);
                 var root = JsonHelper.JonsToList<Root>(result);
                 if (root != null)
                 {
@@ -486,7 +504,7 @@ namespace ZstDataHandle
             {
                 var task = new Am_BackstageTask
                 {
-                    Number = CommonHelper.GetGuid,
+                    Number = result.opr_id,
                     AmmeterCode = ammeter.AM_Code,
                     AmmeterNumber = ammeter.Number,
                     CollectorCode = ammeter.Collector_Code,
@@ -494,7 +512,7 @@ namespace ZstDataHandle
                     CreateTime = DateTime.Now,
                     OperateType = 0,
                     OperateTypeStr = "",
-                    OrderNumber = result.opr_id,
+                    OrderNumber = "",
                     OverTime = DateTime.Now,
                     Remark = "",
                     Status = 0,

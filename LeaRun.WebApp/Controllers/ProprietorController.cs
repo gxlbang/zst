@@ -277,7 +277,7 @@ namespace LeaRun.WebApp.Controllers
         /// </summary>
         /// <param name="number"></param>
         /// <returns></returns>
-        public ActionResult AmmeterOpenAccount(string number )
+        public ActionResult AmmeterOpenAccount(string number)
         {
             //var user = wbll.GetUserInfo(Request);
             List<DbParameter> parAmmeter = new List<DbParameter>();
@@ -287,7 +287,7 @@ namespace LeaRun.WebApp.Controllers
 
             if (ammeter != null && ammeter.Number != null)
             {
-              var result=  CommonClass.AmmeterApi.AmmeterOpen(ammeter.Collector_Code, ammeter.AM_Code,ammeter.Acount_Id.Value, ammeter.Count.Value, 0);
+                var result = CommonClass.AmmeterApi.AmmeterOpen(ammeter.Collector_Code, ammeter.AM_Code, ammeter.Acount_Id.Value, ammeter.Count.Value, 0);
                 if (result.suc)
                 {
                     var user = wbll.GetUserInfo(Request);
@@ -312,11 +312,11 @@ namespace LeaRun.WebApp.Controllers
                         U_Number = user.Number
                     };
 
-                     
-                        task.OperateType = 8;
-                        task.OperateTypeStr = "开户";
-                        database.Insert<Am_Task>(task);
-                        CommonClass.AmmeterApi.InserOperateLog(user.Number, ammeter.Collector_Code, ammeter.AM_Code, 8, "开户", task.Number, result.suc, result.result);
+
+                    task.OperateType = 8;
+                    task.OperateTypeStr = "开户";
+                    database.Insert<Am_Task>(task);
+                    CommonClass.AmmeterApi.InserOperateLog(user.Number, ammeter.Collector_Code, ammeter.AM_Code, 8, "开户", task.Number, result.suc, result.result);
                     return Json(new { res = "Ok", msg = "提交成功" });
 
                 }
@@ -329,7 +329,7 @@ namespace LeaRun.WebApp.Controllers
         /// <param name="number"></param>
         /// <param name="money"></param>
         /// <returns></returns>
-        public ActionResult AmmeterRecharge(string number,int money)
+        public ActionResult AmmeterRecharge(string number, int money)
         {
             List<DbParameter> parAmmeter = new List<DbParameter>();
             parAmmeter.Add(DbFactory.CreateDbParameter("@Number", number));
@@ -359,7 +359,8 @@ namespace LeaRun.WebApp.Controllers
                         TaskMark = "",
                         UserName = user.Account,
                         U_Name = user.Name,
-                        U_Number = user.Number
+                        U_Number = user.Number,
+                        Money = money
                     };
 
 
@@ -583,7 +584,7 @@ namespace LeaRun.WebApp.Controllers
                         CreateTime = DateTime.Now,
                         OperateType = 0,
                         OperateTypeStr = "",
-                        OrderNumber ="",
+                        OrderNumber = "",
                         OverTime = DateTime.Now,
                         Remark = "",
                         Status = 0,
@@ -2132,7 +2133,7 @@ namespace LeaRun.WebApp.Controllers
                                     return Json(new { res = "Ok", msg = "退租成功" });
                                 }
 
-                               
+
 
                             }
                         }

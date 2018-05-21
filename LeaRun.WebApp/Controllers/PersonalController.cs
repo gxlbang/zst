@@ -315,7 +315,7 @@ namespace LeaRun.WebApp.Controllers
             ViewBag.recordCount = 0;
             if (Request.IsAjaxRequest())
             {
-                var balanDetailList = database.FindListPage<Am_MoneyDetail>("Number", "desc", pageIndex, pageSize, ref recordCount);
+                var balanDetailList = database.FindListPage<Am_MoneyDetail>("CreateTime", "desc", pageIndex, pageSize, ref recordCount);
                 ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize); ;
                 return Json(balanDetailList);
             }
@@ -734,7 +734,7 @@ namespace LeaRun.WebApp.Controllers
                 {
                     var task = new Am_Task
                     {
-                        Number = CommonHelper.GetGuid,
+                        Number = item.opr_id,
                         AmmeterCode = ammeter.AM_Code,
                         AmmeterNumber = ammeter.Number,
                         CollectorCode = ammeter.Collector_Code,
@@ -825,7 +825,7 @@ namespace LeaRun.WebApp.Controllers
         /// <param name="pwd"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult AmmeterRecharge(string number, double money, int type, string pwd)
+        public ActionResult AmmeterRecharge(string number, int money, int type, string pwd)
         {
             var user = wbll.GetUserInfo(Request);
 
@@ -909,66 +909,55 @@ namespace LeaRun.WebApp.Controllers
                         {
                             return Json(new { res = "No", msg = "余额不足，请先充值" });
                         }
-                        var status = database.Insert<Am_Charge>(charge);
-                        if (status > 0)
+                        account.Money = account.Money - money;
+                        var accStatus = database.Update<Ho_PartnerUser>(account);
+                        if (accStatus > 0)
                         {
-                            account.Money = account.Money - money;
-                            var accStatus = database.Update<Ho_PartnerUser>(account);
-                            if (accStatus > 0)
+                            var moneyDetail = new Am_MoneyDetail
                             {
-                                var moneyDetail = new Am_MoneyDetail
-                                {
-                                    Number = CommonHelper.GetGuid,
-                                    CreateTime = DateTime.Now,
-                                    CreateUserId = user.Number,
-                                    CreateUserName = user.Name,
-                                    CurrMoney = account.Money,
-                                    Money = money,
-                                    OperateType = 4,
-                                    OperateTypeStr = "电费充值",
-                                    Remark = "",
-                                    UserName = user.Account,
-                                    U_Number = user.Number
-                                };
-                                database.Insert<Am_MoneyDetail>(moneyDetail);
+                                Number = CommonHelper.GetGuid,
+                                CreateTime = DateTime.Now,
+                                CreateUserId = user.Number,
+                                CreateUserName = user.Name,
+                                CurrMoney = account.Money,
+                                Money = money,
+                                OperateType = 4,
+                                OperateTypeStr = "电费充值",
+                                Remark = "",
+                                UserName = user.Account,
+                                U_Number = user.Number
+                            };
+                            database.Insert<Am_MoneyDetail>(moneyDetail);
 
-                                charge.STATUS = 1;
-                                charge.StatusStr = "支付成功";
-                                var st = database.Update<Am_Charge>(charge);
-                                if (st > 0)
+
+                            var item = CommonClass.AmmeterApi.AmmeterRecharge(ammeter.Collector_Code, ammeter.AM_Code, ammeter.Acount_Id.Value, ammeter.Count.Value, money);
+                            if (item.suc)
+                            {
+                                var task = new Am_Task
                                 {
-                                    var item = CommonClass.AmmeterApi.ReadAmmeter(ammeter.Collector_Code, ammeter.AM_Code, type.ToString());
-                                    if (item.suc)
-                                    {
-                                        var task = new Am_Task
-                                        {
-                                            AmmeterCode = ammeter.AM_Code,
-                                            AmmeterNumber = ammeter.Number,
-                                            Number = CommonHelper.GetGuid,
-                                            CollectorCode = ammeter.Collector_Code,
-                                            CollectorNumber = ammeter.Collector_Number,
-                                            CreateTime = DateTime.Now,
-                                            OperateType = 4,
-                                            OperateTypeStr = "充值",
-                                            OrderNumber = charge.OrderNumber,
-                                            OverTime = DateTime.Now,
-                                            Remark = "",
-                                            Status = 0,
-                                            StatusStr = "队列中",
-                                            TaskMark = "",
-                                            UserName = user.Account,
-                                            U_Name = user.Name,
-                                            U_Number = user.Number
-                                        };
-                                        database.Insert<Am_Task>(task);
-                                        return Json(new { res = "Ok", msg = "提交成功" });
-                                    }
-                                    else
-                                    {
-                                        return Json(new { res = "No", msg = "接口异常" });
-                                    }
-                                }
+                                    AmmeterCode = ammeter.AM_Code,
+                                    AmmeterNumber = ammeter.Number,
+                                    Number = item.opr_id,
+                                    CollectorCode = ammeter.Collector_Code,
+                                    CollectorNumber = ammeter.Collector_Number,
+                                    CreateTime = DateTime.Now,
+                                    OperateType = 4,
+                                    OperateTypeStr = "充值",
+                                    OrderNumber = charge.OrderNumber,
+                                    OverTime = DateTime.Now,
+                                    Remark = "",
+                                    Status = 0,
+                                    StatusStr = "队列中",
+                                    TaskMark = "",
+                                    UserName = user.Account,
+                                    U_Name = user.Name,
+                                    U_Number = user.Number,
+                                    Money =money
+                                };
+                                database.Insert<Am_Task>(task);
+                                return Json(new { res = "Ok", msg = "提交成功" });
                             }
+
                         }
                     }
                 }

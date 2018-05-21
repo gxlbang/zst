@@ -36,7 +36,7 @@
                         <span class="op-ju">安装地址：@Model.Address </span>
                         <span class="op-ju">备注：</span>
                         <div class="op-btnall clear">
-                            <a href="" class="op-abtn fl">电表清零</a>
+                            @*<a href="" class="op-abtn fl">电表清零</a>*@
                             <a href="javascript:;" onclick="pullOff('@Model.Number',10)" class="op-abtn fl">跳闸</a>
                             <a href="javascript:;" onclick="pullOff('@Model.Number',11)" class="op-abtn fl">合闸</a>
                         </div>
@@ -54,8 +54,8 @@
                         <span class="op-ju clear">充值金额：<input type="text" class="money fr" placeholder="0"  id="money"/></span>
                         <div class="op-btnall op-cho clear">
                             <a href="javascript;;"  onclick="recharge('@Model.Number')" class="btn-all fl">充值</a>
-                            <a href="" class="op-abtn fl">返回</a>
-                            <a href="" class="op-abtn fr">刷新</a>
+                            @*<a href="" class="op-abtn fl">返回</a>
+                            <a href="" class="op-abtn fr">刷新</a>*@
                         </div>
                     </div>
                 </div>
