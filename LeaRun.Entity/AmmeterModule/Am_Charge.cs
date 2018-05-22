@@ -129,6 +129,18 @@ namespace LeaRun.Entity
         [DisplayName("AmmeterCode")]
         public string AmmeterCode { get; set; }
         /// <summary>
+        /// ObjectName
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("ObjectName")]
+        public string ObjectName { get; set; }
+        /// <summary>
+        /// ObjectNumber
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("ObjectNumber")]
+        public string ObjectNumber { get; set; }
+        /// <summary>
         /// Remark
         /// </summary>
         /// <returns></returns>
