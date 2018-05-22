@@ -75,7 +75,7 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
                 model.AmmeterCode = item.AmmeterCode;
                 model.ChargeTypeStr = item.ChargeTypeStr;
                 model.CreateTime = item.CreateTime.Value.ToString("yyyy-MM-dd HH:mm:ss");
-                model.Moeny = item.Moeny.Value.ToString("0.00");
+                model.Money = item.Money.Value.ToString("0.00");
                 model.OrderNumber = item.OrderNumber;
                 model.OutNumber = item.OutNumber;
                 model.PayType = item.PayType;

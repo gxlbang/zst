@@ -166,7 +166,7 @@ namespace LeaRun.WebApp.Controllers
                 var order = database.FindEntityByWhere<Am_Charge>(" and OrderNumber=@OrderNumber and STATUS=@STATUS ", parameter.ToArray());
                 if (order != null&& order.Number !=null )
                 {
-                    if (payResult.TotalFee == Decimal.Parse(order.Moeny.ToString()))
+                    if (payResult.TotalFee == Decimal.Parse(order.Money.ToString()))
                     {
                         //var orderCommand = new Commands.TradeCenter.UpdateOrderStatusCommand(order.OrderId, 1);
                         //var status = await _commandService.SendAsync(orderCommand);
@@ -187,7 +187,7 @@ namespace LeaRun.WebApp.Controllers
                                 order.SucTime = DateTime.Now;
                                 database.Update<Am_Charge>(order);
 
-                                accout.Money = accout.Money + order.Moeny;
+                                accout.Money = accout.Money + order.Money;
                                 var status = database.Update<Ho_PartnerUser>(accout);
                                 if (status>0)
                                 {
