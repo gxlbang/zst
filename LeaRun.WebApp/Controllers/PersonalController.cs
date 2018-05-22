@@ -374,7 +374,7 @@ namespace LeaRun.WebApp.Controllers
                 charge.ChargeTypeStr = "余额充值";
                 charge.CreateTime = DateTime.Now;
                 charge.PayType = "微信支付";
-                charge.Moeny = money;
+                charge.Money = money;
                 var statu = database.Insert<Am_Charge>(charge);
                 if (statu > 0)
                 {
@@ -864,7 +864,7 @@ namespace LeaRun.WebApp.Controllers
                     charge.CreateTime = DateTime.Now;
                     charge.AmmeterNumber = ammeter.Number;
                     charge.AmmeterCode = ammeter.AM_Code;
-                    charge.Moeny = money;
+                    charge.Money = money;
 
                     if (type == 0)
                     {
@@ -894,7 +894,7 @@ namespace LeaRun.WebApp.Controllers
                                 AlipayAndWepaySDK.Model.TransmiParameterModel model = new AlipayAndWepaySDK.Model.TransmiParameterModel();
                                 model.orderNo = payOrder.OrderNumber;
                                 model.productName = "充值";
-                                model.totalFee = int.Parse((charge.Moeny * 100).ToString());
+                                model.totalFee = int.Parse((charge.Money * 100).ToString());
                                 model.customerIP = "180.136.144.49";
                                 model.openId = account.OpenId;
                                 var payUrl = _wePay.BuildWePay(model, AlipayAndWepaySDK.Enum.EnumWePayTradeType.JSAPI);
@@ -1093,7 +1093,7 @@ namespace LeaRun.WebApp.Controllers
                     charge.CreateTime = DateTime.Now;
                     charge.AmmeterNumber = "";
                     charge.AmmeterCode = "";
-                    charge.Moeny = bill.Money;
+                    charge.Money = bill.Money;
 
                     if (type == 0)
                     {
@@ -1124,7 +1124,7 @@ namespace LeaRun.WebApp.Controllers
                                 AlipayAndWepaySDK.Model.TransmiParameterModel model = new AlipayAndWepaySDK.Model.TransmiParameterModel();
                                 model.orderNo = payOrder.OrderNumber;
                                 model.productName = "账单缴费";
-                                model.totalFee = int.Parse((charge.Moeny * 100).ToString());
+                                model.totalFee = int.Parse((charge.Money * 100).ToString());
                                 model.customerIP = "180.136.144.49";
                                 model.openId = account.OpenId;
                                 var payUrl = _wePay.BuildWePay(model, AlipayAndWepaySDK.Enum.EnumWePayTradeType.JSAPI);

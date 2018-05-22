@@ -87,11 +87,11 @@ namespace LeaRun.Entity
         [DisplayName("PayType")]
         public string PayType { get; set; }
         /// <summary>
-        /// Moeny
+        /// Money
         /// </summary>
         /// <returns></returns>
-        [DisplayName("Moeny")]
-        public double? Moeny { get; set; }
+        [DisplayName("Money")]
+        public double? Money { get; set; }
         /// <summary>
         /// CreateTime
         /// </summary>
