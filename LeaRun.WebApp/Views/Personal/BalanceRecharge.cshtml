@@ -42,7 +42,6 @@
             success: function (data) {
                 if (data.res=="Ok") {
                     jsonParm = $.parseJSON(data.json);
-                    alert(jsonParm);
                     WeixinJSBridge.invoke(
                     'getBrandWCPayRequest',
                      jsonParm,
