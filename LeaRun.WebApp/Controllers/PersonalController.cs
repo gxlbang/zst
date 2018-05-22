@@ -898,8 +898,7 @@ namespace LeaRun.WebApp.Controllers
                                 model.customerIP = "180.136.144.49";
                                 model.openId = account.OpenId;
                                 var payUrl = _wePay.BuildWePay(model, AlipayAndWepaySDK.Enum.EnumWePayTradeType.JSAPI);
-
-                                return Json(new { res = "No", msg = "充值失败,订单已支付", json = payUrl });
+                                return Json(new { res = "Ok", msg = "生成订单", json = payUrl });
                             }
                         }
                     }
@@ -1046,6 +1045,26 @@ namespace LeaRun.WebApp.Controllers
             return View(bill);
         }
         /// <summary>
+        /// 账单确认
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public ActionResult BillConfirmation(string number )
+        {
+            var user = wbll.GetUserInfo(Request);
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@T_U_Number", user.Number));
+            parameter.Add(DbFactory.CreateDbParameter("@Status", "1"));
+            parameter.Add(DbFactory.CreateDbParameter("@Number", number));
+
+            var bill = database.FindEntityByWhere<Am_Bill>(" and T_U_Number=@T_U_Number and Status=@Status and Number=@Number", parameter.ToArray());
+            if (bill != null && bill.Number != null)
+            {
+                return View(bill);
+            }
+            return View();
+        }
+        /// <summary>
         /// 账单缴费
         /// </summary>
         /// <param name="number"></param>
@@ -1057,7 +1076,7 @@ namespace LeaRun.WebApp.Controllers
         {
             var user = wbll.GetUserInfo(Request);
             var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Number='" + user.Number + "'");
-            if (account != null && account.Number != null && account.Status == 3)
+            if (account != null && account.Number != null)
             {
                 if (type == 1)
                 {
@@ -1094,6 +1113,8 @@ namespace LeaRun.WebApp.Controllers
                     charge.AmmeterNumber = "";
                     charge.AmmeterCode = "";
                     charge.Money = bill.Money;
+                    charge.ObjectName = "账单支付";
+                    charge.ObjectNumber = number;
 
                     if (type == 0)
                     {
@@ -1129,7 +1150,7 @@ namespace LeaRun.WebApp.Controllers
                                 model.openId = account.OpenId;
                                 var payUrl = _wePay.BuildWePay(model, AlipayAndWepaySDK.Enum.EnumWePayTradeType.JSAPI);
 
-                                return Json(new { res = "No", msg = "充值失败,订单已支付", json = payUrl });
+                                return Json(new { res = "Ok", msg = "订单生成", json = payUrl });
                             }
 
                         }

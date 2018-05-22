@@ -13,7 +13,8 @@ namespace ZstDataHandle
     public partial class Service1 : ServiceBase
     {
         System.Timers.Timer timer = new System.Timers.Timer();
-        System.Timers.Timer BIllTimer = new System.Timers.Timer();
+        System.Timers.Timer BillTimer = new System.Timers.Timer();
+        System.Timers.Timer BillSendTimer = new System.Timers.Timer();
         System.Timers.Timer ReadingTimer = new System.Timers.Timer();
         System.Timers.Timer ReadingHandleTimer = new System.Timers.Timer();
 
@@ -33,16 +34,21 @@ namespace ZstDataHandle
             timer.Enabled = true;
 
             //账单生成
-            BIllTimer.Elapsed += new System.Timers.ElapsedEventHandler(BIllTimerdEvent);
-            BIllTimer.Interval = 5000;//每5秒执行一次
-            BIllTimer.Enabled = true;
+            BillTimer.Elapsed += new System.Timers.ElapsedEventHandler(BillTimerdEvent);
+            BillTimer.Interval = 5000;//每5秒执行一次
+            BillTimer.Enabled = true;
+            //账单出账
+            BillSendTimer.Elapsed += new System.Timers.ElapsedEventHandler(BillSendTimerdEvent);
+            BillSendTimer.Interval = 5000;//每5秒执行一次
+            BillSendTimer.Enabled = true;
+
 
             //抄表生成
             ReadingTimer.Elapsed += new System.Timers.ElapsedEventHandler(ReadingTimerEvent);
             ReadingTimer.Interval = 1000 * 60 * 5;//每5分钟执行一次
             ReadingTimer.Enabled = true;
 
-
+            //抄表异步处理
             ReadingHandleTimer.Elapsed += new System.Timers.ElapsedEventHandler(ReadingHandleTimerTimerEvent);
             ReadingHandleTimer.Interval = 5000;//每5秒执行一次
             ReadingHandleTimer.Enabled = true;
@@ -111,6 +117,7 @@ namespace ZstDataHandle
                                 {
                                     ammeter.Count = ammeter.Count + 1;
                                     ammeter.Acount_Id = null;
+                                    ammeter.CurrMoney = item.Money.Value;
                                     database.Update<Am_Ammeter>(ammeter);
                                 }
                                 if (result.Contains("params"))
@@ -193,7 +200,7 @@ namespace ZstDataHandle
                                 var ammeter = DbHelper.GetAmmeter(item.AmmeterNumber);
                                 if (ammeter != null)
                                 {
-                                    ammeter.CurrMoney = decimal.Parse(example.data[0].value[0].ToString());
+                                    ammeter.CurrMoney = double.Parse(example.data[0].value[0].ToString());
                                     ammeter.CM_Time = DateTime.Parse(example.resolve_time);
                                     DbHelper.UpdateAmmeter(ammeter);
                                 }
@@ -252,9 +259,9 @@ namespace ZstDataHandle
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void BIllTimerdEvent(object sender, System.Timers.ElapsedEventArgs e)
+        private void BillTimerdEvent(object sender, System.Timers.ElapsedEventArgs e)
         {
-            BIllTimer.Stop();
+            BillTimer.Stop();
             var config = database.FindEntityByWhere<Fx_WebConfig>("");
 
             if (config != null && config.BillDate > 0)
@@ -263,7 +270,10 @@ namespace ZstDataHandle
                 var pList = DbHelper.GetAmmeterPermissionList(time);
                 foreach (var item in pList)
                 {
-                    var ammeter = DbHelper.GetAmmeter(item.Ammeter_Number);
+                    List<DbParameter> par1 = new List<DbParameter>();
+                    par1.Add(DbFactory.CreateDbParameter("@Number", item.Ammeter_Number));
+
+                    var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number=@Number ", par1.ToArray());
                     if (ammeter != null)
                     {
                         List<DbParameter> par = new List<DbParameter>();
@@ -361,7 +371,38 @@ namespace ZstDataHandle
 
                 }
             }
-            BIllTimer.Start();
+            BillTimer.Start();
+        }
+        /// <summary>
+        /// 账单推送
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BillSendTimerdEvent(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            BillSendTimer.Stop();
+            var config = database.FindEntityByWhere<Fx_WebConfig>("");
+
+            if (config != null && config.SendBillDate.Value > 0)
+            {
+                var time = DateTime.Now.AddDays(config.SendBillDate.Value);
+                List<DbParameter> par = new List<DbParameter>();
+                par.Add(DbFactory.CreateDbParameter("@time", time));
+                par.Add(DbFactory.CreateDbParameter("@Status", "0"));
+
+                var billList = database.FindList<Am_Bill>("  and  BeginTime<=@time and Status=@Status ", par.ToArray());
+                foreach (var item in billList)
+                {
+                    item.Status = 1;
+                    item.StatusStr = "未支付";
+                    item.SendTime = DateTime.Now;
+                    if (database.Update<Am_Bill>(item)>0)
+                    {
+                        //账单推送
+
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -463,13 +504,15 @@ namespace ZstDataHandle
                         if (example.data != null && example.data.Count > 0)
                         {
                             int type = example.data[0].type;
+                            List<DbParameter> par = new List<DbParameter>();
+                            par.Add(DbFactory.CreateDbParameter("@Number", item.AmmeterNumber));
+                            var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number =@Number ", par.ToArray());
                             //查询余额
                             if (type == 22)
                             {
-                                var ammeter = DbHelper.GetAmmeter(item.AmmeterNumber);
-                                if (ammeter != null)
+                                if (ammeter != null&& ammeter.Number !=null )
                                 {
-                                    ammeter.CurrMoney = decimal.Parse(example.data[0].value[0].ToString());
+                                    ammeter.CurrMoney = double.Parse(example.data[0].value[0].ToString());
                                     ammeter.CM_Time = DateTime.Parse(example.resolve_time);
                                     DbHelper.UpdateAmmeter(ammeter);
                                 }
@@ -477,8 +520,7 @@ namespace ZstDataHandle
                             //查询电量
                             if (type == 20)
                             {
-                                var ammeter = DbHelper.GetAmmeter(item.AmmeterNumber);
-                                if (ammeter != null)
+                                if (ammeter != null && ammeter.Number != null)
                                 {
                                     ammeter.CurrPower = decimal.Parse(example.data[0].value[0].ToString()).ToString("0.00");
                                     ammeter.CP_Time = DateTime.Parse(example.resolve_time);

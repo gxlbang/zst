@@ -9561,6 +9561,7 @@
     <Content Include="Views\Proprietor\RentRecordList.cshtml" />
     <Content Include="Views\Proprietor\RentRecorDetails.cshtml" />
     <Content Include="Views\Personal\RentList.cshtml" />
+    <Content Include="Views\Personal\BillConfirmation.cshtml" />
     <None Include="Views\Utility\PrintPage.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

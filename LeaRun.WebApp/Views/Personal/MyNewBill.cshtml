@@ -50,10 +50,10 @@
                             lis.push("<a class=\"pro repair-m mt15\" href=\"/Personal/NewBillDetails?number="+data[i].Number+"\">");
                             lis.push("<div class=\"my-bill clear\">");
                             lis.push("<span class=\"bill-span fl\">账单号："+data[i].BillCode+"</span>");
-                            lis.push("<span class=\"bill-span fr\">"+parseFloat(data[i].Moeny).toFixed(2)+"元</span>");
+                            lis.push("<span class=\"bill-span fr\">"+parseFloat(data[i].Money).toFixed(2)+"元</span>");
                             lis.push("</div>");
-                            lis.push("<span class=\"bill-span\">"+data[i].Province+data[i].City+data[i].County+data[i].Address+"</span>");
-                            lis.push("<span class=\"bill-span\">"+data[i].Cell+"单元"+data[i].Floor+"楼层"+data[i].Room+"号</span>");
+                            lis.push("<span class=\"bill-span\">"+data[i].Province+data[i].City+data[i].County+"  "+data[i].Address+"</span>");
+                            lis.push("<span class=\"bill-span\">"+data[i].Cell+"单元  "+data[i].Floor+"楼层  "+data[i].Room+"号</span>");
                             lis.push("<i class=\"icon-next\"></i></a>");
                         }
                         next(lis.join(''), page < count);

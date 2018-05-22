@@ -195,7 +195,7 @@ namespace LeaRun.WebApp.Controllers
                                 }
                             }
                         }
-                        else if (order .ChargeType==2)
+                        else if (order.ChargeType == 2)
                         {
                             order.OutNumber = payResult.TradeNo;
                             order.STATUS = 1;
@@ -204,10 +204,9 @@ namespace LeaRun.WebApp.Controllers
                             database.Update<Am_Charge>(order);
 
                             List<DbParameter> par = new List<DbParameter>();
-                            par.Add(DbFactory.CreateDbParameter("@OrderNumber", payResult.OutTradeNo));
-                            par.Add(DbFactory.CreateDbParameter("@STATUS", "0"));
-                            var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number=@Number",par.ToArray());
-                            var item = CommonClass.AmmeterApi.AmmeterRecharge(ammeter.Collector_Code, ammeter.AM_Code, ammeter.Acount_Id.Value, ammeter.Count.Value,int.Parse(order.Moeny.ToString()));
+                            par.Add(DbFactory.CreateDbParameter("@Number", order.AmmeterNumber));
+                            var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number=@Number", par.ToArray());
+                            var item = CommonClass.AmmeterApi.AmmeterRecharge(ammeter.Collector_Code, ammeter.AM_Code, ammeter.Acount_Id.Value, ammeter.Count.Value, int.Parse(order.Money.ToString()));
                             if (item.suc)
                             {
                                 var task = new Am_Task
@@ -229,12 +228,33 @@ namespace LeaRun.WebApp.Controllers
                                     UserName = order.UserName,
                                     U_Name = order.U_Name,
                                     U_Number = order.U_Number,
-                                    Money = order.Moeny
+                                    Money = order.Money
                                 };
                                 database.Insert<Am_Task>(task);
-                                
+
                             }
                             return Content(payResult.ReturnXml);
+                        }
+                        else if (order.ChargeType == 3)
+                        {
+                            order.OutNumber = payResult.TradeNo;
+                            order.STATUS = 1;
+                            order.StatusStr = "缴费成功";
+                            order.SucTime = DateTime.Now;
+                            database.Update<Am_Charge>(order);
+
+                            List<DbParameter> par = new List<DbParameter>();
+                            par.Add(DbFactory.CreateDbParameter("@Number", order.ObjectNumber));
+                            par.Add(DbFactory.CreateDbParameter("@Status", "1"));
+                            var bill = database.FindEntityByWhere<Am_Bill>(" and Number=@Number and Status=@Status ", par.ToArray());
+                            if (bill != null && bill.Number != null)
+                            {
+                                bill.Status = 2;
+                                bill.StatusStr = "已支付";
+                                bill.PayTime = DateTime.Now;
+                                database.Update<Am_Bill>(bill);
+                                return Content(payResult.ReturnXml);
+                            }
                         }
                     }
                 }

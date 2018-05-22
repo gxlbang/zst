@@ -217,7 +217,7 @@ namespace LeaRun.Entity
         /// </summary>
         /// <returns></returns>
         [DisplayName("CurrMoney")]
-        public decimal? CurrMoney { get; set; }
+        public double? CurrMoney { get; set; }
         /// <summary>
         /// CM_Time
         /// </summary>
