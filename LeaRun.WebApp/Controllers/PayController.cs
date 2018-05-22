@@ -49,7 +49,7 @@ namespace LeaRun.WebApp.Controllers
             }
             var user = wbll.GetUserInfo(Request);
             var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Number=" + user.Number);
-            if (account!=null&&account.Number!=null )
+            if (account != null && account.Number != null)
             {
                 List<DbParameter> parameter = new List<DbParameter>();
                 parameter.Add(DbFactory.CreateDbParameter("@U_Number", account.Number));
@@ -77,8 +77,8 @@ namespace LeaRun.WebApp.Controllers
                     model.customerIP = "180.136.144.49";
                     model.openId = account.OpenId;
                     var payUrl = _wePay.BuildWePay(model, AlipayAndWepaySDK.Enum.EnumWePayTradeType.JSAPI);
-                    
-                   // return Newtonsoft.Json.JsonConvert.SerializeObject(payUrl);
+
+                    // return Newtonsoft.Json.JsonConvert.SerializeObject(payUrl);
                 }
             }
             return View();
@@ -105,7 +105,7 @@ namespace LeaRun.WebApp.Controllers
                 charge.CreateTime = DateTime.Now;
                 charge.PayType = "微信支付";
                 var statu = database.Update<Am_Charge>(charge);
-                if (statu>0)
+                if (statu > 0)
                 {
                     List<DbParameter> parameter = new List<DbParameter>();
                     parameter.Add(DbFactory.CreateDbParameter("@U_Number", account.Number));
@@ -138,7 +138,7 @@ namespace LeaRun.WebApp.Controllers
                     }
                 }
 
-                
+
             }
             return "支付失败!";
         }
@@ -148,7 +148,7 @@ namespace LeaRun.WebApp.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public  ActionResult WepayWebNotify()
+        public ActionResult WepayWebNotify()
         {
             //var _logger = ObjectContainer.Resolve<ILoggerFactory>().Create(GetType().FullName);
             WePayReturnModel payResult = new WePayReturnModel();
@@ -164,7 +164,7 @@ namespace LeaRun.WebApp.Controllers
                 parameter.Add(DbFactory.CreateDbParameter("@OrderNumber", payResult.OutTradeNo));
                 parameter.Add(DbFactory.CreateDbParameter("@STATUS", "0"));
                 var order = database.FindEntityByWhere<Am_Charge>(" and OrderNumber=@OrderNumber and STATUS=@STATUS ", parameter.ToArray());
-                if (order != null&& order.Number !=null )
+                if (order != null && order.Number != null)
                 {
                     if (payResult.TotalFee == Decimal.Parse(order.Moeny.ToString()))
                     {
@@ -174,12 +174,12 @@ namespace LeaRun.WebApp.Controllers
                         //{
                         //    return Content(payResult.ReturnXml);
                         //}
-                        if (order.ChargeType==0)
+                        if (order.ChargeType == 1)
                         {
                             List<DbParameter> par = new List<DbParameter>();
                             par.Add(DbFactory.CreateDbParameter("@Number", order.U_Number));
-                            var accout = database.FindEntityByWhere<Ho_PartnerUser>(" and Number=@Number",par.ToArray());
-                            if (accout!=null && accout.Number!=null )
+                            var accout = database.FindEntityByWhere<Ho_PartnerUser>(" and Number=@Number", par.ToArray());
+                            if (accout != null && accout.Number != null)
                             {
                                 order.OutNumber = payResult.TradeNo;
                                 order.STATUS = 1;
@@ -189,15 +189,56 @@ namespace LeaRun.WebApp.Controllers
 
                                 accout.Money = accout.Money + order.Moeny;
                                 var status = database.Update<Ho_PartnerUser>(accout);
-                                if (status>0)
+                                if (status > 0)
                                 {
                                     return Content(payResult.ReturnXml);
                                 }
                             }
                         }
+                        else if (order .ChargeType==2)
+                        {
+                            order.OutNumber = payResult.TradeNo;
+                            order.STATUS = 1;
+                            order.StatusStr = "充值成功";
+                            order.SucTime = DateTime.Now;
+                            database.Update<Am_Charge>(order);
+
+                            List<DbParameter> par = new List<DbParameter>();
+                            par.Add(DbFactory.CreateDbParameter("@OrderNumber", payResult.OutTradeNo));
+                            par.Add(DbFactory.CreateDbParameter("@STATUS", "0"));
+                            var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number=@Number",par.ToArray());
+                            var item = CommonClass.AmmeterApi.AmmeterRecharge(ammeter.Collector_Code, ammeter.AM_Code, ammeter.Acount_Id.Value, ammeter.Count.Value,int.Parse(order.Moeny.ToString()));
+                            if (item.suc)
+                            {
+                                var task = new Am_Task
+                                {
+                                    AmmeterCode = ammeter.AM_Code,
+                                    AmmeterNumber = ammeter.Number,
+                                    Number = item.opr_id,
+                                    CollectorCode = ammeter.Collector_Code,
+                                    CollectorNumber = ammeter.Collector_Number,
+                                    CreateTime = DateTime.Now,
+                                    OperateType = 4,
+                                    OperateTypeStr = "微信充值",
+                                    OrderNumber = order.OrderNumber,
+                                    OverTime = DateTime.Now,
+                                    Remark = "",
+                                    Status = 0,
+                                    StatusStr = "队列中",
+                                    TaskMark = "",
+                                    UserName = order.UserName,
+                                    U_Name = order.U_Name,
+                                    U_Number = order.U_Number,
+                                    Money = order.Moeny
+                                };
+                                database.Insert<Am_Task>(task);
+                                
+                            }
+                            return Content(payResult.ReturnXml);
+                        }
                     }
                 }
-               
+
 
             }
             return Content(BuildWepayReturnXml("FAIL", ""));

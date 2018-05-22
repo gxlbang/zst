@@ -84,6 +84,7 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Explain\微信支付配置使用流程.doc" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

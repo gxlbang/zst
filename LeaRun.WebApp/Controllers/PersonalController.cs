@@ -367,9 +367,10 @@ namespace LeaRun.WebApp.Controllers
                 charge.STATUS = 0;
                 charge.StatusStr = "待支付";
                 charge.SucTime = DateTime.Now;
-                charge.UserName = account.Name;
+                charge.UserName = account.Account;
                 charge.U_Number = account.Number;
-                charge.ChargeType = 0;
+                charge.U_Name = account.Name;
+                charge.ChargeType = 1;
                 charge.ChargeTypeStr = "余额充值";
                 charge.CreateTime = DateTime.Now;
                 charge.PayType = "微信支付";
@@ -406,7 +407,7 @@ namespace LeaRun.WebApp.Controllers
                             model.openId = account.OpenId;
                             var payUrl = _wePay.BuildWePay(model, AlipayAndWepaySDK.Enum.EnumWePayTradeType.JSAPI);
 
-                            return Json(new { res = "Ok", msg = "生成订单", json = Newtonsoft.Json.JsonConvert.SerializeObject(payUrl) });
+                            return Json(new { res = "Ok", msg = "生成订单", json = payUrl });
                         }
                         else
                         {
@@ -898,7 +899,7 @@ namespace LeaRun.WebApp.Controllers
                                 model.openId = account.OpenId;
                                 var payUrl = _wePay.BuildWePay(model, AlipayAndWepaySDK.Enum.EnumWePayTradeType.JSAPI);
 
-                                return Json(new { res = "No", msg = "充值失败,订单已支付", json = Newtonsoft.Json.JsonConvert.SerializeObject(payUrl) });
+                                return Json(new { res = "No", msg = "充值失败,订单已支付", json = payUrl });
                             }
                         }
                     }
@@ -952,7 +953,7 @@ namespace LeaRun.WebApp.Controllers
                                     UserName = user.Account,
                                     U_Name = user.Name,
                                     U_Number = user.Number,
-                                    Money =money
+                                    Money = money
                                 };
                                 database.Insert<Am_Task>(task);
                                 return Json(new { res = "Ok", msg = "提交成功" });
@@ -1128,7 +1129,7 @@ namespace LeaRun.WebApp.Controllers
                                 model.openId = account.OpenId;
                                 var payUrl = _wePay.BuildWePay(model, AlipayAndWepaySDK.Enum.EnumWePayTradeType.JSAPI);
 
-                                return Json(new { res = "No", msg = "充值失败,订单已支付", json = Newtonsoft.Json.JsonConvert.SerializeObject(payUrl) });
+                                return Json(new { res = "No", msg = "充值失败,订单已支付", json = payUrl });
                             }
 
                         }
