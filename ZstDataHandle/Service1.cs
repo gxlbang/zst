@@ -322,7 +322,7 @@ namespace ZstDataHandle
                             County = ammeter.County,
                             CreateTime = DateTime.Now,
                             Floor = ammeter.Floor,
-                            F_UserName = item.UserName,
+                            F_UserName = item.UY_UserName,
                             F_U_Name = item.UY_Name,
                             F_U_Number = item.UY_Number,
                             Money = money,
@@ -335,8 +335,8 @@ namespace ZstDataHandle
                             SendTime = sendTime,
                             Status = 0,
                             StatusStr = "待支付",
-                            T_UserName = item.U_Name,
-                            T_U_Name = item.UY_UserName,
+                            T_UserName = item.UserName,
+                            T_U_Name = item.U_Name,
                             T_U_Number = item.U_Number,
                             BeginTime = item.LastPayBill,
                             EndTime = item.LastPayBill.Value.AddMonths(item.BillCyc.Value)
@@ -406,7 +406,7 @@ namespace ZstDataHandle
                         IMpClient mpClient = new MpClient();
                         AccessTokenGetRequest request = new AccessTokenGetRequest()
                         {
-                            AppIdInfo = new AppIdInfo() { AppID = ConfigHelper.AppSettings("AppID"), AppSecret = ConfigHelper.AppSettings("AppSecret") }
+                            AppIdInfo = new AppIdInfo() { AppID = ConfigHelper.AppSettings("WEPAY_WEB_APPID"), AppSecret = ConfigHelper.AppSettings("WEPAY_WEb_AppSecret") }
                         };
                         AccessTokenGetResponse response = mpClient.Execute(request);
                         if (response.IsError)
@@ -418,10 +418,10 @@ namespace ZstDataHandle
                         first.value = item.T_U_Name + ",您本月的账单已生成";
                         Weixin.Mp.Sdk.Domain.Keynote1 keynote1 = new Keynote1();
                         keynote1.color = "#0000ff";
-                        keynote1.value = item.Cell+item.Floor+item.Room;
+                        keynote1.value = item.Address + " " + item.Cell + "单元" + item.Floor + "楼" + item.Room + "号";
                         Weixin.Mp.Sdk.Domain.Keynote2 keynote2 = new Keynote2();
                         keynote2.color = "#0000ff";
-                        keynote2.value = item.BeginTime.Value.ToString("yyyy-MM-dd")+"-"+item.EndTime.Value.ToString("yyyy-MM-dd");
+                        keynote2.value = item.BeginTime.Value.ToString("yyyy-MM-dd") + "至" + item.EndTime.Value.ToString("yyyy-MM-dd");
                         Weixin.Mp.Sdk.Domain.Keynote3 keynote3 = new Keynote3();
                         keynote3.color = "#0000ff";
                         keynote3.value = item.Money.Value.ToString("0.00");
@@ -430,7 +430,7 @@ namespace ZstDataHandle
                         //keynote4.value = model.s_Reception + "  " + model.s_ReMobile;
                         Weixin.Mp.Sdk.Domain.Remark remark = new Remark();
                         remark.color = "#464646";
-                        remark.value = "请在"+ config.SendBillDate.Value.ToString()+"天之内在线支付账单!";
+                        remark.value = "请在" + config.SendBillDate.Value.ToString() + "天之内在线支付账单!";
                         Weixin.Mp.Sdk.Domain.Data data = new Data();
                         data.first = first;
                         data.keynote1 = keynote1;
@@ -448,12 +448,12 @@ namespace ZstDataHandle
                         var usermodel = database.FindEntity<Ho_PartnerUser>(item.T_U_Number);
                         templateMessage.touser = usermodel.OpenId;
                         templateMessage.url = "http://am.zst0771.com/Personal/NewBillDetails?Number=" + item.Number;
-                        string postData = templateMessage.ToJsonString(); /*JsonHelper.ToJson(templateMessage);*/
+                        string postData = templateMessage.ToJsonString1(); /*JsonHelper.ToJson(templateMessage);*/
 
                         AppIdInfo app = new AppIdInfo()
                         {
-                            AppID = ConfigHelper.AppSettings("AppID"),
-                            AppSecret = ConfigHelper.AppSettings("AppSecret"),
+                            AppID = ConfigHelper.AppSettings("WEPAY_WEB_APPID"),
+                            AppSecret = ConfigHelper.AppSettings("WEPAY_WEb_AppSecret"),
                             CallBack = ""
                         };
                         SendTemplateMessageRequest req = new SendTemplateMessageRequest()
@@ -470,6 +470,7 @@ namespace ZstDataHandle
                     }
                 }
             }
+            BillSendTimer.Start();
         }
 
         /// <summary>
