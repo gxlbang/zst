@@ -230,6 +230,7 @@
     <Compile Include="CommonClass\WeixinHelper.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CommonController.cs" />
+    <Compile Include="Controllers\InfoController.cs" />
     <Compile Include="Controllers\PayController.cs" />
     <Compile Include="Controllers\PersonalController.cs" />
     <Compile Include="Controllers\ProprietorController.cs" />
@@ -9565,6 +9566,8 @@
     <Content Include="Views\Proprietor\RentRecorDetails.cshtml" />
     <Content Include="Views\Personal\RentList.cshtml" />
     <Content Include="Views\Personal\BillConfirmation.cshtml" />
+    <Content Include="Views\Info\Perfect.cshtml" />
+    <Content Include="Views\Info\Information.cshtml" />
     <None Include="Views\Utility\PrintPage.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

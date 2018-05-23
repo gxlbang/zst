@@ -206,7 +206,7 @@
         $("#form").submit();
     }
     $("#PayPassword").click(function myfunction() {
-        PwdBox.init('123456', '/Content/Scripts/passwordBox/img/pwd_keyboard.png', '请输入支付密码', '安全支付环境，请放心使用！');        PwdBox.show(function (res) {
+        PwdBox.init('123456', '~/Content/Scripts/passwordBox/img/pwd_keyboard.png', '请输入支付密码', '安全支付环境，请放心使用！');        PwdBox.show(function (res) {
             if (res.status) {
                 //重置输入
                 alert('密码正确');

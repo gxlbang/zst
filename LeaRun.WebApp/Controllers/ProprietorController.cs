@@ -232,7 +232,9 @@ namespace LeaRun.WebApp.Controllers
                     UY_Number = user.Number,
                     UY_UserName = user.Account,
                     U_Name = model.U_Name,
-                    U_Number = model.U_Number
+                    U_Number = model.U_Number,
+                    Acount_Id = null,
+                    Count = 1
                 };
                 //if (model.UserName != null && model.UserName != "")
                 //{

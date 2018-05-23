@@ -13,7 +13,12 @@
         {
             foreach (var item in Model)
             {
-                <a class="pro repair-m" href="/Personal/AmmeterDetails?Number=@item.Number">
+                var url = "/Personal/AmmeterDetails?Number=" +item.Number;
+                if (item.Status==0)
+                {
+                    url = "";
+                }
+                <a class="pro repair-m" href="@url">
                     <div class="my-bill clear">
                         <span class="bill-span fl">表号：@item.AM_Code</span>
                     </div>

@@ -90,7 +90,7 @@
         $(obj).val("开户中...");
         $.post("/Proprietor/AmmeterOpenAccount", { number:number}, function (data) {
             if (data.res = "Ok") {
-
+                $(obj).val("已开户");
             } else {
                 layer.msg(data.msg);
             }
