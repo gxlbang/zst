@@ -183,6 +183,12 @@ namespace LeaRun.Entity
         [DisplayName("FirstAlarm")]
         public int? FirstAlarm { get; set; }
         /// <summary>
+        /// IsLowerWarning
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("IsLowerWarning")]
+        public int? IsLowerWarning { get; set; }
+        /// <summary>
         /// SencondAlarm
         /// </summary>
         /// <returns></returns>
