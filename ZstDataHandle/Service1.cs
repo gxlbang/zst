@@ -331,8 +331,8 @@ namespace ZstDataHandle
                             SendTime = sendTime,
                             Status = 0,
                             StatusStr = "待支付",
-                            T_UserName = item.U_Name,
-                            T_U_Name = item.UY_UserName,
+                            T_UserName = item.UserName,
+                            T_U_Name = item.U_Name,
                             T_U_Number = item.U_Number,
                             BeginTime = item.LastPayBill,
                             EndTime = item.LastPayBill.Value.AddMonths(item.BillCyc.Value)

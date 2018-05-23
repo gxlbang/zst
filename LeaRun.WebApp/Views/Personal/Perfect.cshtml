@@ -151,16 +151,17 @@
             </div>
             <div class="add-co card-li bbot clear">
                 <span class="bill-text fl">支付密码</span>
-                <input name="PayPassword" type="password" class="l-input fl" value="" placeholder="支付密码">
+                <input name="PayPassword" type="password" maxlength="6" class="l-input fl" value="" placeholder="支付密码" id="PayPassword">
             </div>
             <div class="add-co card-li bbot clear">
                 <span class="bill-text fl">确认支付密码</span>
-                <input name="ConfirmPayPassword" type="password" class="l-input fl" value="" placeholder="确认支付密码">
+                <input name="ConfirmPayPassword" type="password" maxlength="6" class="l-input fl" value="" placeholder="确认支付密码">
             </div>
         }
     </div>
     <div class="list-index"><a href="javascript:;" onclick="subform()" class="btn-all">提交</a></div>
 </div>
+<script src="~/Content/Scripts/passwordBox/passwordBox.min.js"></script>
 <script>
     function subform() {
         var name = $("input[name='Name']").val();
@@ -204,7 +205,18 @@
         }
         $("#form").submit();
     }
-
+    $("#PayPassword").click(function myfunction() {
+        PwdBox.init('123456', '/Content/Scripts/passwordBox/img/pwd_keyboard.png', '请输入支付密码', '安全支付环境，请放心使用！');        PwdBox.show(function (res) {
+            if (res.status) {
+                //重置输入
+                alert('密码正确');
+                //关闭并重置密码输入
+                PwdBox.reset();
+            } else {
+                alert(JSON.stringify(arguments));
+            }
+        });
+    });
 
     function success(data) {
         if (data.res == "Ok") {

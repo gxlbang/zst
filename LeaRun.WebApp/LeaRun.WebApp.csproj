@@ -8973,6 +8973,9 @@
     <Content Include="Content\Scripts\menu.js" />
     <Content Include="Content\Scripts\mtip\jquery.m.toast.css" />
     <Content Include="Content\Scripts\mtip\jquery.m.toast.js" />
+    <Content Include="Content\Scripts\passwordBox\img\pwd_keyboard.png" />
+    <Content Include="Content\Scripts\passwordBox\index.html" />
+    <Content Include="Content\Scripts\passwordBox\passwordBox.min.js" />
     <Content Include="Content\Scripts\pictureupload.js" />
     <Content Include="Content\Scripts\scrollbar\scrollbar.js" />
     <Content Include="Content\Scripts\smartwizard\images\loader.gif" />
