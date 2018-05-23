@@ -121,7 +121,10 @@ namespace ZstDataHandle
                                 {
                                     ammeter.Count = ammeter.Count + 1;
                                     ammeter.Acount_Id = null;
-                                    ammeter.CurrMoney = ammeter.CurrMoney+ item.Money.Value;
+                                    ammeter.CurrMoney = item.Money.Value;
+                                    if (ammeter.CurrMoney > ammeter.FirstAlarm) {
+                                        ammeter.IsLowerWarning = 1;
+                                    }
                                     database.Update<Am_Ammeter>(ammeter);
                                 }
                                 if (result.Contains("params"))
@@ -583,6 +586,67 @@ namespace ZstDataHandle
                                 {
                                     ammeter.CurrMoney = double.Parse(example.data[0].value[0].ToString());
                                     ammeter.CM_Time = DateTime.Parse(example.resolve_time);
+                                    if (ammeter.CurrMoney < ammeter.FirstAlarm && ammeter.IsLowerWarning == 1)
+                                    {
+                                        ammeter.IsLowerWarning = 2;
+                                        //发微信通知
+                                        IMpClient mpClient = new MpClient();
+                                        AccessTokenGetRequest request = new AccessTokenGetRequest()
+                                        {
+                                            AppIdInfo = new AppIdInfo() { AppID = ConfigHelper.AppSettings("WEPAY_WEB_APPID"), AppSecret = ConfigHelper.AppSettings("WEPAY_WEb_AppSecret") }
+                                        };
+                                        AccessTokenGetResponse response = mpClient.Execute(request);
+                                        if (response.IsError)
+                                        {
+                                            this.WriteLog(response.ErrInfo.ErrMsg);
+                                        }
+                                        Weixin.Mp.Sdk.Domain.First first = new First();
+                                        first.color = "#000000";
+                                        first.value = ammeter.U_Name + ",您" + ammeter.Room + "号房电费不足";
+                                        Weixin.Mp.Sdk.Domain.Keynote1 keynote1 = new Keynote1();
+                                        keynote1.color = "#0000ff";
+                                        keynote1.value = ammeter.CurrMoney.Value.ToString("0.00");
+                                        Weixin.Mp.Sdk.Domain.Keynote2 keynote2 = new Keynote2();
+                                        keynote2.color = "#0000ff";
+                                        keynote2.value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                                        Weixin.Mp.Sdk.Domain.Remark remark = new Remark();
+                                        remark.color = "#464646";
+                                        remark.value = "请及时充值,以免影响您正常用电!";
+                                        Weixin.Mp.Sdk.Domain.Data data = new Data();
+                                        data.first = first;
+                                        data.keynote1 = keynote1;
+                                        data.keynote2 = keynote2;
+                                        data.remark = remark;
+                                        Weixin.Mp.Sdk.Domain.Miniprogram miniprogram = new Miniprogram();
+                                        miniprogram.appid = "";
+                                        miniprogram.pagepath = "";
+                                        Weixin.Mp.Sdk.Domain.TemplateMessage templateMessage = new TemplateMessage();
+                                        templateMessage.data = data;
+                                        templateMessage.miniprogram = miniprogram;
+                                        templateMessage.template_id = "AaRgB6rFU6Z3kUbagN16Mp7DbT293yI8nuE96Xvoxdk";
+                                        var usermodel = database.FindEntity<Ho_PartnerUser>(ammeter.U_Number);
+                                        templateMessage.touser = usermodel.OpenId;
+                                        templateMessage.url = "http://am.zst0771.com/Personal/NewBillDetails?Number=" + item.Number;
+                                        string postData = templateMessage.ToJsonString1(); /*JsonHelper.ToJson(templateMessage);*/
+
+                                        AppIdInfo app = new AppIdInfo()
+                                        {
+                                            AppID = ConfigHelper.AppSettings("WEPAY_WEB_APPID"),
+                                            AppSecret = ConfigHelper.AppSettings("WEPAY_WEb_AppSecret"),
+                                            CallBack = ""
+                                        };
+                                        SendTemplateMessageRequest req = new SendTemplateMessageRequest()
+                                        {
+                                            AccessToken = response.AccessToken.AccessToken,
+                                            SendData = postData,
+                                            AppIdInfo = app
+                                        };
+                                        SendTemplateMessageResponse res = mpClient.Execute(req);
+                                        if (res.IsError)
+                                        {
+                                            this.WriteLog(res.ErrInfo.ErrMsg);
+                                        }
+                                    }
                                     DbHelper.UpdateAmmeter(ammeter);
                                 }
                             }
