@@ -7,6 +7,10 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
 using System.ServiceProcess;
+using Weixin.Mp.Sdk;
+using Weixin.Mp.Sdk.Domain;
+using Weixin.Mp.Sdk.Request;
+using Weixin.Mp.Sdk.Response;
 
 namespace ZstDataHandle
 {
@@ -79,15 +83,15 @@ namespace ZstDataHandle
                             item.StatusStr = "成功";
                             if (example.data != null)
                             {
-                                if (example.data[0].type==20)
+                                if (example.data[0].type == 20)
                                 {
-                                    item.Remark ="剩余电量:" +example.data[0].dsp;
+                                    item.Remark = "剩余电量:" + example.data[0].dsp;
                                 }
                                 else if (example.data[0].type == 22)
                                 {
                                     item.Remark = "剩余金额:" + example.data[0].dsp;
                                 }
-                                
+
                             }
 
                             item.OverTime = DateTime.Parse(example.resolve_time);
@@ -108,7 +112,7 @@ namespace ZstDataHandle
                                 item.Remark = "开户成功";
 
                             }
-                            else if (item.OperateType == 4|| item.OperateType == 9)
+                            else if (item.OperateType == 4 || item.OperateType == 9)
                             {
                                 List<DbParameter> par = new List<DbParameter>();
                                 par.Add(DbFactory.CreateDbParameter("@Number", item.AmmeterNumber));
@@ -123,9 +127,9 @@ namespace ZstDataHandle
                                 if (result.Contains("params"))
                                 {
                                     var pr = JsonHelper.JonsToList<Root>(result.Replace("params", "paramsContent"));
-                                    if (pr[0].paramsContent!=null )
+                                    if (pr[0].paramsContent != null)
                                     {
-                                        item.Remark = "充值成功:"+ pr[0].paramsContent.money+"元";
+                                        item.Remark = "充值成功:" + pr[0].paramsContent.money + "元";
                                     }
                                     item.TaskMark = result;
                                 }
@@ -219,7 +223,7 @@ namespace ZstDataHandle
                         }
                     }
                 }
-                if (item.Status==2&&item.OperateType==4)
+                if (item.Status == 2 && item.OperateType == 4)
                 {
                     List<DbParameter> par = new List<DbParameter>();
                     par.Add(DbFactory.CreateDbParameter("@Number", item.U_Number));
@@ -396,10 +400,75 @@ namespace ZstDataHandle
                     item.Status = 1;
                     item.StatusStr = "未支付";
                     item.SendTime = DateTime.Now;
-                    if (database.Update<Am_Bill>(item)>0)
+                    if (database.Update<Am_Bill>(item) > 0)
                     {
                         //账单推送
+                        IMpClient mpClient = new MpClient();
+                        AccessTokenGetRequest request = new AccessTokenGetRequest()
+                        {
+                            AppIdInfo = new AppIdInfo() { AppID = ConfigHelper.AppSettings("AppID"), AppSecret = ConfigHelper.AppSettings("AppSecret") }
+                        };
+                        AccessTokenGetResponse response = mpClient.Execute(request);
+                        if (response.IsError)
+                        {
+                            continue;
+                        }
+                        Weixin.Mp.Sdk.Domain.First first = new First();
+                        first.color = "#000000";
+                        first.value = item.T_U_Name + ",您本月的账单已生成";
+                        Weixin.Mp.Sdk.Domain.Keynote1 keynote1 = new Keynote1();
+                        keynote1.color = "#0000ff";
+                        keynote1.value = item.Cell+item.Floor+item.Room;
+                        Weixin.Mp.Sdk.Domain.Keynote2 keynote2 = new Keynote2();
+                        keynote2.color = "#0000ff";
+                        keynote2.value = item.BeginTime.Value.ToString("yyyy-MM-dd")+"-"+item.EndTime.Value.ToString("yyyy-MM-dd");
+                        Weixin.Mp.Sdk.Domain.Keynote3 keynote3 = new Keynote3();
+                        keynote3.color = "#0000ff";
+                        keynote3.value = item.Money.Value.ToString("0.00");
+                        //Weixin.Mp.Sdk.Domain.Keynote4 keynote4 = new Keynote4();
+                        //keynote4.color = "#0000ff";
+                        //keynote4.value = model.s_Reception + "  " + model.s_ReMobile;
+                        Weixin.Mp.Sdk.Domain.Remark remark = new Remark();
+                        remark.color = "#464646";
+                        remark.value = "请在"+ config.SendBillDate.Value.ToString()+"天之内在线支付账单!";
+                        Weixin.Mp.Sdk.Domain.Data data = new Data();
+                        data.first = first;
+                        data.keynote1 = keynote1;
+                        data.keynote2 = keynote2;
+                        data.keynote3 = keynote3;
+                        //data.keynote4 = keynote4;
+                        data.remark = remark;
+                        Weixin.Mp.Sdk.Domain.Miniprogram miniprogram = new Miniprogram();
+                        miniprogram.appid = "";
+                        miniprogram.pagepath = "";
+                        Weixin.Mp.Sdk.Domain.TemplateMessage templateMessage = new TemplateMessage();
+                        templateMessage.data = data;
+                        templateMessage.miniprogram = miniprogram;
+                        templateMessage.template_id = "d0NDpmuQ7BjtlxPurNTr9N1GlATOAQ98S8vrmgAijH8";
+                        var usermodel = database.FindEntity<Ho_PartnerUser>(item.T_U_Number);
+                        templateMessage.touser = usermodel.OpenId;
+                        templateMessage.url = "http://am.zst0771.com/Personal/NewBillDetails?Number=" + item.Number;
+                        string postData = templateMessage.ToJsonString(); /*JsonHelper.ToJson(templateMessage);*/
 
+                        AppIdInfo app = new AppIdInfo()
+                        {
+                            AppID = ConfigHelper.AppSettings("AppID"),
+                            AppSecret = ConfigHelper.AppSettings("AppSecret"),
+                            CallBack = ""
+                        };
+                        SendTemplateMessageRequest req = new SendTemplateMessageRequest()
+                        {
+                            AccessToken = response.AccessToken.AccessToken,
+                            SendData = postData,
+                            AppIdInfo = app
+                        };
+                        SendTemplateMessageResponse res = mpClient.Execute(req);
+                        if (res.IsError)
+                        {
+                            Message += ":微信消息发送失败-" + response.ErrInfo;
+                            return Content(new JsonMessage { Success = true, Code = "1", Message = Message }.ToString());
+                        }
+                        return Content(new JsonMessage { Success = true, Code = "1", Message = Message }.ToString());
                     }
                 }
             }
@@ -510,7 +579,7 @@ namespace ZstDataHandle
                             //查询余额
                             if (type == 22)
                             {
-                                if (ammeter != null&& ammeter.Number !=null )
+                                if (ammeter != null && ammeter.Number != null)
                                 {
                                     ammeter.CurrMoney = double.Parse(example.data[0].value[0].ToString());
                                     ammeter.CM_Time = DateTime.Parse(example.resolve_time);
@@ -709,7 +778,7 @@ namespace ZstDataHandle
             public string opr_id { get; set; }
         }
         public class paramsContent
-    {
+        {
             public int account_id { get; set; }
 
             public int count { get; set; }
