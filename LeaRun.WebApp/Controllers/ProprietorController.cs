@@ -184,9 +184,34 @@ namespace LeaRun.WebApp.Controllers
                 }
                 //设置接口电价
                 var setPrice = CommonClass.AmmeterApi.SetAmmeterParameter(collector.CollectorCode, model.AM_Code, "12", ammeterMoney.FirstMoney.Value.ToString());
-                if (!setPrice.suc)
+                if (setPrice.suc)
                 {
-                    return Json(new { res = "No", msg = addAmmeter.result });
+                    var task = new Am_Task
+                    {
+                        Number = setPrice.opr_id,
+                        AmmeterCode = ammeter.AM_Code,
+                        AmmeterNumber = ammeter.Number,
+                        CollectorCode = ammeter.Collector_Code,
+                        CollectorNumber = ammeter.Collector_Number,
+                        CreateTime = DateTime.Now,
+                        OperateType = 0,
+                        OperateTypeStr = "",
+                        OrderNumber = "",
+                        OverTime = DateTime.Now,
+                        Remark = "",
+                        Status = 0,
+                        StatusStr = "队列",
+                        TaskMark = "",
+                        UserName = user.Account,
+                        U_Name = user.Name,
+                        U_Number = user.Number
+                    };
+
+                    task.OperateType = 20;
+                    task.OperateTypeStr = "设置电价";
+                    database.Insert<Am_Task>(task);
+                    CommonClass.AmmeterApi.InserOperateLog(user.Number, ammeter.Collector_Code, ammeter.AM_Code, 20, "设置电价", task.Number, setPrice.suc, setPrice.result);
+
                 }
                 ////设置一级报警
                 //var setAlert = CommonClass.AmmeterApi.SetAmmeterParameter(collector.CollectorCode, model.AM_Code, "24", model.FirstAlarm.ToString());

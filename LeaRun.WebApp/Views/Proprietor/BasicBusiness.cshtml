@@ -85,9 +85,6 @@
             menu.className = i == cursel ? "on" : "";
             con.style.display = i == cursel ? "block" : "none";
         }
-        if (cursel==3) {
-            binList(); 
-        }
     }
     //-->
     function pullOff(number,type) {
@@ -164,9 +161,7 @@
         var money=$("#money").val();
         $.post("/Proprietor/AmmeterRecharge", { number: number, money: money }, function (data) {
             if (data.res == "Ok") {
-                layer.msg(data.msg, { time: 2000,end:function data() {
-                    setTab('one',3,3);
-                } });
+                alert(data.msg);
             } else {
                 layer.msg(data.msg, { time: 2000 });
             }

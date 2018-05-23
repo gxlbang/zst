@@ -121,7 +121,7 @@ namespace ZstDataHandle
                                 {
                                     ammeter.Count = ammeter.Count + 1;
                                     ammeter.Acount_Id = null;
-                                    ammeter.CurrMoney = item.Money.Value;
+                                    ammeter.CurrMoney = ammeter.CurrMoney+ item.Money.Value;
                                     database.Update<Am_Ammeter>(ammeter);
                                 }
                                 if (result.Contains("params"))
