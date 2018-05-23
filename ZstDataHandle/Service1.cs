@@ -198,10 +198,12 @@ namespace ZstDataHandle
                         if (example.data != null && example.data.Count > 0)
                         {
                             int type = example.data[0].type;
+                            List<DbParameter> par = new List<DbParameter>();
+                            par.Add(DbFactory.CreateDbParameter("@Number", item.AmmeterNumber));
+                            var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number =@Number ", par.ToArray());
                             //查询余额
                             if (type == 22)
                             {
-                                var ammeter = DbHelper.GetAmmeter(item.AmmeterNumber);
                                 if (ammeter != null)
                                 {
                                     ammeter.CurrMoney = double.Parse(example.data[0].value[0].ToString());
@@ -212,7 +214,6 @@ namespace ZstDataHandle
                             //查询电量
                             if (type == 20)
                             {
-                                var ammeter = DbHelper.GetAmmeter(item.AmmeterNumber);
                                 if (ammeter != null)
                                 {
                                     ammeter.CurrPower = decimal.Parse(example.data[0].value[0].ToString()).ToString("0.00");
