@@ -51,9 +51,27 @@ namespace Weixin.Mp.Sdk.Domain
             string s = "{\"touser\":\"" + touser + "\",\"template_id\":\"" + template_id + "\",\"url\":\"" + url +
                 //"\",\"miniprogram\":{\"appid\":\"" + miniprogram.appid + "\",\"pagepath\":\"" + miniprogram.pagepath + "\"}," +
                 "\",\"data\":{\"first\":{\"value\":\"" + data.first.value + "\",\"color\":\"" + data.first.color + "\"}," +
-                "\"keynote1\":{\"value\":\"" + data.keynote1.value + "\",\"color\":\"" + data.keynote1.color + "\"}," +
-                "\"keynote2\":{\"value\":\"" + data.keynote2.value + "\",\"color\":\"" + data.keynote2.color + "\"}," +
-                "\"keynote3\":{\"value\":\"" + data.keynote3.value + "\",\"color\":\"" + data.keynote3.color + "\"}," +
+                "\"keynote1\":{\"value\":\"" + data.keynote1.value + "\",\"color\":\"" + data.keynote1.color + "\"}," + (string.IsNullOrEmpty(data.keynote2.value) ? "" :
+                "\"keynote2\":{\"value\":\"" + data.keynote2.value + "\",\"color\":\"" + data.keynote2.color + "\"},") + (string.IsNullOrEmpty(data.keynote3.value) ? "" :
+                "\"keynote3\":{\"value\":\"" + data.keynote3.value + "\",\"color\":\"" + data.keynote3.color + "\"},") + (string.IsNullOrEmpty(data.keynote4.value) ? "" :
+                "\"keynote4\":{\"value\":\"" + data.keynote4.value + "\",\"color\":\"" + data.keynote4.color + "\"},") +
+                "\"remark\":{\"value\":\"" + data.remark.value + "\",\"color\":\"" + data.remark.color + "\"}}}";
+
+            return s;
+        }
+        /// <summary>
+        /// 将对象转化为Json字符串
+        /// </summary>
+        /// <returns></returns>
+        public string ToJsonString1()
+        {
+            string s = "{\"touser\":\"" + touser + "\",\"template_id\":\"" + template_id + "\",\"url\":\"" + url +
+                //"\",\"miniprogram\":{\"appid\":\"" + miniprogram.appid + "\",\"pagepath\":\"" + miniprogram.pagepath + "\"}," +
+                "\",\"data\":{\"first\":{\"value\":\"" + data.first.value + "\",\"color\":\"" + data.first.color + "\"}," +
+                "\"keyword1\":{\"value\":\"" + data.keynote1.value + "\",\"color\":\"" + data.keynote1.color + "\"}," + (string.IsNullOrEmpty(data.keynote2.value) ? "" :
+                "\"keyword2\":{\"value\":\"" + data.keynote2.value + "\",\"color\":\"" + data.keynote2.color + "\"},") + (string.IsNullOrEmpty(data.keynote3.value) ? "" :
+                "\"keyword3\":{\"value\":\"" + data.keynote3.value + "\",\"color\":\"" + data.keynote3.color + "\"},") + (string.IsNullOrEmpty(data.keynote4.value) ? "" :
+                "\"keyword4\":{\"value\":\"" + data.keynote4.value + "\",\"color\":\"" + data.keynote4.color + "\"},") +
                 "\"remark\":{\"value\":\"" + data.remark.value + "\",\"color\":\"" + data.remark.color + "\"}}}";
 
             return s;
@@ -61,7 +79,8 @@ namespace Weixin.Mp.Sdk.Domain
 
     }
 
-    public class Miniprogram {
+    public class Miniprogram
+    {
         /// <summary>
         /// 所需跳转到的小程序appid（该小程序appid必须与发模板消息的公众号是绑定关联关系）
         /// </summary>
@@ -137,7 +156,8 @@ namespace Weixin.Mp.Sdk.Domain
         /// </summary>
         public string color { get; set; }
     }
-    public class Data {
+    public class Data
+    {
         /// <summary>
         /// 描述内容
         /// </summary>
