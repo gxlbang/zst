@@ -465,10 +465,8 @@ namespace ZstDataHandle
                         SendTemplateMessageResponse res = mpClient.Execute(req);
                         if (res.IsError)
                         {
-                            Message += ":微信消息发送失败-" + response.ErrInfo;
-                            return Content(new JsonMessage { Success = true, Code = "1", Message = Message }.ToString());
+                            continue;
                         }
-                        return Content(new JsonMessage { Success = true, Code = "1", Message = Message }.ToString());
                     }
                 }
             }
