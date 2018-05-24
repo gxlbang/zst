@@ -60,19 +60,30 @@
 
                             lis.push("<div class=\"pro-explain pro-tit bbot clear\">表号："+data[i].AM_Code+"");
                             lis.push("<a href=\"/Proprietor/BasicBusiness?number="+data[i].Number+"\" class=\"l-a fr\">基本业务</a>");
-                            lis.push("<a href=\"/Proprietor/BindUser?number="+data[i].Number+"\" class=\"l-a fr\">关联用户</a>");
                             lis.push("<a href=\"/Proprietor/AmmeterAdd?number="+data[i].Number+"\" class=\"l-a fr\">编辑</a>");
+                            lis.push("</div>");
+                            lis.push("<div class=\"op-litwo op-lione clear\">");
+                            lis .push("<span class=\"op-sshow fl\">用户："+s+"</span>");
+                            lis .push("<span class=\"op-sshow fl\"><a href=\"/Proprietor/BindUser?number="+data[i].Number+"\" class=\"l-a fr\">关联用户</a></span>");
                             lis.push("</div>");
 
                             lis.push("<div class=\"op-litwo op-lione clear\">");
-                            lis .push("<span class=\"op-sshow fl\">用户："+s+"</span>");
-                            lis .push("<span class=\"op-sshow fl\">状态：<lable id=\""+data[i].AM_Code+"\"  >"+data[i].StatusStr+" </lable></span><span class=\"op-sshow fl\">");
-                            if (data[i].Status=="0") {
-                                lis.push("<input type=\"button\" class=\"l-a fr\"\ onclick=\"btn(this,'"+data[i].Number+"')\" value=\"开户\">");
+                            lis .push("<span class=\"op-sshow fl\">开户状态：");
+                            if (data[i].Status=="1") {
+                                lis.push("<lable id=\""+data[i].AM_Code+"\"  >"+data[i].StatusStr+" </lable>")
                             }
-                            lis.push("</span></div>");
+                            if (data[i].Status=="0") {
+                                lis.push(" <input type=\"button\" class=\"l-a fr\"\ onclick=\"btn(this,'"+data[i].Number+"')\" value=\"开户\">");
+                            }
+                            lis.push("</span>");
+ 
+                            lis .push("<span class=\"op-sshow fl\">电价：<lable id=\""+data[i].AM_Code+"\"  >"+data[i].StatusStr+" </lable></span>");
+                            if (data[i].Status=="0") {
+                                lis.push("<span class=\"op-sshow fl\"><input type=\"button\" class=\"l-a fr\"\ onclick=\"btn(this,'"+data[i].Number+"')\" value=\"开户\"></span>");
+                            }
+                            lis.push("</div>");
 
-                            lis.push("<div class=\"op-litwo op-lione clear\"><span class=\"op-sshow fl\">区域："+data[i].Province+data[i].City+data[i].County+data[i].Address+"</span></div>");
+                            lis.push("<div class=\"op-litwo op-lione clear\"><span class=\"op-sshow fl\">区域："+data[i].Province+data[i].City+data[i].County+"   "+data[i].Address+"</span></div>");
                             lis .push("<div class=\"op-litwo op-lione clear\"><span class=\"op-sshow fl\">房号："+data[i].Cell+"单元 "+data[i].Floor+"层 "+data[i].Room+"号</span><a href=\"operation-record.html\" class=\"l-a fr\">合同模板</a> </div>");
                             lis.push("</div></div>");
 

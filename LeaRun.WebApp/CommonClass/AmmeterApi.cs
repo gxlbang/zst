@@ -109,6 +109,7 @@ namespace LeaRun.WebApp.CommonClass
         public static Result SetAmmeterParameter(string cid, string address, string type, string value)
         {
             Result r = new CommonClass.AmmeterApi.Result();
+            var opr_id = Utilities.CommonHelper.GetGuid;
             AmmeterSDK.MainApi api = new AmmeterSDK.MainApi();
             List<Dictionary<string, object>> list = new List<Dictionary<string, object>>();
             Dictionary<string, object> paramssMap = new Dictionary<string, object>();
@@ -116,7 +117,7 @@ namespace LeaRun.WebApp.CommonClass
             paramssMap.Add("address", address);
             paramssMap.Add("type", type);
             paramssMap.Add("retry_times", "1");
-            paramssMap.Add("opr_id", Utilities.CommonHelper.GetGuid);
+            paramssMap.Add("opr_id", opr_id);
             paramssMap.Add("params", "{\"p1\":\"\"" + value + "\",\"p2\":\"\"0\"}");
             paramssMap.Add("must_online", true);
             list.Add(paramssMap);
@@ -129,6 +130,7 @@ namespace LeaRun.WebApp.CommonClass
                 {
                     r.suc = true;
                     r.result = "设置成功";
+                    r.opr_id = opr_id;
                 }
                 else
                 {
