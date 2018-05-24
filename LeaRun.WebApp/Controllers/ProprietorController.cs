@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using Weixin.Mp.Sdk.Domain;
 
 namespace LeaRun.WebApp.Controllers
 {
@@ -1692,9 +1693,10 @@ namespace LeaRun.WebApp.Controllers
             {
                 var repair = database.FindEntity<Am_Repair>(Number);
                 var wxuser = database.FindEntity<Ho_PartnerUser>(U_Number);
+                
                 if (repair != null && repair.Number != null)
                 {
-
+                    var NumberCode = repair.RepairCode;
                     var answer = new Am_RepairAnswer()
                     {
                         AContent = AContent,
@@ -1723,10 +1725,114 @@ namespace LeaRun.WebApp.Controllers
                     }
                     else
                     {
-                        //发送微信通知给师傅
-
-
                         database.Commit();
+                        //发送微信通知给师傅
+                        #region 发送微信通知给师傅
+                        if (true)
+                        {
+                            Weixin.Mp.Sdk.Domain.First first = new First();
+                            first.color = "#000000";
+                            first.value = wxuser.Name + "，您有新的维修任务！";
+                            Weixin.Mp.Sdk.Domain.Keynote1 keynote1 = new Keynote1();
+                            keynote1.color = "#0000ff";
+                            keynote1.value = repair.U_Name;
+                            Weixin.Mp.Sdk.Domain.Keynote2 keynote2 = new Keynote2();
+                            keynote2.color = "#0000ff";
+                            keynote2.value = repair.UserName;
+                            Weixin.Mp.Sdk.Domain.Keynote3 keynote3 = new Keynote3();
+                            keynote3.color = "#0000ff";
+                            keynote3.value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                            Weixin.Mp.Sdk.Domain.Keynote4 keynote4 = new Keynote4();
+                            keynote4.color = "#0000ff";
+                            keynote4.value = repair.RContent;
+                            //Weixin.Mp.Sdk.Domain.Keynote5 keynote5 = new Keynote5();
+                            //keynote5.color = "#0000ff";
+                            //keynote5.value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                            Weixin.Mp.Sdk.Domain.Remark remark = new Remark();
+                            remark.color = "#464646";
+                            remark.value = "请及时联系租户处理。";
+                            Weixin.Mp.Sdk.Domain.Data data = new Data();
+                            data.first = first;
+                            data.keynote1 = keynote1;
+                            data.keynote2 = keynote2;
+                            data.keynote3 = keynote3;
+                            data.keynote4 = keynote4;
+                            //data.keynote5 = keynote5;
+                            data.remark = remark;
+                            Weixin.Mp.Sdk.Domain.Miniprogram miniprogram = new Miniprogram();
+                            miniprogram.appid = "";
+                            miniprogram.pagepath = "";
+                            Weixin.Mp.Sdk.Domain.TemplateMessage templateMessage = new TemplateMessage();
+                            templateMessage.AppId = ConfigHelper.AppSettings("WEPAY_WEB_APPID");
+                            templateMessage.AppSecret = ConfigHelper.AppSettings("WEPAY_WEb_AppSecret");
+                            templateMessage.data = data;
+                            templateMessage.miniprogram = miniprogram;
+                            templateMessage.template_id = "FCxLxUJixf6dnMEIPbCT8YWR-cH55qjD_62VXCI5XPE";
+                            templateMessage.touser = wxuser.OpenId;
+                            templateMessage.url = "http://am.zst0771.com/Personal/RepairInfo_wx?number=" + repair.Number;
+                            templateMessage.SendTemplateMessage();
+                        }
+                        #endregion
+
+                        #region 发送微信通知给租户
+                        if (true)
+                        {
+                            var first = new First()
+                            {
+                                color = "#000000",
+                                value = wxuser.Name + "，您有新的维修任务！"
+                            };
+                            var keynote1 = new Keynote1()
+                            {
+                                color = "#0000ff",
+                                value = NumberCode.ToString()
+                            };
+                            var keynote2 = new Keynote2()
+                            {
+                                color = "#0000ff",
+                                value = repair.Address + " " + repair.Cell + "单元" + repair.Floor + "楼" + repair.Room + "号房"
+                            };
+                            var keynote3 = new Keynote3()
+                            {
+                                color = "#0000ff",
+                                value = repair.RContent
+                            };
+                            var keynote4 = new Keynote4()
+                            {
+                                color = "#0000ff",
+                                value = repair.StatusStr
+                            };
+                            var keynote5 = new Keynote5()
+                            {
+                                color = "#0000ff",
+                                value = "已派师傅:"+ wxuser.Name+" "+wxuser.Mobile
+                            };
+                            Weixin.Mp.Sdk.Domain.Remark remark = new Remark();
+                            remark.color = "#464646";
+                            remark.value = "请耐心等待维修师傅联系您。";
+                            Weixin.Mp.Sdk.Domain.Data data = new Data();
+                            data.first = first;
+                            data.keynote1 = keynote1;
+                            data.keynote2 = keynote2;
+                            data.keynote3 = keynote3;
+                            data.keynote4 = keynote4;
+                            data.keynote5 = keynote5;
+                            data.remark = remark;
+                            Weixin.Mp.Sdk.Domain.Miniprogram miniprogram = new Miniprogram();
+                            miniprogram.appid = "";
+                            miniprogram.pagepath = "";
+                            Weixin.Mp.Sdk.Domain.TemplateMessage templateMessage = new TemplateMessage();
+                            templateMessage.AppId = ConfigHelper.AppSettings("WEPAY_WEB_APPID");
+                            templateMessage.AppSecret = ConfigHelper.AppSettings("WEPAY_WEb_AppSecret");
+                            templateMessage.data = data;
+                            templateMessage.miniprogram = miniprogram;
+                            templateMessage.template_id = "Rsuv1t057y9Rc2tmI9B9Ys0a72kRUm29eL6h7gI61bk";
+                            var usermodel = database.FindEntity<Ho_PartnerUser>(repair.U_Number);
+                            templateMessage.touser = usermodel.OpenId;
+                            templateMessage.url = "http://am.zst0771.com/Personal/RepairInfo?number=" + repair.Number;
+                            templateMessage.SendTemplateMessage();
+                        }
+                        #endregion
                         return Json(new { res = "Ok", msg = "提交成功" });
                     }
                 }

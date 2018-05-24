@@ -49,7 +49,7 @@ namespace ZstDataHandle
 
             //抄表生成
             ReadingTimer.Elapsed += new System.Timers.ElapsedEventHandler(ReadingTimerEvent);
-            ReadingTimer.Interval = 1000 * 60 * 5;//每5分钟执行一次
+            ReadingTimer.Interval = 5000;//每5分钟执行一次
             ReadingTimer.Enabled = true;
 
             //抄表异步处理
@@ -586,6 +586,7 @@ namespace ZstDataHandle
                                 {
                                     ammeter.CurrMoney = double.Parse(example.data[0].value[0].ToString());
                                     ammeter.CM_Time = DateTime.Parse(example.resolve_time);
+                                    ammeter.Acount_Id = null;
                                     if (ammeter.CurrMoney < ammeter.FirstAlarm && ammeter.IsLowerWarning == 1)
                                     {
                                         ammeter.IsLowerWarning = 2;
@@ -626,7 +627,7 @@ namespace ZstDataHandle
                                         templateMessage.template_id = "AaRgB6rFU6Z3kUbagN16Mp7DbT293yI8nuE96Xvoxdk";
                                         var usermodel = database.FindEntity<Ho_PartnerUser>(ammeter.U_Number);
                                         templateMessage.touser = usermodel.OpenId;
-                                        templateMessage.url = "http://am.zst0771.com/Personal/NewBillDetails?Number=" + item.Number;
+                                        templateMessage.url = "http://am.zst0771.com/Personal/AmmeterRecharge?number=" + ammeter.Number;
                                         string postData = templateMessage.ToJsonString1(); /*JsonHelper.ToJson(templateMessage);*/
 
                                         AppIdInfo app = new AppIdInfo()
@@ -647,7 +648,7 @@ namespace ZstDataHandle
                                             this.WriteLog(res.ErrInfo.ErrMsg);
                                         }
                                     }
-                                    DbHelper.UpdateAmmeter(ammeter);
+                                    database.Update(ammeter);
                                 }
                             }
                             //查询电量
