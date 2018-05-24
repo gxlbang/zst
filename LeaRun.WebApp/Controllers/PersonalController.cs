@@ -47,7 +47,7 @@ namespace LeaRun.WebApp.Controllers
 
 
 
-        
+
 
         /// <summary>
         /// 个人信息
@@ -1504,6 +1504,62 @@ namespace LeaRun.WebApp.Controllers
                 var status = database.Insert<Am_Rent>(rent);
                 if (status > 0)
                 {
+                    #region 发送微信通知给业主
+                    var first = new First()
+                    {
+                        color = "#000000",
+                        value = ammeter.UY_Name + "，您有新的退房通知！"
+                    };
+                    var keynote1 = new Keynote1()
+                    {
+                        color = "#0000ff",
+                        value = ammeter.Address + " " + ammeter.Cell + "单元" + ammeter.Floor + "楼" + ammeter.Room + "号房"
+                    };
+                    var keynote2 = new Keynote2()
+                    {
+                        color = "#0000ff",
+                        value = "退房申请"
+                    };
+                    var keynote3 = new Keynote3()
+                    {
+                        color = "#0000ff",
+                        value = rent.CreateTime.Value.ToString("yyyy-MM-dd HH:mm:ss")
+                    };
+                    var keynote4 = new Keynote4()
+                    {
+                        color = "#0000ff",
+                        value = rent.CreateTime.Value.ToString("yyyy年MM月dd日")
+                    };
+                    //var keynote5 = new Keynote5()
+                    //{
+                    //    color = "#0000ff",
+                    //    value = "已派师傅:" + wxuser.Name + " " + wxuser.Mobile
+                    //};
+                    Weixin.Mp.Sdk.Domain.Remark remark = new Remark();
+                    remark.color = "#464646";
+                    remark.value = "请尽快处理。";
+                    Weixin.Mp.Sdk.Domain.Data data = new Data();
+                    data.first = first;
+                    data.keynote1 = keynote1;
+                    data.keynote2 = keynote2;
+                    data.keynote3 = keynote3;
+                    data.keynote4 = keynote4;
+                    //data.keynote5 = keynote5;
+                    data.remark = remark;
+                    Weixin.Mp.Sdk.Domain.Miniprogram miniprogram = new Miniprogram();
+                    miniprogram.appid = "";
+                    miniprogram.pagepath = "";
+                    Weixin.Mp.Sdk.Domain.TemplateMessage templateMessage = new TemplateMessage();
+                    templateMessage.AppId = ConfigHelper.AppSettings("WEPAY_WEB_APPID");
+                    templateMessage.AppSecret = ConfigHelper.AppSettings("WEPAY_WEb_AppSecret");
+                    templateMessage.data = data;
+                    templateMessage.miniprogram = miniprogram;
+                    templateMessage.template_id = "Aes9ovTMCPtlHQ8CMWQWXcamyaw4V_dn52F3kuj8VnQ";
+                    var usermodel = database.FindEntity<Ho_PartnerUser>(ammeter.UY_Number);
+                    templateMessage.touser = usermodel.OpenId;
+                    templateMessage.url = "http://am.zst0771.com/Proprietor/RentingDetails?number=" + rent.Number;
+                    templateMessage.SendTemplateMessage();
+                    #endregion
                     return Json(new { res = "Ok", msg = "提交成功" });
                 }
             }
