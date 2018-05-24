@@ -6,6 +6,29 @@
 <script src="~/Content/Scripts/uijs/checkFileTypeAndSize.js"></script>
 <script type="text/javascript">
     $(function () {
+        PwdBox.init('', '/Content/Scripts/passwordBox/img/pwd_keyboard.png', '请输入支付密码', '安全支付环境，请放心使用！');
+        $("#PayPassword").click(function myfunction() {
+            PwdBox.show(function (res) {
+                if (res.status) {
+                    $("#PayPassword").val(res.password);
+                    //关闭并重置密码输入
+                    PwdBox.reset();
+                } else {
+                    alert(JSON.stringify(arguments));
+                }
+            });
+        });
+        $("#ConfirmPayPassword").click(function myfunction() {
+            PwdBox.show(function (res) {
+                if (res.status) {
+                    $("#ConfirmPayPassword").val(res.password);
+                    //关闭并重置密码输入
+                    PwdBox.reset();
+                } else {
+                    alert(JSON.stringify(arguments));
+                }
+            });
+        });
         $("#img1").click(function () {
             $("#imguploadimg1").click();
         })
@@ -112,7 +135,7 @@
             </div>
             <div class="add-co card-li bbot clear">
                 <span class="bill-text fl">身份证号码</span>
-                <input name="CardCode" type="text" class="l-input fl" value="" placeholder="输入身份证号码">
+                <input name="CardCode" type="text" class="l-input fl" value="" maxlength="18" placeholder="输入身份证号码">
             </div>
             <div class="add-co card-li clear">
                 <span class="bill-text fl">身份证上传</span>
@@ -155,7 +178,7 @@
             </div>
             <div class="add-co card-li bbot clear">
                 <span class="bill-text fl">确认支付密码</span>
-                <input name="ConfirmPayPassword" type="password" maxlength="6" class="l-input fl" value="" placeholder="确认支付密码">
+                <input name="ConfirmPayPassword" id="ConfirmPayPassword" type="password" maxlength="6" class="l-input fl" value="" placeholder="确认支付密码">
             </div>
         }
     </div>
@@ -163,32 +186,6 @@
 </div>
 <script src="~/Content/Scripts/passwordBox/passwordBox.min.js"></script>
 <script>
-
-    $(function () {
-        PwdBox.init('', '/Content/Scripts/passwordBox/img/pwd_keyboard.png', '请输入支付密码', '安全支付环境，请放心使用！');
-        $("#PayPassword").click(function myfunction() {
-            PwdBox.show(function (res) {
-                if (res.status) {
-                    $("#PayPassword").val(res.password);
-                    //关闭并重置密码输入
-                    PwdBox.reset();
-                } else {
-                    alert(JSON.stringify(arguments));
-                }
-            });
-        });
-        $("#ConfirmPayPassword").click(function myfunction() {
-            PwdBox.show(function (res) {
-                if (res.status) {
-                    $("#ConfirmPayPassword").val(res.password);
-                    //关闭并重置密码输入
-                    PwdBox.reset();
-                } else {
-                    alert(JSON.stringify(arguments));
-                }
-            });
-        });
-    });
 
     function subform() {
         var name = $("input[name='Name']").val();

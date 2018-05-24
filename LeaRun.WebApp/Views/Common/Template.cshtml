@@ -108,14 +108,14 @@
 </body>
 </html>
 <script type="text/javascript">
-    var KeyValue = GetQuery('ammeterNumber');
+    var ammeterNumber = GetQuery('ammeterNumber');
     var Device = GetQuery('Device');
     $(function () {
         InitControl();
     })
     //得到一个对象实体
     function InitControl() {
-        if (!!GetQuery('KeyValue')) {
+        if (!!GetQuery('ammeterNumber')) {
             AjaxJson("/Common/ContractTemplate", { ammeterNumber: ammeterNumber }, function (data) {
                 SetWebControls(data);
                 $("#U_Name1").val(data.U_Name);
