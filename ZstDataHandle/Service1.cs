@@ -49,7 +49,7 @@ namespace ZstDataHandle
 
             //抄表生成
             ReadingTimer.Elapsed += new System.Timers.ElapsedEventHandler(ReadingTimerEvent);
-            ReadingTimer.Interval = 1000 * 60 * 5;//每5分钟执行一次
+            ReadingTimer.Interval = 5000;//每5分钟执行一次
             ReadingTimer.Enabled = true;
 
             //抄表异步处理
@@ -122,7 +122,8 @@ namespace ZstDataHandle
                                     ammeter.Count = ammeter.Count + 1;
                                     ammeter.Acount_Id = null;
                                     ammeter.CurrMoney = item.Money.Value;
-                                    if (ammeter.CurrMoney > ammeter.FirstAlarm) {
+                                    if (ammeter.CurrMoney > ammeter.FirstAlarm)
+                                    {
                                         ammeter.IsLowerWarning = 1;
                                     }
                                     database.Update<Am_Ammeter>(ammeter);
@@ -136,6 +137,8 @@ namespace ZstDataHandle
                                     }
                                     item.TaskMark = result;
                                 }
+                                //发送通知租户缴费成功
+                                SendMessage(ammeter.Number, ammeter.U_Number, ammeter.Money.Value.ToString("0.00"), "失败", item.Money.Value.ToString("0.00"), item.CreateTime.Value.ToString("yyyy-MM-dd HH:mm:dd"));
 
                             }
                             else if (item.OperateType == 1)
@@ -252,8 +255,11 @@ namespace ZstDataHandle
                             U_Number = user.Number
                         };
                         database.Insert<Am_MoneyDetail>(moneyDetail);
-
-
+                        List<DbParameter> par1 = new List<DbParameter>();
+                        par.Add(DbFactory.CreateDbParameter("@Number", item.AmmeterNumber));
+                        var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number =@Number ", par1.ToArray());
+                        //发送微信通知租户缴费失败
+                        SendMessage(ammeter.Number,user.Number, ammeter.Money.Value.ToString("0.00") ,"失败", item.Money.Value.ToString("0.00"),item.CreateTime.Value.ToString("yyyy-MM-dd HH:mm:dd"));
                     }
                 }
 
@@ -262,6 +268,66 @@ namespace ZstDataHandle
 
             //业务逻辑代码
         }
+
+        private void SendMessage(string Number,string U_Number,string CurrMoney, string result, string Money, string time)
+        {
+            var usermodel = database.FindEntity<Ho_PartnerUser>(U_Number);
+            var first = new First()
+            {
+                color = "#000000",
+                value = usermodel.Name + "，您电费缴费" + result
+            };
+            var keynote1 = new Keynote1()
+            {
+                color = "#0000ff",
+                value = Money + "元"
+            };
+            var keynote2 = new Keynote2()
+            {
+                color = "#0000ff",
+                value = time
+            };
+            var keynote3 = new Keynote3()
+            {
+                color = "#0000ff",
+                value = CurrMoney + "元"
+            };
+            //var keynote4 = new Keynote4()
+            //{
+            //    color = "#0000ff",
+            //    value = rent.CreateTime.Value.ToString("yyyy年MM月dd日")
+            //};
+            //var keynote5 = new Keynote5()
+            //{
+            //    color = "#0000ff",
+            //    value = "已派师傅:" + wxuser.Name + " " + wxuser.Mobile
+            //};
+            Weixin.Mp.Sdk.Domain.Remark remark = new Remark();
+            remark.color = "#464646";
+            remark.value = result == "成功" ? "感谢您的使用。" : "费用已经退回您的余额,稍后重新尝试!";
+            Weixin.Mp.Sdk.Domain.Data data = new Data();
+            data.first = first;
+            data.keynote1 = keynote1;
+            data.keynote2 = keynote2;
+            data.keynote3 = keynote3;
+            //data.keynote4 = keynote4;
+            //data.keynote5 = keynote5;
+            data.remark = remark;
+            Weixin.Mp.Sdk.Domain.Miniprogram miniprogram = new Miniprogram();
+            miniprogram.appid = "";
+            miniprogram.pagepath = "";
+            Weixin.Mp.Sdk.Domain.TemplateMessage templateMessage = new TemplateMessage();
+            templateMessage.AppId = ConfigHelper.AppSettings("WEPAY_WEB_APPID");
+            templateMessage.AppSecret = ConfigHelper.AppSettings("WEPAY_WEb_AppSecret");
+            templateMessage.data = data;
+            templateMessage.miniprogram = miniprogram;
+            templateMessage.template_id = "LvmnXS1GVISLKU0sg3bmRq78G7xHq6BiQvOTr5i2a4Y";
+
+            templateMessage.touser = usermodel.OpenId;
+            templateMessage.url = "http://am.zst0771.com/Personal/AmmeterPayCost?number=" + Number;
+            templateMessage.SendTemplateMessage();
+        }
+
         /// <summary>
         /// 账单生成
         /// </summary>
@@ -586,6 +652,7 @@ namespace ZstDataHandle
                                 {
                                     ammeter.CurrMoney = double.Parse(example.data[0].value[0].ToString());
                                     ammeter.CM_Time = DateTime.Parse(example.resolve_time);
+                                    ammeter.Acount_Id = null;
                                     if (ammeter.CurrMoney < ammeter.FirstAlarm && ammeter.IsLowerWarning == 1)
                                     {
                                         ammeter.IsLowerWarning = 2;
@@ -626,7 +693,7 @@ namespace ZstDataHandle
                                         templateMessage.template_id = "AaRgB6rFU6Z3kUbagN16Mp7DbT293yI8nuE96Xvoxdk";
                                         var usermodel = database.FindEntity<Ho_PartnerUser>(ammeter.U_Number);
                                         templateMessage.touser = usermodel.OpenId;
-                                        templateMessage.url = "http://am.zst0771.com/Personal/NewBillDetails?Number=" + item.Number;
+                                        templateMessage.url = "http://am.zst0771.com/Personal/AmmeterRecharge?number=" + ammeter.Number;
                                         string postData = templateMessage.ToJsonString1(); /*JsonHelper.ToJson(templateMessage);*/
 
                                         AppIdInfo app = new AppIdInfo()
@@ -647,7 +714,7 @@ namespace ZstDataHandle
                                             this.WriteLog(res.ErrInfo.ErrMsg);
                                         }
                                     }
-                                    DbHelper.UpdateAmmeter(ammeter);
+                                    database.Update(ammeter);
                                 }
                             }
                             //查询电量

@@ -14,6 +14,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
+using Weixin.Mp.Sdk;
+using Weixin.Mp.Sdk.Domain;
+using Weixin.Mp.Sdk.Request;
+using Weixin.Mp.Sdk.Response;
 
 namespace LeaRun.WebApp.Controllers
 {
@@ -32,7 +36,7 @@ namespace LeaRun.WebApp.Controllers
         {
             return View();
         }
-        
+
 
         public ActionResult Exit()
         {
@@ -43,7 +47,7 @@ namespace LeaRun.WebApp.Controllers
 
 
 
-        
+
 
         /// <summary>
         /// 个人信息
@@ -870,7 +874,7 @@ namespace LeaRun.WebApp.Controllers
         /// </summary>
         /// <param name="number"></param>
         /// <returns></returns>
-        public ActionResult BillConfirmation(string number )
+        public ActionResult BillConfirmation(string number)
         {
             var user = wbll.GetUserInfo(Request);
             List<DbParameter> parameter = new List<DbParameter>();
@@ -1243,6 +1247,51 @@ namespace LeaRun.WebApp.Controllers
                         repairImageList.Add(model);
                     }
                     database.Insert<Am_RepairImage>(repairImageList);
+                    //发送微信通知
+                    #region 发送微信通知
+                    Weixin.Mp.Sdk.Domain.First first = new First();
+                    first.color = "#000000";
+                    first.value = ammeter.UY_Name + ",您有新的报修";
+                    Weixin.Mp.Sdk.Domain.Keynote1 keynote1 = new Keynote1();
+                    keynote1.color = "#0000ff";
+                    keynote1.value = ammeter.U_Name;
+                    Weixin.Mp.Sdk.Domain.Keynote2 keynote2 = new Keynote2();
+                    keynote2.color = "#0000ff";
+                    keynote2.value = ammeter.UserName;
+                    Weixin.Mp.Sdk.Domain.Keynote3 keynote3 = new Keynote3();
+                    keynote3.color = "#0000ff";
+                    keynote3.value = ammeter.Address + " " + ammeter.Cell + "单元" + ammeter.Floor + "楼" + ammeter.Room + "号房";
+                    Weixin.Mp.Sdk.Domain.Keynote4 keynote4 = new Keynote4();
+                    keynote4.color = "#0000ff";
+                    keynote4.value = explain;
+                    Weixin.Mp.Sdk.Domain.Keynote5 keynote5 = new Keynote5();
+                    keynote5.color = "#0000ff";
+                    keynote5.value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                    Weixin.Mp.Sdk.Domain.Remark remark = new Remark();
+                    remark.color = "#464646";
+                    remark.value = "请及时处理。";
+                    Weixin.Mp.Sdk.Domain.Data data = new Data();
+                    data.first = first;
+                    data.keynote1 = keynote1;
+                    data.keynote2 = keynote2;
+                    data.keynote3 = keynote3;
+                    data.keynote4 = keynote4;
+                    data.keynote5 = keynote5;
+                    data.remark = remark;
+                    Weixin.Mp.Sdk.Domain.Miniprogram miniprogram = new Miniprogram();
+                    miniprogram.appid = "";
+                    miniprogram.pagepath = "";
+                    Weixin.Mp.Sdk.Domain.TemplateMessage templateMessage = new TemplateMessage();
+                    templateMessage.AppId = ConfigHelper.AppSettings("WEPAY_WEB_APPID");
+                    templateMessage.AppSecret = ConfigHelper.AppSettings("WEPAY_WEb_AppSecret");
+                    templateMessage.data = data;
+                    templateMessage.miniprogram = miniprogram;
+                    templateMessage.template_id = "kxfbcIdkt6bMqtbyU4leu4ygwAqI6UftxwVPyq_uLOE";
+                    var usermodel = database.FindEntity<Ho_PartnerUser>(ammeter.UY_Number);
+                    templateMessage.touser = usermodel.OpenId;
+                    templateMessage.url = "http://am.zst0771.com/Proprietor/RepairInfo?number=" + repair.Number;
+                    templateMessage.SendTemplateMessage();
+                    #endregion
                     return Json(new { res = "Ok", msg = "提交成功" });
                 }
             }
@@ -1307,6 +1356,34 @@ namespace LeaRun.WebApp.Controllers
             par.Add(DbFactory.CreateDbParameter("@Number", number));
 
             var repair = database.FindEntityByWhere<Am_Repair>(" and Number=@Number and U_Number=@U_Number", par.ToArray());
+            if (repair != null && repair.Number != null)
+            {
+                List<DbParameter> par1 = new List<DbParameter>();
+                par1.Add(DbFactory.CreateDbParameter("@Repair_Number", repair.Number));
+
+                var repairImage = database.FindList<Am_RepairImage>(" and  Repair_Number=@Repair_Number ", par1.ToArray());
+                ViewBag.repairImage = repairImage;
+
+                List<DbParameter> par2 = new List<DbParameter>();
+                par2.Add(DbFactory.CreateDbParameter("@Repair_Number", repair.Number));
+                var repairAnswer = database.FindEntityByWhere<Am_RepairAnswer>(" and Repair_Number=@Repair_Number ", par2.ToArray());
+                ViewBag.repairAnswer = repairAnswer;
+
+                return View(repair);
+            }
+            return View();
+        }
+        /// <summary>
+        /// 报修详情
+        /// </summary>
+        /// <param name="Number"></param>
+        /// <returns></returns>
+        public ActionResult RepairInfo_wx(string number)
+        {
+            List<DbParameter> par = new List<DbParameter>();
+            par.Add(DbFactory.CreateDbParameter("@Number", number));
+
+            var repair = database.FindEntityByWhere<Am_Repair>(" and Number=@Number", par.ToArray());
             if (repair != null && repair.Number != null)
             {
                 List<DbParameter> par1 = new List<DbParameter>();
@@ -1427,6 +1504,62 @@ namespace LeaRun.WebApp.Controllers
                 var status = database.Insert<Am_Rent>(rent);
                 if (status > 0)
                 {
+                    #region 发送微信通知给业主
+                    var first = new First()
+                    {
+                        color = "#000000",
+                        value = ammeter.UY_Name + "，您有新的退房通知！"
+                    };
+                    var keynote1 = new Keynote1()
+                    {
+                        color = "#0000ff",
+                        value = ammeter.Address + " " + ammeter.Cell + "单元" + ammeter.Floor + "楼" + ammeter.Room + "号房"
+                    };
+                    var keynote2 = new Keynote2()
+                    {
+                        color = "#0000ff",
+                        value = "退房申请"
+                    };
+                    var keynote3 = new Keynote3()
+                    {
+                        color = "#0000ff",
+                        value = rent.CreateTime.Value.ToString("yyyy-MM-dd HH:mm:ss")
+                    };
+                    var keynote4 = new Keynote4()
+                    {
+                        color = "#0000ff",
+                        value = rent.CreateTime.Value.ToString("yyyy年MM月dd日")
+                    };
+                    //var keynote5 = new Keynote5()
+                    //{
+                    //    color = "#0000ff",
+                    //    value = "已派师傅:" + wxuser.Name + " " + wxuser.Mobile
+                    //};
+                    Weixin.Mp.Sdk.Domain.Remark remark = new Remark();
+                    remark.color = "#464646";
+                    remark.value = "请尽快处理。";
+                    Weixin.Mp.Sdk.Domain.Data data = new Data();
+                    data.first = first;
+                    data.keynote1 = keynote1;
+                    data.keynote2 = keynote2;
+                    data.keynote3 = keynote3;
+                    data.keynote4 = keynote4;
+                    //data.keynote5 = keynote5;
+                    data.remark = remark;
+                    Weixin.Mp.Sdk.Domain.Miniprogram miniprogram = new Miniprogram();
+                    miniprogram.appid = "";
+                    miniprogram.pagepath = "";
+                    Weixin.Mp.Sdk.Domain.TemplateMessage templateMessage = new TemplateMessage();
+                    templateMessage.AppId = ConfigHelper.AppSettings("WEPAY_WEB_APPID");
+                    templateMessage.AppSecret = ConfigHelper.AppSettings("WEPAY_WEb_AppSecret");
+                    templateMessage.data = data;
+                    templateMessage.miniprogram = miniprogram;
+                    templateMessage.template_id = "Aes9ovTMCPtlHQ8CMWQWXcamyaw4V_dn52F3kuj8VnQ";
+                    var usermodel = database.FindEntity<Ho_PartnerUser>(ammeter.UY_Number);
+                    templateMessage.touser = usermodel.OpenId;
+                    templateMessage.url = "http://am.zst0771.com/Proprietor/RentingDetails?number=" + rent.Number;
+                    templateMessage.SendTemplateMessage();
+                    #endregion
                     return Json(new { res = "Ok", msg = "提交成功" });
                 }
             }
@@ -1490,7 +1623,7 @@ namespace LeaRun.WebApp.Controllers
 
             //Random r = new Random(100); //产生一个随机数据
             string Extends = DateTime.Now.ToFileTime().ToString();  //转换成windows文件夹时间
-            //获取文件的后缀名称
+                                                                    //获取文件的后缀名称
             string geshi = file.FileName.Substring(file.FileName.IndexOf('.'));
 
             //保存的路径 
