@@ -143,6 +143,7 @@ namespace LeaRun.WebApp.Controllers
                     ammeter.Remark = model.Remark;
                     ammeter.Acount_Id = null;
                     ammeter.Count = 1;
+                    ammeter.IsLowerWarning = 0;
 
                     var status = database.Update<Am_Ammeter>(ammeter);
                     if (status > 0)

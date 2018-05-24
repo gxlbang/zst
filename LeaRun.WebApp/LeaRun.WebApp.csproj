@@ -9568,6 +9568,7 @@
     <Content Include="Views\Personal\BillConfirmation.cshtml" />
     <Content Include="Views\Info\Perfect.cshtml" />
     <Content Include="Views\Info\Information.cshtml" />
+    <Content Include="Views\Common\Template.cshtml" />
     <None Include="Views\Utility\PrintPage.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
