@@ -42,7 +42,7 @@
 
         $("#imguploadimg1").checkFileTypeAndSize({
             allowedExtensions: ['jpg', 'jpeg', 'gif', 'png'],
-            maxSize: 1024, //最大允许1024KB，即1MB
+            maxSize: 6144, //最大允许1024KB，即1MB
             success: function () {
                 //上传文件数据准备
                 var fd = new FormData();
@@ -70,14 +70,14 @@
                 return;
             },
             sizeerror: function () {
-                $.toast("最大尺寸1024KB,即1MB");
+                $.toast("最大尺寸6144KB,即6MB");
                 return;
             }
         });
 
         $("#imguploadimg2").checkFileTypeAndSize({
             allowedExtensions: ['jpg', 'jpeg', 'gif', 'png'],
-            maxSize: 1024, //最大允许1024KB，即1MB
+            maxSize: 6144, //最大允许1024KB，即1MB
             success: function () {
                 //上传文件数据准备
                 var fd = new FormData();
@@ -105,7 +105,7 @@
                 return;
             },
             sizeerror: function () {
-                $.toast("最大尺寸1024KB,即1MB");
+                $.toast("最大尺寸6144KB,即6MB");
                 return;
             }
         });
@@ -174,11 +174,11 @@
             </div>
             <div class="add-co card-li bbot clear">
                 <span class="bill-text fl">支付密码</span>
-                <input name="PayPassword" type="password" maxlength="6" class="l-input fl" value="" placeholder="支付密码" id="PayPassword">
+                <input name="PayPassword" readonly="readonly" type="password" maxlength="6" class="l-input fl" value="" placeholder="支付密码" id="PayPassword">
             </div>
             <div class="add-co card-li bbot clear">
                 <span class="bill-text fl">确认支付密码</span>
-                <input name="ConfirmPayPassword" id="ConfirmPayPassword" type="password" maxlength="6" class="l-input fl" value="" placeholder="确认支付密码">
+                <input name="ConfirmPayPassword"  readonly="readonly" id="ConfirmPayPassword" type="password" maxlength="6" class="l-input fl" value="" placeholder="确认支付密码">
             </div>
         }
     </div>
