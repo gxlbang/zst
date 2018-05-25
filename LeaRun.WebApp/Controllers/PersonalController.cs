@@ -999,6 +999,64 @@ namespace LeaRun.WebApp.Controllers
                                 var st = database.Update<Am_Charge>(charge);
                                 if (st > 0)
                                 {
+                                    var ammeter = database.FindEntity<Am_Ammeter>(charge.AmmeterNumber);
+                                    //发送微信通知
+                                    #region 发送微信通知给业主
+                                    var first = new First()
+                                    {
+                                        color = "#000000",
+                                        value ="租户 "+ account.Name+ "本月账单已支付成功！"
+                                    };
+                                    var keynote1 = new Keynote1()
+                                    {
+                                        color = "#0000ff",
+                                        value = ammeter.Address + " " + ammeter.Cell + "单元" + ammeter.Floor + "楼" + ammeter.Room + "号房"
+                                    };
+                                    var keynote2 = new Keynote2()
+                                    {
+                                        color = "#0000ff",
+                                        value = bill.BeginTime.Value.ToString("yyyy-MM-dd") + "至" + bill.EndTime.Value.ToString("yyyy-MM-dd")
+                                    };
+                                    var keynote3 = new Keynote3()
+                                    {
+                                        color = "#0000ff",
+                                        value = bill.Money.Value.ToString("0.00")
+                                    };
+                                    var keynote4 = new Keynote4()
+                                    {
+                                        color = "#0000ff",
+                                        value = charge.SucTime.Value.ToString("yyyy-MM-dd HH:mm:ss")
+                                    };
+                                    var keynote5 = new Keynote5()
+                                    {
+                                        color = "#0000ff",
+                                        value = "余额支付"
+                                    };
+                                    Weixin.Mp.Sdk.Domain.Remark remark = new Remark();
+                                    remark.color = "#464646";
+                                    remark.value = "感谢您的使用。";
+                                    Weixin.Mp.Sdk.Domain.Data data = new Data();
+                                    data.first = first;
+                                    data.keynote1 = keynote1;
+                                    data.keynote2 = keynote2;
+                                    data.keynote3 = keynote3;
+                                    data.keynote4 = keynote4;
+                                    data.keynote5 = keynote5;
+                                    data.remark = remark;
+                                    Weixin.Mp.Sdk.Domain.Miniprogram miniprogram = new Miniprogram();
+                                    miniprogram.appid = "";
+                                    miniprogram.pagepath = "";
+                                    Weixin.Mp.Sdk.Domain.TemplateMessage templateMessage = new TemplateMessage();
+                                    templateMessage.AppId = ConfigHelper.AppSettings("WEPAY_WEB_APPID");
+                                    templateMessage.AppSecret = ConfigHelper.AppSettings("WEPAY_WEb_AppSecret");
+                                    templateMessage.data = data;
+                                    templateMessage.miniprogram = miniprogram;
+                                    templateMessage.template_id = "jeHMUoWxLoPvRGB6yK4ys56_952jiWrUV9mgA7qrmkQ";
+                                    var usermodel = database.FindEntity<Ho_PartnerUser>(ammeter.UY_Number);
+                                    templateMessage.touser = usermodel.OpenId;
+                                    templateMessage.url = "http://am.zst0771.com/Proprietor/BillingDetails?number=" + bill.Number;
+                                    templateMessage.SendTemplateMessage();
+                                    #endregion
                                     return Json(new { res = "Ok", msg = "缴费成功" });
                                 }
                             }

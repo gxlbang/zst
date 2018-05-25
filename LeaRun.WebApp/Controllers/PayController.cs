@@ -255,6 +255,7 @@ namespace LeaRun.WebApp.Controllers
                                 database.Update<Am_Bill>(bill);
                                 return Content(payResult.ReturnXml);
                             }
+                            //发送微信通知
                         }
                     }
                 }

@@ -100,7 +100,6 @@
         $("#myusernumber").val($(elm).attr("ppuser"));
         layer.closeAll();
     }
-
     function AddOpUser() {
         $.post("/Proprietor/GetMyUserWXList", { type: 1 }, function (data) {
             var htmlstr = '<div><div class="pen-li pen-re bbot clear">' +
@@ -113,15 +112,25 @@
                     '</a>';
             }
             htmlstr += '</div>';
+            //layer.open({
+            //    type: 1,
+            //    shade: false,
+            //    title: false, //不显示标题
+            //    area: '85%',
+            //    content: htmlstr, //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
+            //    cancel: function () {
+            //        bool = false;
+            //        //layer.msg('玩命提示中');
+            //    }
+            //});
             layer.open({
                 type: 1,
-                shade: false,
-                title: false, //不显示标题
-                area: ['85%'],
-                content: htmlstr //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
-                //cancel: function () {
-                //    layer.msg('玩命提示中');
-                //}
+                title: false,
+                closeBtn: 1,
+                area: '85%',
+                shadeClose: true,
+                skin: 'yourclass',
+                content: htmlstr
             });
         });
     }
@@ -167,4 +176,3 @@
         });
     };
 </script>
-

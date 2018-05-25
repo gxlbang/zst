@@ -138,7 +138,7 @@ namespace ZstDataHandle
                                     item.TaskMark = result;
                                 }
                                 //发送通知租户缴费成功
-                                SendMessage(ammeter.Number, ammeter.U_Number, ammeter.Money.Value.ToString("0.00"), "失败", item.Money.Value.ToString("0.00"), item.CreateTime.Value.ToString("yyyy-MM-dd HH:mm:dd"));
+                                SendMessage(ammeter.Number, ammeter.U_Number, ammeter.CurrMoney.Value.ToString("0.00"), "成功", item.Money.Value.ToString("0.00"), item.CreateTime.Value.ToString("yyyy-MM-dd HH:mm:dd"));
 
                             }
                             else if (item.OperateType == 1)
@@ -259,7 +259,7 @@ namespace ZstDataHandle
                         par.Add(DbFactory.CreateDbParameter("@Number", item.AmmeterNumber));
                         var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number =@Number ", par1.ToArray());
                         //发送微信通知租户缴费失败
-                        SendMessage(ammeter.Number,user.Number, ammeter.Money.Value.ToString("0.00") ,"失败", item.Money.Value.ToString("0.00"),item.CreateTime.Value.ToString("yyyy-MM-dd HH:mm:dd"));
+                        SendMessage(ammeter.Number,user.Number, ammeter.CurrMoney.Value.ToString("0.00") ,"失败", item.Money.Value.ToString("0.00"),item.CreateTime.Value.ToString("yyyy-MM-dd HH:mm:dd"));
                     }
                 }
 

@@ -9571,6 +9571,8 @@
     <Content Include="Views\Personal\RepairInfo_wx.cshtml" />
     <Content Include="Views\Common\Template.cshtml" />
     <Content Include="Views\Common\Template.cshtml" />
+    <Content Include="Views\Proprietor\RepairMasterList.cshtml" />
+    <Content Include="Views\Proprietor\RepairMasterAdd.cshtml" />
     <None Include="Views\Utility\PrintPage.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

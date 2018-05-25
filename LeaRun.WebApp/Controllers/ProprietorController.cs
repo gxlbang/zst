@@ -1697,7 +1697,7 @@ namespace LeaRun.WebApp.Controllers
             var user = wbll.GetUserInfo(Request);
             List<DbParameter> par = new List<DbParameter>();
             par.Add(DbFactory.CreateDbParameter("@As_Number", user.Number));
-            var PartnerUserList = database.FindList<Ho_PartnerUser>(" and UserRole = '维修师傅' and As_Number=@As_Number", par.ToArray());
+            var PartnerUserList = database.FindList<Ho_PartnerUser>(" and UserRoleNumber = '32c38f87-18ea-4eab-8b4d-36c52b3ee2aa' and As_Number=@As_Number", par.ToArray());
             //if (PartnerUser != null && PartnerUser.Number != null)
             //{
             //    return Json(PartnerUser);
@@ -1719,7 +1719,7 @@ namespace LeaRun.WebApp.Controllers
             {
                 var repair = database.FindEntity<Am_Repair>(Number);
                 var wxuser = database.FindEntity<Ho_PartnerUser>(U_Number);
-                
+
                 if (repair != null && repair.Number != null)
                 {
                     var NumberCode = repair.RepairCode;
@@ -1831,7 +1831,7 @@ namespace LeaRun.WebApp.Controllers
                             var keynote5 = new Keynote5()
                             {
                                 color = "#0000ff",
-                                value = "已派师傅:"+ wxuser.Name+" "+wxuser.Mobile
+                                value = "已派师傅:" + wxuser.Name + " " + wxuser.Mobile
                             };
                             Weixin.Mp.Sdk.Domain.Remark remark = new Remark();
                             remark.color = "#464646";
@@ -2341,5 +2341,96 @@ namespace LeaRun.WebApp.Controllers
             }
             return View();
         }
+
+        #region 维修师傅管理
+        /// <summary>
+        /// 维修师傅列表
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult RepairMasterList()
+        {
+            var user = wbll.GetUserInfo(Request);
+
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@As_Number", user.Number));
+            parameter.Add(DbFactory.CreateDbParameter("@UserRoleNumber", "32c38f87-18ea-4eab-8b4d-36c52b3ee2aa"));
+
+            var ammeterMoneyList = database.FindList<Ho_PartnerUser>(" and As_Number=@As_Number and UserRoleNumber = @UserRoleNumber", parameter.ToArray());
+            return View(ammeterMoneyList);
+        }
+        /// <summary>
+        /// 删除维修师傅
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public ActionResult RepairMasterDel(string number)
+        {
+            //var user = wbll.GetUserInfo(Request);
+            if (number != null && number != "")
+            {
+                var user = database.FindEntity<Ho_PartnerUser>(number);
+                if (user != null && user.Number != null)
+                {
+                    user.As_Number = "";
+                    user.As_Name = "";
+                    user.UserRole = "普通会员";
+                    user.UserRoleNumber = "00bebc9a-539b-4ad3-87dc-6d4428f22993";
+                    user.Sign = null;
+                    user.Modify(user.Number);
+                    int status = database.Update(user);
+                    if (status > 0)
+                    {
+                        return Json(new { res = "Ok", msg = "删除成功" });
+                    }
+                }
+            }
+            return Json(new { res = "No", msg = "删除失败" });
+        }
+        /// <summary>
+        /// 维修师傅添加
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult RepairMasterAdd()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// 添加维修师傅
+        /// </summary>
+        /// <param name="Name"></param>
+        /// <param name="Mobile"></param>
+        /// <returns></returns>
+        public ActionResult AddRepairMaster(string Name,string Mobile)
+        {
+            var usermodel = wbll.GetUserInfo(Request);
+            if (!string.IsNullOrEmpty(Name)&& !string.IsNullOrEmpty(Mobile))
+            {
+                List<DbParameter> par = new List<DbParameter>();
+                par.Add(DbFactory.CreateDbParameter("@Name", Name));
+                par.Add(DbFactory.CreateDbParameter("@Mobile", Mobile));
+
+                var user = database.FindEntityByWhere<Ho_PartnerUser>(" and Mobile=@Mobile and Name=@Name", par.ToArray());
+                if (user != null && user.Number != null)
+                {
+                    user.As_Number = usermodel.Number;
+                    user.As_Name = usermodel.Name;
+                    user.UserRole = "维修师傅";
+                    user.UserRoleNumber = "32c38f87-18ea-4eab-8b4d-36c52b3ee2aa";
+                    user.Sign = null;
+                    user.Modify(user.Number);
+                    int status = database.Update(user);
+                    if (status > 0)
+                    {
+                        return Json(new { res = "Ok", msg = "添加成功" });
+                    }
+                }else
+                {
+                    return Json(new { res = "No", msg = "师傅信息错误" });
+                }
+            }
+            return Json(new { res = "No", msg = "添加失败" });
+        }
+        #endregion
     }
 }
