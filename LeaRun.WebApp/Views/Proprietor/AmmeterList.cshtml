@@ -76,8 +76,8 @@
                                 lis.push(" <input type=\"button\" class=\"l-a fr\"\ onclick=\"btn(this,'"+data[i].Number+"')\" value=\"开户\">");
                             }
                             lis.push("</span>");
- 
-                            lis .push("<span class=\"op-sshow fl\">电价：<lable id=\""+data[i].AM_Code+"\"  >"+data[i].StatusStr+" </lable></span>");
+
+                            lis .push("<span class=\"op-sshow fl\">电价：<a herf=\"javascript:;\" id=\"xx"+data[i].AM_Code+"\"  onclick=\"setPrice('"+data[i].Number+"','"+data[i].AM_Code+"')\" >"+data[i].AmmeterMoneyName+" </a></span>");
                             if (data[i].Status=="0") {
                                 lis.push("<span class=\"op-sshow fl\"><input type=\"button\" class=\"l-a fr\"\ onclick=\"btn(this,'"+data[i].Number+"')\" value=\"开户\"></span>");
                             }
@@ -95,7 +95,53 @@
             }
         });
     });
+    function setPrice(number,code) {
+        var html="";
+        html+="<form class=\"layui-form layui-form-pane\" action=\"\">";
+        html+="<div class=\"layui-form-item\">";
+        html+="<label class=\"layui-form-label\">表号</label>";
+        html+="<div class=\"layui-input-inline\">";
+        html+="<input readonly=\"readonly\" type=\"text\" name=\"username\" lay-verify=\"required\"   autocomplete=\"off\" class=\"layui-input\" value=\""+code+"\">";
+        html+="</div>";
+        html+="</div>";
 
+        html+="<div class=\"layui-form-item\">";
+        html+="<label class=\"layui-form-label\">电价</label>";
+        html+="<div class=\"layui-input-inline\">";
+        html+="<input  type=\"number\" name=\"username\" lay-verify=\"required\" placeholder=\"请输入\" autocomplete=\"off\" class=\"layui-input\">";
+        html+="</div>";
+        html+="</div>";
+
+        html+="</form>";
+        html+="<div style=\"text-align:center\">"
+        html+="<button class=\"layui-btn layui-btn-normal\">设置</button>";
+        html+="</div>";
+
+        layer.open({
+            type: 1,
+            title: "设置电价",
+            closeBtn: 1,
+            shadeClose: true,
+            skin: 'yourclass',
+            area: ['80%', '28%'],
+            content: html,
+            cancel: function () {
+            }
+        });
+
+    }
+
+    function subPrice(number,price) {
+        $(obj).attr('disabled',"true");
+        $(obj).val("开户中...");
+        $.post("/Proprietor/AmmeterOpenAccount", { number:number}, function (data) {
+            if (data.res = "Ok") {
+                $(obj).val("已开户");
+            } else {
+                layer.msg(data.msg);
+            }
+        });
+    }
     function btn(obj,number) {
         $(obj).attr('disabled',"true");
         $(obj).val("开户中...");

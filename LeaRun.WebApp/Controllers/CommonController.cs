@@ -277,7 +277,7 @@ namespace LeaRun.WebApp.Controllers
                 {
                     newTemplate = new Am_ContractTemplate
                     {
-                        Number = "",
+                        Number = CommonHelper.GetGuid,
                         Address = contract.Address,
                         AmmeterCode = ammeter.AM_Code,
                         AmmeterNumber = ammeter.Number,
