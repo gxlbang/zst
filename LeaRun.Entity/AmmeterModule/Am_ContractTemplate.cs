@@ -28,7 +28,7 @@ namespace LeaRun.Entity
     /// </author>
     /// </summary>
     [Description("Am_ContractTemplate")]
-    [PrimaryKey("AmmeterNumber")]
+    [PrimaryKey("Number")]
     public class Am_ContractTemplate : BaseEntity
     {
         #region 获取/设置 字段值
@@ -326,6 +326,12 @@ namespace LeaRun.Entity
         /// <returns></returns>
         [DisplayName("Remark")]
         public string Remark { get; set; }
+        /// <summary>
+        /// AgoDay
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("AgoDay")]
+        public int? AgoDay { get; set; }
         #endregion
 
         #region 扩展操作

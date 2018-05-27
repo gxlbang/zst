@@ -43,7 +43,7 @@
 
         $("#imguploadimg1").checkFileTypeAndSize({
             allowedExtensions: ['jpg', 'jpeg', 'gif', 'png'],
-            maxSize: 1024, //最大允许1024KB，即1MB
+            maxSize: 6144, //最大允许1024KB，即1MB
             success: function () {
                 //上传文件数据准备
                 var fd = new FormData();
@@ -71,7 +71,7 @@
                 return;
             },
             sizeerror: function () {
-                $.toast("最大尺寸1024KB,即1MB");
+                $.toast("最大尺寸6144KB,即6MB");
                 return;
             }
         });
