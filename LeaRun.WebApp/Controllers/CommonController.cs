@@ -8,6 +8,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Weixin.Mp.Sdk.Domain;
 
 namespace LeaRun.WebApp.Controllers
 {
@@ -385,7 +386,7 @@ namespace LeaRun.WebApp.Controllers
                     RentMoneyTime = contract.RentMoneyTime,
                     RoomNum = contract.RoomNum,
                     Status = 0,
-                    StatusStr = "待发送",
+                    StatusStr = "待签订",
                     TemplateNumber = newTemplate.Number,
                     ToiletNum = contract.ToiletNum,
                     TotalMoney = contract.TotalMoney,
@@ -405,7 +406,60 @@ namespace LeaRun.WebApp.Controllers
                 NewContract(itemList, addContract.Number);
 
                 //推送通知用户
-
+                //var first = new First()
+                //{
+                //    color = "#000000",
+                //    value = wxuser.Name + "，您有新的维修任务！"
+                //};
+                //var keynote1 = new Keynote1()
+                //{
+                //    color = "#0000ff",
+                //    value = NumberCode.ToString()
+                //};
+                //var keynote2 = new Keynote2()
+                //{
+                //    color = "#0000ff",
+                //    value = repair.Address + " " + repair.Cell + "单元" + repair.Floor + "楼" + repair.Room + "号房"
+                //};
+                //var keynote3 = new Keynote3()
+                //{
+                //    color = "#0000ff",
+                //    value = repair.RContent
+                //};
+                //var keynote4 = new Keynote4()
+                //{
+                //    color = "#0000ff",
+                //    value = repair.StatusStr
+                //};
+                //var keynote5 = new Keynote5()
+                //{
+                //    color = "#0000ff",
+                //    value = "已派师傅:" + wxuser.Name + " " + wxuser.Mobile
+                //};
+                //Weixin.Mp.Sdk.Domain.Remark remark = new Remark();
+                //remark.color = "#464646";
+                //remark.value = "请耐心等待维修师傅联系您。";
+                //Weixin.Mp.Sdk.Domain.Data data = new Data();
+                //data.first = first;
+                //data.keynote1 = keynote1;
+                //data.keynote2 = keynote2;
+                //data.keynote3 = keynote3;
+                //data.keynote4 = keynote4;
+                //data.keynote5 = keynote5;
+                //data.remark = remark;
+                //Weixin.Mp.Sdk.Domain.Miniprogram miniprogram = new Miniprogram();
+                //miniprogram.appid = "";
+                //miniprogram.pagepath = "";
+                //Weixin.Mp.Sdk.Domain.TemplateMessage templateMessage = new TemplateMessage();
+                //templateMessage.AppId = ConfigHelper.AppSettings("WEPAY_WEB_APPID");
+                //templateMessage.AppSecret = ConfigHelper.AppSettings("WEPAY_WEb_AppSecret");
+                //templateMessage.data = data;
+                //templateMessage.miniprogram = miniprogram;
+                //templateMessage.template_id = "Rsuv1t057y9Rc2tmI9B9Ys0a72kRUm29eL6h7gI61bk";
+                //var usermodel = database.FindEntity<Ho_PartnerUser>(repair.U_Number);
+                //templateMessage.touser = usermodel.OpenId;
+                //templateMessage.url = "http://am.zst0771.com/Personal/RepairInfo?number=" + repair.Number;
+                //templateMessage.SendTemplateMessage();
 
 
                 return Json(new { res = "Ok", msg = "提交成功" });

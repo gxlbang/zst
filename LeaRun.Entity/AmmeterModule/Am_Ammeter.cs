@@ -69,6 +69,13 @@ namespace LeaRun.Entity
         [DisplayName("AmmeterMoney_Name")]
         public string AmmeterMoney_Name { get; set; }
         /// <summary>
+        /// AmmeterMoney
+        /// </summary>
+        /// <returns></returns>
+        [DisplayName("AmmeterMoney")]
+        public decimal? AmmeterMoney { get; set; }
+        
+        /// <summary>
         /// Collector_Number
         /// </summary>
         /// <returns></returns>

@@ -2267,8 +2267,6 @@ namespace LeaRun.WebApp.Controllers
                                     return Json(new { res = "Ok", msg = "退租成功" });
                                 }
 
-
-
                             }
                         }
                     }
