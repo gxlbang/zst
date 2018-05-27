@@ -105,7 +105,7 @@
         <div class="text-right">
             <p>
                 签订时间：@*<input id="CreateTimeYear" type="text" class="inp" />年<input id="CreateTimeMonth" type="text" class="inp" />月<input id="CreateTimeDay" type="text" class="inp" />日</p>*@
-                <input type="text" name="name" value="" id="CreateTime" disabled="disabled" />
+                <input  type="text" name="name" value="" id="CreateTime" disabled="disabled" />
             <p>签订地址：<input id="CreateAddress" type="text" class="inp inp-long" /></p>
         </div>
     </div>
@@ -121,7 +121,7 @@
     </div>
 
     <div class="layui-form-item layui-form-text" style="text-align:center">
-        <button class="layui-btn layui-btn-normal" type="button" onclick="sub()">保存并生成合同</button>
+        <button  class="layui-btn layui-btn-normal" type="button" onclick="sub()">保存并生成合同</button>
     </div>
 
 
@@ -293,7 +293,7 @@
                 //获取附件
                 AjaxJson("/Common/GetContractTemplateImage", { ACT_Number: data.Number }, function (data1) {
                     $.each(data1, function (i) {
-                        var tempstr = '<div class="form clear">';
+                        var tempstr = '<div class="form  itemList clear">';
                         //if (i == data1.length - 1) {
                         //    tempstr = '<div class="form form-bom clear">';
                         //}
