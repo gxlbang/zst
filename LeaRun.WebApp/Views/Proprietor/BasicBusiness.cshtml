@@ -26,9 +26,9 @@
                         <span class="op-ju clear">采集器： @Model.Collector_Code @*<span class="op-lian fr">已连接</span>*@</span>
                         <span class="op-ju">表号：@Model.AM_Code</span>
                         <span class="op-ju">电表类型：@Model.AmmeterType_Name</span>
-                        <span class="op-ju">电价：@ViewBag.ammeterMoney 元/度</span>
+                        <span class="op-ju">电价：@Model.AmmeterMoney.Value.ToString("0.00") 元/度</span>
                         <span class="op-ju">绑定用户：@Model.U_Name</span>
-                        <span class="op-ju">起充金额：0.00 元</span>
+                        @*<span class="op-ju">起充金额：0.00 元</span>*@
                         <span class="op-ju">区域：@Model.Province @Model.City @Model.County </span>
                         <span class="op-ju">单元：@Model.Cell 单元</span>
                         <span class="op-ju">楼层：@Model.Floor 楼</span>

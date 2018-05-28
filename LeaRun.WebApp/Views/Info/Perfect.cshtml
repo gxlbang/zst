@@ -12,7 +12,7 @@
                 if (res.status) {
                     $("#PayPassword").val(res.password);
                     //关闭并重置密码输入
-                    PwdBox.reset();
+                    setTimeout("PwdBox.reset();", 500);
                 } else {
                     alert(JSON.stringify(arguments));
                 }
@@ -176,13 +176,13 @@
             <div class="add-co card-li bbot clear">
                 <span class="bill-text fl">支付密码</span>
                 <a id="dj1">
-                    <input name="PayPassword" type="password" maxlength="6" class="l-input fl" value="" placeholder="支付密码" id="PayPassword" disabled="disabled">
+                    <input name="PayPassword" type="password" maxlength="6" class="l-input fl" value="" placeholder="支付密码" id="PayPassword">
                 </a>
             </div>
             <div class="add-co card-li bbot clear">
                 <span class="bill-text fl">确认支付密码</span>
                 <a id="dj2">
-                    <input name="ConfirmPayPassword" id="ConfirmPayPassword" type="password" maxlength="6" class="l-input fl" value="" placeholder="确认支付密码" disabled="disabled">
+                    <input name="ConfirmPayPassword" id="ConfirmPayPassword" type="password" maxlength="6" class="l-input fl" value="" placeholder="确认支付密码">
                 </a>
             </div>
         }

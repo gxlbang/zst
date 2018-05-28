@@ -1,4 +1,5 @@
-﻿@{
+﻿@model LeaRun.Entity.Ho_PartnerUser
+@{
     ViewBag.Title = "个人中心";
     Layout = "~/Views/Shared/_Partial.cshtml";
 }
@@ -12,7 +13,7 @@
             <div class="my-border"></div>
             <img src="/Content/Images/top.png" alt="" />
         </div>
-        <span class="my-xing">@User.Identity.Name</span>
+        <span class="my-xing">@Model.Name</span>
     </div>
     <div class="my-all">
         <a href="/Personal/Information" class="my-list clear bbot">
@@ -93,12 +94,15 @@
             <i class="icon-next"></i>
         </a>
  
-
-        <a href="/Proprietor/Index" class="my-list clear bbot">
-            <i class="icon icon-eight fl"></i>
-            <span class="my-edit">业主中心</span>
-            <i class="icon-next"></i>
-        </a>
+        @if (Model.UserRole == "运营商")
+        {
+            <a href="/Proprietor/Index" class="my-list clear bbot">
+                <i class="icon icon-eight fl"></i>
+                <span class="my-edit">业主中心</span>
+                <i class="icon-next"></i>
+            </a>
+        }
+        
         <a href="share.html" class="my-list clear bbot">
             <i class="icon icon-nine fl"></i>
             <span class="my-edit">我要分享</span>
