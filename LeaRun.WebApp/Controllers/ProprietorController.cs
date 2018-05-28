@@ -1430,7 +1430,7 @@ namespace LeaRun.WebApp.Controllers
                 par3.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
                 par3.Add(DbFactory.CreateDbParameter("@U_Number2", "System"));
                 //收费项
-                var chargeItemList = database.FindList<Am_ChargeItem>(" and U_Number=@U_Number or U_Number=@U_Number2 ", par3.ToArray()).OrderBy(o=>o.Title);
+                var chargeItemList = database.FindList<Am_ChargeItem>(" and U_Number=@U_Number or U_Number=@U_Number2 ", par3.ToArray());
                 ViewBag.chargeItemList = chargeItemList;
 
                 return View(ammeter);
@@ -1457,12 +1457,16 @@ namespace LeaRun.WebApp.Controllers
             List<DbParameter> parTenant1 = new List<DbParameter>();
             parTenant1.Add(DbFactory.CreateDbParameter("@Name", name));
             parTenant1.Add(DbFactory.CreateDbParameter("@Account", phone));
-            parTenant1.Add(DbFactory.CreateDbParameter("@Status", "3"));
 
-            var isTenant = database.FindEntityByWhere<Ho_PartnerUser>(" and Name=@Name and Account=@Account and Status=@Status", parTenant1.ToArray());
+            var isTenant = database.FindEntityByWhere<Ho_PartnerUser>(" and Name=@Name and Account=@Account", parTenant1.ToArray());
             //是否存在用户
             if (isTenant != null && isTenant.Number != null)
             {
+                ///要判断状态
+                isTenant.Status =3;
+                isTenant.StatusStr = "审核通过";
+                database.Update<Ho_PartnerUser>(isTenant);
+
                 List<DbParameter> par = new List<DbParameter>();
                 par.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
                 par.Add(DbFactory.CreateDbParameter("@Number", number));

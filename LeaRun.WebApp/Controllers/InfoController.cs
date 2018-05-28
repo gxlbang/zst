@@ -49,7 +49,7 @@ namespace LeaRun.WebApp.Controllers
                 }
                 else
                 {
-                    if (hpf.ContentLength > 1024 * 1024 * 2) //如果大于规定最大尺寸
+                    if (hpf.ContentLength > 1024 * 1024 * 6) //如果大于规定最大尺寸
                     {
                         results.Add(new UploadFileResult()
                         {
@@ -57,7 +57,7 @@ namespace LeaRun.WebApp.Controllers
                             FilePath = "",
                             IsValid = false,
                             Length = hpf.ContentLength,
-                            Message = "图片尺寸不能超过2048KB",
+                            Message = "图片尺寸不能超过6144KB",
                             Type = hpf.ContentType
                         });
                     }
