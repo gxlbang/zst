@@ -27,14 +27,14 @@
 
             }
         </div>
-        <div class="charge-bill add-ele bbot clear">
+        @*<div class="charge-bill add-ele bbot clear">
             <span class="bill-text fl">电费</span>
             @if (ViewBag.ammeterMoneyList != null)
             {
                 @Html.DropDownListFor(m => m.Number, new SelectList(@ViewBag.ammeterMoneyList, "Number", "Name"), new { Name = "AmmeterMoney_Number", @class = "charge-se fl" })
 
             }
-        </div>
+        </div>*@
         <div class="charge-bill add-ele bbot clear">
             <span class="bill-text fl">表号</span>
             @Html.TextBoxFor(model => model.AM_Code, new { @class = "l-input fl", placeholder = "表号", })

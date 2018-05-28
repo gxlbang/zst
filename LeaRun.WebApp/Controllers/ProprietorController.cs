@@ -185,36 +185,36 @@ namespace LeaRun.WebApp.Controllers
                     return Json(new { res = "No", msg = addAmmeter.result });
                 }
                 //设置接口电价
-                var setPrice = CommonClass.AmmeterApi.SetAmmeterParameter(collector.CollectorCode, model.AM_Code, "12", ammeterMoney.FirstMoney.Value.ToString());
-                if (setPrice.suc)
-                {
-                    var task = new Am_Task
-                    {
-                        Number = setPrice.opr_id,
-                        AmmeterCode = ammeter.AM_Code,
-                        AmmeterNumber = ammeter.Number,
-                        CollectorCode = ammeter.Collector_Code,
-                        CollectorNumber = ammeter.Collector_Number,
-                        CreateTime = DateTime.Now,
-                        OperateType = 0,
-                        OperateTypeStr = "",
-                        OrderNumber = "",
-                        OverTime = DateTime.Now,
-                        Remark = "",
-                        Status = 0,
-                        StatusStr = "队列",
-                        TaskMark = "",
-                        UserName = user.Account,
-                        U_Name = user.Name,
-                        U_Number = user.Number
-                    };
+                //var setPrice = CommonClass.AmmeterApi.SetAmmeterParameter(collector.CollectorCode, model.AM_Code, "12", ammeterMoney.FirstMoney.Value.ToString());
+                //if (setPrice.suc)
+                //{
+                //    var task = new Am_Task
+                //    {
+                //        Number = setPrice.opr_id,
+                //        AmmeterCode = ammeter.AM_Code,
+                //        AmmeterNumber = ammeter.Number,
+                //        CollectorCode = ammeter.Collector_Code,
+                //        CollectorNumber = ammeter.Collector_Number,
+                //        CreateTime = DateTime.Now,
+                //        OperateType = 0,
+                //        OperateTypeStr = "",
+                //        OrderNumber = "",
+                //        OverTime = DateTime.Now,
+                //        Remark = "",
+                //        Status = 0,
+                //        StatusStr = "队列",
+                //        TaskMark = "",
+                //        UserName = user.Account,
+                //        U_Name = user.Name,
+                //        U_Number = user.Number
+                //    };
 
-                    task.OperateType = 20;
-                    task.OperateTypeStr = "设置电价";
-                    database.Insert<Am_Task>(task);
-                    CommonClass.AmmeterApi.InserOperateLog(user.Number, ammeter.Collector_Code, ammeter.AM_Code, 20, "设置电价", task.Number, setPrice.suc, setPrice.result);
+                //    task.OperateType = 20;
+                //    task.OperateTypeStr = "设置电价";
+                //    database.Insert<Am_Task>(task);
+                //    CommonClass.AmmeterApi.InserOperateLog(user.Number, ammeter.Collector_Code, ammeter.AM_Code, 20, "设置电价", task.Number, setPrice.suc, setPrice.result);
 
-                }
+                //}
                 ////设置一级报警
                 //var setAlert = CommonClass.AmmeterApi.SetAmmeterParameter(collector.CollectorCode, model.AM_Code, "24", model.FirstAlarm.ToString());
                 //if (!setAlert.suc)
@@ -347,6 +347,62 @@ namespace LeaRun.WebApp.Controllers
                     database.Insert<Am_Task>(task);
                     CommonClass.AmmeterApi.InserOperateLog(user.Number, ammeter.Collector_Code, ammeter.AM_Code, 8, "开户", task.Number, result.suc, result.result);
                     return Json(new { res = "Ok", msg = "提交成功" });
+
+                }
+            }
+            return Json(new { res = "No", msg = "提交失败" });
+        }
+
+        /// <summary>
+        /// 设置电价
+        /// </summary>
+        /// <param name="number"></param>
+        /// <param name="price"></param>
+        /// <returns></returns>
+        public ActionResult AmmeterSetPrice(string number, string price)
+        {
+            //var user = wbll.GetUserInfo(Request);
+            List<DbParameter> parAmmeter = new List<DbParameter>();
+            parAmmeter.Add(DbFactory.CreateDbParameter("@Number", number));
+            var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number=@Number ", parAmmeter.ToArray());
+
+            if (ammeter != null && ammeter.Number != null)
+            {
+                if (ammeter.AmmeterMoney==null )
+                {
+                    var clear = CommonClass.AmmeterApi.ClearZero(ammeter.Collector_Code, ammeter.AM_Code,ammeter.Acount_Id.ToString());
+                }
+                var result = CommonClass.AmmeterApi.AmmeterSetPrice(ammeter.Collector_Code, ammeter.AM_Code, decimal.Parse(price));
+                if (result.suc)
+                {
+                    var user = wbll.GetUserInfo(Request);
+                    var task = new Am_Task
+                    {
+                        Number = result.opr_id,
+                        AmmeterCode = ammeter.AM_Code,
+                        AmmeterNumber = ammeter.Number,
+                        CollectorCode = ammeter.Collector_Code,
+                        CollectorNumber = ammeter.Collector_Number,
+                        CreateTime = DateTime.Now,
+                        OperateType = 0,
+                        OperateTypeStr = "",
+                        OrderNumber = "",
+                        OverTime = DateTime.Now,
+                        Remark = "",
+                        Status = 0,
+                        StatusStr = "队列",
+                        TaskMark = "",
+                        UserName = user.Account,
+                        U_Name = user.Name,
+                        U_Number = user.Number
+                    };
+
+
+                    task.OperateType = 20;
+                    task.OperateTypeStr = "设置电价";
+                    database.Insert<Am_Task>(task);
+                    CommonClass.AmmeterApi.InserOperateLog(user.Number, ammeter.Collector_Code, ammeter.AM_Code, 5, "设置电价", task.Number, result.suc, result.result);
+                    return Json(new { res = "Ok", msg = "提交成功", pr_id= result.opr_id });
 
                 }
             }
@@ -1374,7 +1430,7 @@ namespace LeaRun.WebApp.Controllers
                 par3.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
                 par3.Add(DbFactory.CreateDbParameter("@U_Number2", "System"));
                 //收费项
-                var chargeItemList = database.FindList<Am_ChargeItem>(" and U_Number=@U_Number or U_Number=@U_Number2 ", par3.ToArray());
+                var chargeItemList = database.FindList<Am_ChargeItem>(" and U_Number=@U_Number or U_Number=@U_Number2 ", par3.ToArray()).OrderBy(o=>o.Title);
                 ViewBag.chargeItemList = chargeItemList;
 
                 return View(ammeter);
@@ -2399,10 +2455,10 @@ namespace LeaRun.WebApp.Controllers
         /// <param name="Name"></param>
         /// <param name="Mobile"></param>
         /// <returns></returns>
-        public ActionResult AddRepairMaster(string Name,string Mobile)
+        public ActionResult AddRepairMaster(string Name, string Mobile)
         {
             var usermodel = wbll.GetUserInfo(Request);
-            if (!string.IsNullOrEmpty(Name)&& !string.IsNullOrEmpty(Mobile))
+            if (!string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(Mobile))
             {
                 List<DbParameter> par = new List<DbParameter>();
                 par.Add(DbFactory.CreateDbParameter("@Name", Name));
@@ -2422,7 +2478,8 @@ namespace LeaRun.WebApp.Controllers
                     {
                         return Json(new { res = "Ok", msg = "添加成功" });
                     }
-                }else
+                }
+                else
                 {
                     return Json(new { res = "No", msg = "师傅信息错误" });
                 }
