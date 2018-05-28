@@ -37,7 +37,7 @@
         <h3 class="top">《房屋租赁合同》</h3>
         <div class="l-mot clear"><span class="nane fl">甲方（出租方）：<input disabled="disabled" id="F_U_Name" type="text" class="inp inp-long" /></span></div>
         <div class="l-mot clear"><span class="nane fl">乙方（承租方）：<input disabled="disabled" id="U_Name" type="text" class="inp inp-long" /></span></div>
-        <p class="mt15">甲方自愿将名下位于<span class="red"><input id="Province" type="text" class="inp" /><input id="City" type="text" class="inp" /><input id="County" type="text" class="inp" /><input id="Address" type="text" class="inp" />  <input id="Floor" type="text" class="inp" />栋<input id="Cell" type="text" class="inp" />单元<input id="Room" type="text" class="inp" />号<input id="RoomNum" type="text" class="inp" />房<input id="HallNum" type="text" class="inp" />厅<input id="KitchenNum" type="text" class="inp" />厨<input id="ToiletNum" type="text" class="inp" />卫</span>户型房屋，（建筑面积约为<span class="red"><input id="HouseSize" type="text" class="inp" />平米</span>）出租给乙方作为<input id="Useing" type="text" class="inp in-lot" />使用。（以下简称：<span class="red">该房屋、铺面</span>）。为明确各事项，经协商一致签订本合同。</p>
+        <p class="mt15">甲方自愿将名下位于<span class="red"><input id="Province" type="text" class="inp"  /><input id="City" type="text" class="inp" /><input id="County" type="text" class="inp" /><input id="Address" type="text" class="inp" />  <input id="Floor" type="text" class="inp" />栋<input id="Cell" type="text" class="inp" />单元<input id="Room" type="text" class="inp" />号<input id="RoomNum" type="text" class="inp" />房<input id="HallNum" type="text" class="inp" />厅<input id="KitchenNum" type="text" class="inp" />厨<input id="ToiletNum" type="text" class="inp" />卫</span>户型房屋，（建筑面积约为<span class="red"><input id="HouseSize" type="text" class="inp" />平米</span>）出租给乙方作为<input id="Useing" type="text" class="inp in-lot" />使用。（以下简称：<span class="red">该房屋、铺面</span>）。为明确各事项，经协商一致签订本合同。</p>
 
         <strong class="textbold">第一条<span class="span-pa">房屋基本情况</span></strong>
         <p>1.1使用面积约为<b class="b-blod"><input id="UseingSize" type="text" class="inp" value="120" /></b>平方米。 配套设备及装修情况详见（附件1）</p>
@@ -398,15 +398,18 @@
             data: json,
             success: function (data) {
                 if (data.res == "Ok") {
-                    layer.open({ content: data.msg, skin: 'msg', time: 2 });
-                    location.reload();
-                    layer.close(index);
+                    layer.msg(data.msg, {
+                        time: 2000, end: function myfunction() {
+                            location.href = "/Proprietor/AmmeterList";
+                        }
+                    });
+
                 } else {
-                    layer.open({ content: data.msg, skin: 'msg', time: 2 });
+                    layer.msg(data.msg, { time: 2000 });
                 }
             },
             error: function (data) {
-                layer.open({ content: data.msg, skin: 'msg', time: 2 });
+                layer.msg(data.msg, { time: 2000 });
             }
         });
 

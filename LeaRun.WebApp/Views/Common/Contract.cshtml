@@ -18,6 +18,7 @@
     @*<script src="~/Content/Scripts/uijs/js.js"></script>*@
     <script src="~/Content/Scripts/learunui-framework.js"></script>
     <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <link href="~/Content/Scripts/layui/css/layui.css" rel="stylesheet" />
     <script type="text/javascript" src="~/Content/Scripts/layer/layer.js"></script>
 
     <script type="text/javascript">
@@ -102,8 +103,11 @@
         <strong class="textbold"><span class="red">附件（1）</span></strong>
         <p>以下附件中列明的配套设备及装修情况，乙方在承租期届满退租时应完好整洁交付给甲方验收，出现损坏或无法正常使用的甲方有权要求乙方等价赔偿或维修正常使用。</p>
         <div class="form mt15 clear">
-            <span class="form-li fl">名称</span><span class="form-li fl">数量</span><span class="form-li fl">单价</span><span class="form-li fl">图片</span><span class="form-li fl">详情描述</span>
+            <span class="form-li fl" style="border-top:0.02rem solid #ccc">名称</span><span style="border-top:0.02rem solid #ccc" class="form-li fl">数量</span><span style="border-top:0.02rem solid #ccc" class="form-li fl">单价</span><span style="border-top:0.02rem solid #ccc" class="form-li fl">图片</span><span style="border-top:0.02rem solid #ccc" class="form-li fl">详情描述</span>
         </div>
+    </div>
+    <div class="layui-form-item layui-form-text" style="text-align:center;display:none;" id="btnContract">
+        <button class="layui-btn layui-btn-normal" type="button" onclick="sub()">同意并签订合同</button>
     </div>
 </body>
 </html>
@@ -112,12 +116,16 @@
     var Device = GetQuery('Device');
     $(function () {
         InitControl();
+        $("input").attr("readonly", "readonly");
     })
     //得到一个对象实体
     function InitControl() {
         if (!!GetQuery('KeyValue')) {
             AjaxJson("/Common/GetContract", { KeyValue: KeyValue }, function (data) {
                 SetWebControls(data);
+                if (data.Status == 0) {
+                    $("#btnContract").show();
+                }
                 $("#U_Name1").val(data.U_Name);
                 var myDate = new Date(data.CreateTime);
                 $("#CreateTimeYear").val(myDate.getFullYear());
@@ -148,6 +156,22 @@
                         $("#ContractImage").append(tempstr);
                     });
                 });
+            });
+        }
+    }
+
+    function sub() {
+        if (!!GetQuery('KeyValue')) {
+            AjaxJson("/Common/SetContract", { KeyValue: KeyValue }, function (data) {
+                if (data.res == "Ok") {
+                    layer.msg(data.msg, {
+                        time: 2000, end: function myfunction() {
+                            location.href = "/Personal/Index";
+                        }
+                    });
+                } else {
+                    layer.msg(data.msg, { time: 2000 });
+                }
             });
         }
     }

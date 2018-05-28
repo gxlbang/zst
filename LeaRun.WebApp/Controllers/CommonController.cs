@@ -33,6 +33,38 @@ namespace LeaRun.WebApp.Controllers
             return Content(model.ToJson());
         }
         /// <summary>
+        /// 合同签订
+        /// </summary>
+        /// <param name="KeyValue"></param>
+        /// <returns></returns>
+        public ActionResult SetContract(string KeyValue)
+        {
+            var model = database.FindEntity<Am_Contract>(KeyValue);
+            if (model == null || string.IsNullOrEmpty(model.Number)) {
+                return Json(new { res = "No", msg = "合同信息错误" });
+            }
+            model.Status = 1;
+            model.StatusStr = "已签订";
+            model.UpdateTime = DateTime.Now;
+           int result = database.Update(model);
+            if (result > 0)
+            {
+                //做废当前合同
+                var list = database.FindList<Am_Contract>(" and Status = 1 and AmmeterNumber = '"+model.AmmeterNumber+"'");
+                foreach (var item in list)
+                {
+                    item.Status = 9;
+                    item.StatusStr = "已做废";
+                    database.Update(item);
+                }
+                return Json(new { res = "Ok", msg = "提交成功" });
+            }
+            else {
+                return Json(new { res = "No", msg = "合同签订失败" });
+            }
+        }
+
+        /// <summary>
         /// 获取合同附件
         /// </summary>
         /// <param name="KeyValue"></param>
@@ -406,60 +438,60 @@ namespace LeaRun.WebApp.Controllers
                 NewContract(itemList, addContract.Number);
 
                 //推送通知用户
-                //var first = new First()
-                //{
-                //    color = "#000000",
-                //    value = wxuser.Name + "，您有新的维修任务！"
-                //};
-                //var keynote1 = new Keynote1()
-                //{
-                //    color = "#0000ff",
-                //    value = NumberCode.ToString()
-                //};
-                //var keynote2 = new Keynote2()
-                //{
-                //    color = "#0000ff",
-                //    value = repair.Address + " " + repair.Cell + "单元" + repair.Floor + "楼" + repair.Room + "号房"
-                //};
-                //var keynote3 = new Keynote3()
-                //{
-                //    color = "#0000ff",
-                //    value = repair.RContent
-                //};
-                //var keynote4 = new Keynote4()
-                //{
-                //    color = "#0000ff",
-                //    value = repair.StatusStr
-                //};
-                //var keynote5 = new Keynote5()
-                //{
-                //    color = "#0000ff",
-                //    value = "已派师傅:" + wxuser.Name + " " + wxuser.Mobile
-                //};
-                //Weixin.Mp.Sdk.Domain.Remark remark = new Remark();
-                //remark.color = "#464646";
-                //remark.value = "请耐心等待维修师傅联系您。";
-                //Weixin.Mp.Sdk.Domain.Data data = new Data();
-                //data.first = first;
-                //data.keynote1 = keynote1;
-                //data.keynote2 = keynote2;
-                //data.keynote3 = keynote3;
-                //data.keynote4 = keynote4;
-                //data.keynote5 = keynote5;
-                //data.remark = remark;
-                //Weixin.Mp.Sdk.Domain.Miniprogram miniprogram = new Miniprogram();
-                //miniprogram.appid = "";
-                //miniprogram.pagepath = "";
-                //Weixin.Mp.Sdk.Domain.TemplateMessage templateMessage = new TemplateMessage();
-                //templateMessage.AppId = ConfigHelper.AppSettings("WEPAY_WEB_APPID");
-                //templateMessage.AppSecret = ConfigHelper.AppSettings("WEPAY_WEb_AppSecret");
-                //templateMessage.data = data;
-                //templateMessage.miniprogram = miniprogram;
-                //templateMessage.template_id = "Rsuv1t057y9Rc2tmI9B9Ys0a72kRUm29eL6h7gI61bk";
-                //var usermodel = database.FindEntity<Ho_PartnerUser>(repair.U_Number);
-                //templateMessage.touser = usermodel.OpenId;
-                //templateMessage.url = "http://am.zst0771.com/Personal/RepairInfo?number=" + repair.Number;
-                //templateMessage.SendTemplateMessage();
+                var first = new First()
+                {
+                    color = "#000000",
+                    value = addContract.U_Name + "，您有新的合同待签！"
+                };
+                var keynote1 = new Keynote1()
+                {
+                    color = "#0000ff",
+                    value = addContract.ContractCode
+                };
+                var keynote2 = new Keynote2()
+                {
+                    color = "#0000ff",
+                    value = addContract.TotalMoney.Value.ToString("0.00")
+                };
+                var keynote3 = new Keynote3()
+                {
+                    color = "#0000ff",
+                    value = addContract.Address+ addContract.Cell+"单元"+ addContract.Floor+"楼"+ addContract.Room+"房"
+                };
+                var keynote4 = new Keynote4()
+                {
+                    color = "#0000ff",
+                    value = addContract.RentBeginTime.Value.ToString("yyyy-MM-dd")+"至"+ addContract.RentEndTime.Value.ToString("yyyy-MM-dd")
+                };
+                var keynote5 = new Keynote5()
+                {
+                    color = "#0000ff",
+                    value = addContract.F_U_Name
+                };
+                Weixin.Mp.Sdk.Domain.Remark remark = new Remark();
+                remark.color = "#464646";
+                remark.value = "请尽快完成线上签约。";
+                Weixin.Mp.Sdk.Domain.Data data = new Data();
+                data.first = first;
+                data.keynote1 = keynote1;
+                data.keynote2 = keynote2;
+                data.keynote3 = keynote3;
+                data.keynote4 = keynote4;
+                data.keynote5 = keynote5;
+                data.remark = remark;
+                Weixin.Mp.Sdk.Domain.Miniprogram miniprogram = new Miniprogram();
+                miniprogram.appid = "";
+                miniprogram.pagepath = "";
+                Weixin.Mp.Sdk.Domain.TemplateMessage templateMessage = new TemplateMessage();
+                templateMessage.AppId = ConfigHelper.AppSettings("WEPAY_WEB_APPID");
+                templateMessage.AppSecret = ConfigHelper.AppSettings("WEPAY_WEb_AppSecret");
+                templateMessage.data = data;
+                templateMessage.miniprogram = miniprogram;
+                templateMessage.template_id = "hs52Q2SBFc1iEdJrPD9CH3NR6t_IMfYDN-Yg2z6U0ak";
+                var usermodel = database.FindEntity<Ho_PartnerUser>(addContract.U_Number);
+                templateMessage.touser = usermodel.OpenId;
+                templateMessage.url = "http://am.zst0771.com/Common/Contract?KeyValue=" + addContract.Number;
+                templateMessage.SendTemplateMessage();
 
 
                 return Json(new { res = "Ok", msg = "提交成功" });

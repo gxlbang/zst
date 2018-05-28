@@ -2245,9 +2245,19 @@ namespace LeaRun.WebApp.Controllers
                                                     rent.StatusStr = "已退租";
                                                     rent.SucTime = DateTime.Now;
 
-                                                    database.Update<Am_Rent>(rent);
-
-                                                    return Json(new { res = "Ok", msg = "退租成功" });
+                                                    int result = database.Update<Am_Rent>(rent);
+                                                    if (result > 0)
+                                                    {
+                                                        //合同退租
+                                                        var list = database.FindList<Am_Contract>(" and Status = 1 and AmmeterNumber = '" + rent.AmmeterNumber + "'");
+                                                        foreach (var item in list)
+                                                        {
+                                                            item.Status = 2;
+                                                            item.StatusStr = "已退租";
+                                                            database.Update(item);
+                                                        }
+                                                        return Json(new { res = "Ok", msg = "退租成功" });
+                                                    }
                                                 }
 
                                             }

@@ -222,48 +222,48 @@ namespace LeaRun.WebApp.Controllers
         public ActionResult Login(string openid)
         {
             //获取cookie
-            WebData wbll = new WebData();
-            var user = wbll.GetUserInfo(Request);
-            if (user != null && !string.IsNullOrEmpty(user.Number)) //cookie存在
-            {
-                return Redirect("/Personal/Index");
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(openid))
-                {
-                    List<DbParameter> parameter = new List<DbParameter>();
-                    parameter.Add(DbFactory.CreateDbParameter("@OpenId", openid));
-                    var account = database.FindEntityByWhere<Ho_PartnerUser>(" and OpenId=@OpenId", parameter.ToArray());
-                    if (account != null && account.Number != null)
-                    {
-                        if (account.Status == 9)
-                        {
-                            return Content("<script type='text/javascript'>alert('用户被限制登录!');location.href='/Account/Login';</script>");
-                        }
-                        else
-                        {
-                            // 抽取用户信息
-                            string Md5 = Md5Helper.MD5(account.Number + account.OpenId + Request.UserHostAddress + Request.Browser.Type + Request.Browser.ClrVersion.ToString() + "2017", 16);
+            //WebData wbll = new WebData();
+            //var user = wbll.GetUserInfo(Request);
+            //if (user != null && !string.IsNullOrEmpty(user.Number)) //cookie存在
+            //{
+            //    return Redirect("/Personal/Index");
+            //}
+            //else
+            //{
+            //    if (!string.IsNullOrEmpty(openid))
+            //    {
+            //        List<DbParameter> parameter = new List<DbParameter>();
+            //        parameter.Add(DbFactory.CreateDbParameter("@OpenId", openid));
+            //        var account = database.FindEntityByWhere<Ho_PartnerUser>(" and OpenId=@OpenId", parameter.ToArray());
+            //        if (account != null && account.Number != null)
+            //        {
+            //            if (account.Status == 9)
+            //            {
+            //                return Content("<script type='text/javascript'>alert('用户被限制登录!');location.href='/Account/Login';</script>");
+            //            }
+            //            else
+            //            {
+            //                // 抽取用户信息
+            //                string Md5 = Md5Helper.MD5(account.Number + account.OpenId + Request.UserHostAddress + Request.Browser.Type + Request.Browser.ClrVersion.ToString() + "2017", 16);
 
-                            string str = account.Number + "&" + account.OpenId + "&" + Request.UserHostAddress + "&" + Request.Browser.Type
-                                + "&" + Request.Browser.ClrVersion.ToString() + "&" + Md5;
+            //                string str = account.Number + "&" + account.OpenId + "&" + Request.UserHostAddress + "&" + Request.Browser.Type
+            //                    + "&" + Request.Browser.ClrVersion.ToString() + "&" + Md5;
 
-                            str = Utilities.DESEncrypt.Encrypt(str);
-                            CookieHelper.WriteCookie("WebUserInfo", str);
-                        }
-                    }
-                    else
-                    {
-                        return Content("<script type='text/javascript'>alert('请先注册用户!');location.href='/Account/Register?openid=" + openid + "';</script>");
-                    }
-                }
-                else
-                {
-                    return Redirect("http://shop.zst0771.com/Wechat/WeChat/CreateCode");
+            //                str = Utilities.DESEncrypt.Encrypt(str);
+            //                CookieHelper.WriteCookie("WebUserInfo", str);
+            //            }
+            //        }
+            //        else
+            //        {
+            //            return Content("<script type='text/javascript'>alert('请先注册用户!');location.href='/Account/Register?openid=" + openid + "';</script>");
+            //        }
+            //    }
+            //    else
+            //    {
+            //        return Redirect("http://shop.zst0771.com/Wechat/WeChat/CreateCode");
 
-                }
-            }
+            //    }
+            //}
 
             return View();
         }
