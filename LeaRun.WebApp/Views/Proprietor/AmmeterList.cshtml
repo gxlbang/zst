@@ -14,6 +14,7 @@
             <input type="text" name="name" id="name" class="acc-in fl" placeholder="姓名" />
             <button class="acc-btn fr">查询</button>
         </form>
+        <input type="hidden" id="pr_number" name="name" value="" />
     </div>
     <div class="list-index" id="containerList">
 
@@ -77,7 +78,7 @@
                             }
                             lis.push("</span>");
 
-                            lis .push("<span class=\"op-sshow fl\">电价：<a herf=\"javascript:;\" id=\"xx"+data[i].AM_Code+"\"  onclick=\"setPrice('"+data[i].Number+"','"+data[i].AM_Code+"')\" >"+data[i].AmmeterMoneyName+" </a></span>");
+                            lis .push("<span class=\"op-sshow fl\">电价："+data[i].AmmeterMoney+" <a class=\"l-a fr\" herf=\"javascript:;\" id=\"xx"+data[i].AM_Code+"\"  onclick=\"setPrice('"+data[i].Number+"','"+data[i].AM_Code+"')\" >设置</a></span>");
                             if (data[i].Status=="0") {
                                 lis.push("<span class=\"op-sshow fl\"><input type=\"button\" class=\"l-a fr\"\ onclick=\"btn(this,'"+data[i].Number+"')\" value=\"开户\"></span>");
                             }
@@ -101,20 +102,21 @@
         html+="<div class=\"layui-form-item\">";
         html+="<label class=\"layui-form-label\">表号</label>";
         html+="<div class=\"layui-input-inline\">";
-        html+="<input readonly=\"readonly\" type=\"text\" name=\"username\" lay-verify=\"required\"   autocomplete=\"off\" class=\"layui-input\" value=\""+code+"\">";
+        html+="<input readonly=\"readonly\" type=\"text\" name=\"username\" lay-verify=\"required\"   autocomplete=\"off\" class=\"layui-input\"    value=\""+code+"\">";
+        html+="<input type=\"hidden\" id=\"am_number\" name=\"name\" value=\""+number+"\" />";
         html+="</div>";
         html+="</div>";
 
         html+="<div class=\"layui-form-item\">";
         html+="<label class=\"layui-form-label\">电价</label>";
         html+="<div class=\"layui-input-inline\">";
-        html+="<input  type=\"number\" name=\"username\" lay-verify=\"required\" placeholder=\"请输入\" autocomplete=\"off\" class=\"layui-input\">";
+        html+="<input  type=\"number\" id=\"price\" name=\"username\" lay-verify=\"required\" placeholder=\"请输入\" autocomplete=\"off\" class=\"layui-input\">";
         html+="</div>";
         html+="</div>";
 
         html+="</form>";
         html+="<div style=\"text-align:center\">"
-        html+="<button class=\"layui-btn layui-btn-normal\">设置</button>";
+        html+="<button class=\"layui-btn layui-btn-normal\" onclick=\"subPrice(this)\">设置</button>";
         html+="</div>";
 
         layer.open({
@@ -131,12 +133,16 @@
 
     }
 
-    function subPrice(number,price) {
+    function subPrice(obj) {
+        var number=$("#am_number").val();
+        var price=$("#price").val();
         $(obj).attr('disabled',"true");
-        $(obj).val("开户中...");
-        $.post("/Proprietor/AmmeterOpenAccount", { number:number}, function (data) {
+        $(obj).text("设置中...");
+        $.post("/Proprietor/AmmeterSetPrice", { number:number,price:price}, function (data) {
             if (data.res = "Ok") {
-                $(obj).val("已开户");
+                setInterval(function () {
+                    result(data.pr_id);
+                }, 5000);
             } else {
                 layer.msg(data.msg);
             }
@@ -152,6 +158,15 @@
                 layer.msg(data.msg);
             }
         });
+    }
 
+    function result(pr_id) {
+        $.post("/Personal/OperationResult", { pr_id: pr_id }, function (data) {
+            if (data.res == "Ok") {
+                layer.msg(data.msg, { time: 2000,end:function myfunction() {
+                    location.reload();
+                } });
+            }
+        });
     }
 </script>

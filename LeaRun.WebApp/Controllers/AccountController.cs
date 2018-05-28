@@ -221,7 +221,7 @@ namespace LeaRun.WebApp.Controllers
         #endregion
         public ActionResult Login(string openid)
         {
-            //获取cookie
+            ////获取cookie
             //WebData wbll = new WebData();
             //var user = wbll.GetUserInfo(Request);
             //if (user != null && !string.IsNullOrEmpty(user.Number)) //cookie存在

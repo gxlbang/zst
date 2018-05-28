@@ -91,7 +91,6 @@ namespace ZstDataHandle
                                 {
                                     item.Remark = "剩余金额:" + example.data[0].dsp;
                                 }
-
                             }
 
                             item.OverTime = DateTime.Parse(example.resolve_time);
@@ -141,6 +140,30 @@ namespace ZstDataHandle
                                 SendMessage(ammeter.Number, ammeter.U_Number, ammeter.CurrMoney.Value.ToString("0.00"), "成功", item.Money.Value.ToString("0.00"), item.CreateTime.Value.ToString("yyyy-MM-dd HH:mm:dd"));
 
                             }
+                            else if (item.OperateType == 20)//设置电价
+                            {
+                                if (result.Contains("params"))
+                                {
+                                    var pr = JsonHelper.JonsToList<Root>(result.Replace("params", "paramsContent"));
+                                    if (pr[0].paramsContent != null)
+                                    {
+                                        item.Remark = "设置电价成功:" + pr[0].paramsContent.p1 + "元";
+                                    }
+                                    item.TaskMark = result;
+
+
+                                    List<DbParameter> par = new List<DbParameter>();
+                                    par.Add(DbFactory.CreateDbParameter("@Number", item.AmmeterNumber));
+                                    var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number =@Number ", par.ToArray());
+                                    if (ammeter != null && ammeter.Number != null)
+                                    {
+                                        ammeter.AmmeterMoney =decimal.Parse(pr[0].paramsContent.p1);
+                                        ammeter.Acount_Id = null;
+                                        database.Update<Am_Ammeter>(ammeter);
+                                    }
+
+                                }
+                            }
                             else if (item.OperateType == 1)
                             {
                                 item.Remark = "合闸成功";
@@ -149,6 +172,7 @@ namespace ZstDataHandle
                             {
                                 item.Remark = "拉闸成功";
                             }
+
                         }
                         else if (example.status == "RESPONSE_FAIL")
                         {
@@ -226,6 +250,17 @@ namespace ZstDataHandle
                                     ammeter.CP_Time = DateTime.Parse(example.resolve_time);
                                     DbHelper.UpdateAmmeter(ammeter);
                                 }
+                            }
+                            //电价设置
+                            if (type==12)
+                            {
+                                if (ammeter != null)
+                                {
+                                    ammeter.AmmeterMoney = decimal.Parse(example.data[0].value[0].ToString());
+                                    ammeter.Acount_Id = null;
+                                    database.Update<Am_Ammeter>(ammeter);
+                                }
+
                             }
                         }
                     }
@@ -915,6 +950,8 @@ namespace ZstDataHandle
             public int count { get; set; }
 
             public int money { get; set; }
+            
+            public string p1 { get; set; }
         }
     }
 

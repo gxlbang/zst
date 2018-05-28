@@ -271,6 +271,49 @@ namespace LeaRun.WebApp.CommonClass
             }
             return r;
         }
+
+        /// <summary>
+        /// 设置电表电价
+        /// </summary>
+        /// <param name="cid"></param>
+        /// <param name="address"></param>
+        /// <param name="price"></param>
+        /// <returns></returns>
+        public static Result AmmeterSetPrice(string cid, string address, decimal price)
+        {
+            Result r = new CommonClass.AmmeterApi.Result();
+            var opr_id = Utilities.CommonHelper.GetGuid;
+            AmmeterSDK.MainApi api = new AmmeterSDK.MainApi();
+            List<Dictionary<string, object>> list = new List<Dictionary<string, object>>();
+            Dictionary<string, object> paramssMap = new Dictionary<string, object>();
+            paramssMap.Add("cid", cid);
+            paramssMap.Add("address", address);
+            paramssMap.Add("retry_times", "1");
+            paramssMap.Add("time_out", "0");
+            paramssMap.Add("opr_id", opr_id);
+            paramssMap.Add("type", "12");
+            paramssMap.Add("params", new { p1 = price });
+            paramssMap.Add("must_online", true);
+            list.Add(paramssMap);
+            var result = api.Request(AmmeterSDK.ApiUrl.SETAMMETERDATE, list, true);
+            var data = Utilities.JsonHelper.JsonToDataTable(result);
+            if (data.Rows.Count > 0)
+            {
+                var status = data.Rows[0]["status"].ToString();
+                if (status == "SUCCESS")
+                {
+                    r.suc = true;
+                    r.result = "提交成功";
+                    r.opr_id = opr_id;
+                }
+                else
+                {
+                    r.suc = false;
+                    r.result = data.Rows[0]["error_msg"].ToString();
+                }
+            }
+            return r;
+        }
         /// <summary>
         /// 电表充值
         /// </summary>
@@ -314,10 +357,46 @@ namespace LeaRun.WebApp.CommonClass
             }
             return r;
         }
-
-        public static Result ClearZero(string cid, string address)
+        /// <summary>
+        /// 电表清零
+        /// </summary>
+        /// <param name="cid"></param>
+        /// <param name="address"></param>
+        /// <param name="account_id"></param>
+        /// <returns></returns>
+        public static Result ClearZero(string cid, string address,string account_id)
         {
-            return null;
+            Result r = new CommonClass.AmmeterApi.Result();
+            var opr_id = Utilities.CommonHelper.GetGuid;
+            AmmeterSDK.MainApi api = new AmmeterSDK.MainApi();
+            List<Dictionary<string, object>> list = new List<Dictionary<string, object>>();
+            Dictionary<string, object> paramssMap = new Dictionary<string, object>();
+            paramssMap.Add("cid", cid);
+            paramssMap.Add("address", address);
+            paramssMap.Add("retry_times", "1");
+            paramssMap.Add("time_out", "0");
+            paramssMap.Add("opr_id", opr_id);
+            paramssMap.Add("params", new { account_id = account_id });
+            paramssMap.Add("must_online", true);
+            list.Add(paramssMap);
+            var result = api.Request(AmmeterSDK.ApiUrl.AMMETERRESET, list, true);
+            var data = Utilities.JsonHelper.JsonToDataTable(result);
+            if (data.Rows.Count > 0)
+            {
+                var status = data.Rows[0]["status"].ToString();
+                if (status == "SUCCESS")
+                {
+                    r.suc = true;
+                    r.result = "提交成功";
+                    r.opr_id = opr_id;
+                }
+                else
+                {
+                    r.suc = false;
+                    r.result = data.Rows[0]["error_msg"].ToString();
+                }
+            }
+            return r;
         }
         /// <summary>
         /// 获取操作结果

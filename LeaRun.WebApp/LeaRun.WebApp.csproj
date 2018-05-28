@@ -407,6 +407,7 @@
     <Content Include="Content\Images\fileType\zip_24.png" />
     <Content Include="Content\Images\fileType\zip_72.png" />
     <Content Include="Content\Images\hgrabber.gif" />
+    <Content Include="Content\Images\icon-phone.png" />
     <Content Include="Content\Images\Icon16\32_bit.png" />
     <Content Include="Content\Images\Icon16\3d_glasses.png" />
     <Content Include="Content\Images\Icon16\64_bit.png" />

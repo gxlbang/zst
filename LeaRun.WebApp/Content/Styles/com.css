@@ -463,7 +463,7 @@ modify-password 修改密码*/
 .open .linked .icon-next { transform: rotate(90deg); }
 .submenu .my-list { padding-left: 1.3rem; -webkit-transition: all 0.5s ease; -o-transition: all 0.5s ease; transition: all 0.5s ease; }
 .open .submenu .my-list { -webkit-transition: all 0.5s ease; -o-transition: all 0.5s ease; transition: all 0.5s ease; }
-
+.icon-phone { display: block; width: 0.88rem; height: 0.88rem; position: absolute; top: 0; right: 0.6rem; background: url(../images/icon-phone.png) center center no-repeat; background-size: 0.5rem 0.5rem; }
 /*fine-balance 余额明细*/
 
 /*my-deposit 我的押金*/

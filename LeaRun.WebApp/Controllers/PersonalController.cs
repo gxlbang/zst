@@ -609,9 +609,9 @@ namespace LeaRun.WebApp.Controllers
             {
                 var user = wbll.GetUserInfo(Request);
                 List<DbParameter> parameter = new List<DbParameter>();
-                parameter.Add(DbFactory.CreateDbParameter("@OrderNumber", pr_id));
+                parameter.Add(DbFactory.CreateDbParameter("@Number", pr_id));
 
-                var task = database.FindEntityByWhere<Am_Task>(" and OrderNumber=@OrderNumber ", parameter.ToArray());
+                var task = database.FindEntityByWhere<Am_Task>(" and Number=@Number ", parameter.ToArray());
                 if (task != null && task.Number != null)
                 {
                     if (task.Status > 0)
