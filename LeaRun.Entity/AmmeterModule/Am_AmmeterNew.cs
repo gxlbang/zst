@@ -44,11 +44,11 @@ namespace LeaRun.Entity
         [DisplayName("AmmeterType_Name")]
         public string AmmeterType_Name { get; set; }
         /// <summary>
-        /// AmmeterMoney_Name
+        /// AmmeterMoney
         /// </summary>
         /// <returns></returns>
-        [DisplayName("AmmeterMoney_Name")]
-        public string AmmeterMoney_Name { get; set; }
+        [DisplayName("AmmeterMoney")]
+        public string AmmeterMoney { get; set; }
         /// <summary>
         /// Collector_Code
         /// </summary>

@@ -138,7 +138,7 @@ namespace LeaRun.WebApp.Areas.AmmeterModule.Controllers
             {
                 var model = new Am_AmmeterNew();
                 model.Address = item.Address;
-                model.AmmeterMoney_Name = item.AmmeterMoney_Name;
+                model.AmmeterMoney = item.AmmeterMoney.Value.ToString("0.00");
                 model.AmmeterType_Name = item.AmmeterType_Name;
                 model.AM_Code = item.AM_Code;
                 model.Cell = item.Cell;
