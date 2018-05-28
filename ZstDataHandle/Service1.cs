@@ -49,7 +49,7 @@ namespace ZstDataHandle
 
             //抄表生成
             ReadingTimer.Elapsed += new System.Timers.ElapsedEventHandler(ReadingTimerEvent);
-            ReadingTimer.Interval = 5000;//每5分钟执行一次
+            ReadingTimer.Interval = 1000*60*30;//每5分钟执行一次
             ReadingTimer.Enabled = true;
 
             //抄表异步处理

@@ -50,13 +50,14 @@ namespace LeaRun.WebApp.Controllers
             if (result > 0)
             {
                 //做废当前合同
-                var list = database.FindList<Am_Contract>(" and Status = 1 and AmmeterNumber = '"+model.AmmeterNumber+"'");
+                var list = database.FindList<Am_Contract>(" and Status != 9 and AmmeterNumber = '"+model.AmmeterNumber+"' and Number != '"+ KeyValue + "'");
                 foreach (var item in list)
                 {
                     item.Status = 9;
-                    item.StatusStr = "已做废";
+                    item.StatusStr = "已作废";
                     database.Update(item);
                 }
+                //更改电表状态和账单推送等操作
                 return Json(new { res = "Ok", msg = "提交成功" });
             }
             else {

@@ -34,7 +34,8 @@ namespace LeaRun.WebApp.Controllers
 
         public ActionResult Index()
         {
-            return View();
+            var user = wbll.GetUserInfo(Request);
+            return View(user);
         }
 
 
