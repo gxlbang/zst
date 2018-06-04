@@ -30,6 +30,15 @@
                 }
             });
         });
+
+        $("#PayPassword").focus(function () {
+            document.activeElement.blur();
+        });
+        $("#ConfirmPayPassword").focus(function () {
+            document.activeElement.blur();
+        });
+
+
         $("#img1").click(function () {
             $("#imguploadimg1").click();
         })
@@ -138,10 +147,10 @@
                 <span class="bill-text fl">身份证号码</span>
                 <input name="CardCode" type="text" class="l-input fl" value="" maxlength="18" placeholder="输入身份证号码">
             </div>
-            <div class="add-co card-li clear">
+            @*<div class="add-co card-li clear">
                 <span class="bill-text fl">身份证上传</span>
 
-            </div>
+            </div>*@
             <div class="add-co card-li">
 
                 <span class="bill-text fl">身份证正面</span>

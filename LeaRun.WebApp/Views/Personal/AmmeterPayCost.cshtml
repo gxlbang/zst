@@ -11,7 +11,6 @@
     <div id="containerList">
         <div class="pen-li pay-in bbot clear">
             <span class="pen-span fl">金额</span>
-            <span class="pen-span fl">方式</span>
             <span class="pen-span fl">状态</span>
             <span class="pen-span fl">时间</span>
         </div>
@@ -56,10 +55,9 @@
                         var lis = [];
                         for (var i in data) {
                             lis.push("<div class=\"pro pay-in pay-a bbot clear\">");
-                            lis.push("<span class=\"pen-span fl\">"+parseFloat(data[i].Moeny).toFixed(2)+"</span>");
-                            lis.push("<span class=\"pen-span fl\">"+data[i].PayType+"</span>");
+                            lis.push("<span class=\"pen-span fl\">"+parseFloat(data[i].Money).toFixed(2)+"</span>");
                             lis.push("<span class=\"pen-span fl\">"+data[i].StatusStr+"</span>");
-                            lis.push("<span class=\"pen-span fl\">"+formatDate(data[i].CreateTime,"yyyy-MM-dd hh:mm:ss") +"</span>");
+                            lis.push("<span class=\"pen-span  fl\" style=\" width:45%;\">"+formatDate(data[i].CreateTime,"yyyy-MM-dd hh:mm:ss") +"</span>");
                             lis.push("</div>");
                         }
                         next(lis.join(''), page < count);

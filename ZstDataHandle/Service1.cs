@@ -34,7 +34,7 @@ namespace ZstDataHandle
 
             //前台异步处理
             timer.Elapsed += new System.Timers.ElapsedEventHandler(TimedEvent);
-            timer.Interval = 5000;//每5秒执行一次
+            timer.Interval = 1000 * 60 * 50;//每50分钟执行一次
             timer.Enabled = true;
 
             //账单生成
@@ -49,12 +49,12 @@ namespace ZstDataHandle
 
             //抄表生成
             ReadingTimer.Elapsed += new System.Timers.ElapsedEventHandler(ReadingTimerEvent);
-            ReadingTimer.Interval = 5000;//每5分钟执行一次
+            ReadingTimer.Interval = 10000;//每5分钟执行一次
             ReadingTimer.Enabled = true;
 
             //抄表异步处理
             ReadingHandleTimer.Elapsed += new System.Timers.ElapsedEventHandler(ReadingHandleTimerTimerEvent);
-            ReadingHandleTimer.Interval = 5000;//每5秒执行一次
+            ReadingHandleTimer.Interval = 500000;//每50秒执行一次
             ReadingHandleTimer.Enabled = true;
 
         }
@@ -66,7 +66,11 @@ namespace ZstDataHandle
         private void TimedEvent(object sender, System.Timers.ElapsedEventArgs e)
         {
             timer.Stop();
-            var taskList = database.FindList<Am_Task>(" and Status=0 ");
+
+            List<DbParameter> parTask = new List<DbParameter>();
+            parTask.Add(DbFactory.CreateDbParameter("@CreateTime", DateTime.Now.AddMinutes(-5)));
+
+            var taskList = database.FindList<Am_Task>(" and Status=0 and CreateTime<=@CreateTime",parTask.ToArray());
             foreach (var item in taskList)
             {
                 var result = GetResult(item.Number);
@@ -120,7 +124,7 @@ namespace ZstDataHandle
                                 {
                                     ammeter.Count = ammeter.Count + 1;
                                     ammeter.Acount_Id = null;
-                                    ammeter.CurrMoney = item.Money.Value;
+                                    ammeter.CurrMoney = ammeter.CurrMoney+item.Money.Value;
                                     if (ammeter.CurrMoney > ammeter.FirstAlarm)
                                     {
                                         ammeter.IsLowerWarning = 1;
@@ -162,6 +166,20 @@ namespace ZstDataHandle
                                         database.Update<Am_Ammeter>(ammeter);
                                     }
 
+                                }
+                            }
+                            else if (item.OperateType == 3)
+                            {
+                                List<DbParameter> par = new List<DbParameter>();
+                                par.Add(DbFactory.CreateDbParameter("@Number", item.AmmeterNumber));
+                                var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number =@Number ", par.ToArray());
+                                if (ammeter != null && ammeter.Number != null)
+                                {
+                                    ammeter.Count = 1;
+                                    ammeter.Status = 0;
+                                    ammeter.StatusStr = "未开户";
+                                    ammeter.Acount_Id = null;
+                                    database.Update<Am_Ammeter>(ammeter);
                                 }
                             }
                             else if (item.OperateType == 1)
@@ -379,6 +397,15 @@ namespace ZstDataHandle
                 var pList = DbHelper.GetAmmeterPermissionList(time);
                 foreach (var item in pList)
                 {
+                    List<DbParameter> par2 = new List<DbParameter>();
+                    par2.Add(DbFactory.CreateDbParameter("@AmmeterNumber", item.Ammeter_Number));
+                    par2.Add(DbFactory.CreateDbParameter("@Status", "1"));
+                    var contract = database.FindCount<Am_Contract>(" and AmmeterNumber=@AmmeterNumber and Status=@Status ",par2.ToArray());
+                    if (contract==0)
+                    {
+                        //未签订合同
+                        continue;
+                    }
                     List<DbParameter> par1 = new List<DbParameter>();
                     par1.Add(DbFactory.CreateDbParameter("@Number", item.Ammeter_Number));
 
@@ -476,8 +503,6 @@ namespace ZstDataHandle
                             }
                         }
                     }
-
-
                 }
             }
             BillTimer.Start();

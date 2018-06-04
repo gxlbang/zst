@@ -4,6 +4,7 @@ using AlipayAndWepaySDK.Model;
 using LeaRun.DataAccess;
 using LeaRun.Entity;
 using LeaRun.Repository;
+using LeaRun.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -252,7 +253,40 @@ namespace LeaRun.WebApp.Controllers
                                 bill.Status = 2;
                                 bill.StatusStr = "已支付";
                                 bill.PayTime = DateTime.Now;
-                                database.Update<Am_Bill>(bill);
+                                if (database.Update<Am_Bill>(bill) > 0)
+                                {
+                                    List<DbParameter> par1 = new List<DbParameter>();
+                                    par1.Add(DbFactory.CreateDbParameter("@Bill_Number", bill.Number));
+                                    par1.Add(DbFactory.CreateDbParameter("@ChargeItem_Title", "押金"));
+
+                                    var content = database.FindEntityByWhere<Am_BillContent>(" and Bill_Number=@Bill_Number and ChargeItem_Title=@ChargeItem_Title ", par1.ToArray());
+                                    if (content != null && content.Number != null)
+                                    {
+                                        var deposit = new Am_UserDeposit
+                                        {
+                                            Number = CommonHelper.GetGuid,
+                                            Address = bill.Address,
+                                            Ammeter_Code = bill.AmmeterCode,
+                                            Ammeter_Number = bill.AmmeterNumber,
+                                            Cell = bill.Cell,
+                                            City = bill.City,
+                                            County = bill.County,
+                                            CreateTime = DateTime.Now,
+                                            Money = content.Money,
+                                            Floor = bill.Floor,
+                                            PayTime = DateTime.Now,
+                                            Province = bill.Province,
+                                            Remark = "",
+                                            Room = bill.Room,
+                                            Status = 0,
+                                            StatusStr = "冻结押金",
+                                            UserName = bill.T_UserName,
+                                            U_Name = bill.T_U_Name,
+                                            U_Number = bill.T_U_Number
+                                        };
+                                        database.Insert<Am_UserDeposit>(deposit);
+                                    }
+                                }
                                 return Content(payResult.ReturnXml);
                             }
                             //发送微信通知

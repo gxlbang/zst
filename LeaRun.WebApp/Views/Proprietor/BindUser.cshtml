@@ -3,7 +3,22 @@
     ViewBag.Title = "关联用户";
     Layout = "~/Views/Shared/_Partial.cshtml";
 }
+<script src="~/Content/Scripts/layui/layui.js"></script>
+<script>
+    
 
+    layui.use('laydate', function () {
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#starTime' 
+        });
+        laydate.render({
+            elem: '#endTime'
+        });
+    });
+
+
+</script>
 @if (Model != null && Model.Number != null)
 {
     //关联用户
@@ -55,11 +70,11 @@
         </div>
         <div class="charge-bill binding-text bbot clear">
             <span class="bill-text fl">租赁时间：</span>
-            <input type="date" class="l-input fl" value="@(ammeterPermission.BeginTime==null ?"":ammeterPermission.BeginTime.Value.ToString("yyyy-MM-dd"))" placeholder="2018-01-01" id="starTime" />
+            <input type="datetime" class="l-input fl" value="@(ammeterPermission.BeginTime==null ?"":ammeterPermission.BeginTime.Value.ToString("yyyy-MM-dd"))" placeholder="2018-01-01" id="starTime" />
         </div>
         <div class="charge-bill binding-text bbot clear">
             <span class="bill-text fl">到期时间：</span>
-            <input type="date" class="l-input fl" value="@(ammeterPermission.EndTime==null?"":ammeterPermission.EndTime.Value.ToString("yyyy-MM-dd"))" placeholder="2018-01-01" id="endTime" />
+            <input type="datetime" class="l-input fl" value="@(ammeterPermission.EndTime==null?"":ammeterPermission.EndTime.Value.ToString("yyyy-MM-dd"))" placeholder="2018-01-01" id="endTime" />
         </div>
         <div class="charge-bill binding-text bbot clear">
             <span class="bill-text fl">账单周期：</span>
@@ -82,6 +97,8 @@
         <div class="charge-bill binding-text bbot clear">
             <span class="bill-text fl">滞纳金：</span>
             <input type="text" class="l-input fl" value="@template.OtherFees" placeholder="%" id="lateFee" />
+            <span class="bill-text fl">(百分比%)</span>
+            
         </div>
         <div class="gary"></div>
         <div class="acc-top bbot btop clear">
@@ -144,6 +161,14 @@
 
 <script src="~/Content/Scripts/layer.mobile-v2.0/layer_mobile/layer.js"></script>
     <script type="text/javascript">
+
+        $("#starTime").focus(function () {
+            document.activeElement.blur();
+        });
+        $("#endTime").focus(function () {
+            document.activeElement.blur();
+        });
+
         $("#cycle").val(@template.BillCyc);
         var add = document.getElementById('add');
         var container = document.getElementById('container');
@@ -218,9 +243,11 @@
                           data: _list,
                           success: function (data) {
                               if (data.res == "Ok") {
-                                  layer.open({ content: data.msg, skin: 'msg', time: 2 });
-                                  location.reload();
-                                  layer.close(index);
+                                  layer.open({
+                                      content: data.msg, skin: 'msg', time: 2, end: function myfunction() {
+                                          location.href = "/Common/Template?ammeterNumber=" + $("#number").val();
+                                      }
+                                  });
                               } else {
                                   layer.open({ content: data.msg, skin: 'msg', time: 2 });
                               }

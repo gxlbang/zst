@@ -79,9 +79,9 @@
                             lis.push("</span>");
 
                             lis .push("<span class=\"op-sshow fl\">电价："+data[i].AmmeterMoney+" <a class=\"l-a fr\" herf=\"javascript:;\" id=\"xx"+data[i].AM_Code+"\"  onclick=\"setPrice('"+data[i].Number+"','"+data[i].AM_Code+"')\" >设置</a></span>");
-                            if (data[i].Status=="0") {
-                                lis.push("<span class=\"op-sshow fl\"><input type=\"button\" class=\"l-a fr\"\ onclick=\"btn(this,'"+data[i].Number+"')\" value=\"开户\"></span>");
-                            }
+                            //if (data[i].Status=="0") {
+                            //    lis.push("<span class=\"op-sshow fl\"><input type=\"button\" class=\"l-a fr\"\ onclick=\"btn(this,'"+data[i].Number+"')\" value=\"开户\"></span>");
+                            //}
                             lis.push("</div>");
 
                             lis.push("<div class=\"op-litwo op-lione clear\"><span class=\"op-sshow fl\">区域："+data[i].Province+data[i].City+data[i].County+"   "+data[i].Address+"</span></div>");
@@ -125,7 +125,7 @@
             closeBtn: 1,
             shadeClose: true,
             skin: 'yourclass',
-            area: ['80%', '28%'],
+            area: ['80%', '200px'],
             content: html,
             cancel: function () {
             }
@@ -136,6 +136,12 @@
     function subPrice(obj) {
         var number=$("#am_number").val();
         var price=$("#price").val();
+        var money = parseFloat(price);
+        if (!money > 0) {
+            layer.msg("请输入正确的金额");
+            return;
+        }
+
         $(obj).attr('disabled',"true");
         $(obj).text("设置中...");
         $.post("/Proprietor/AmmeterSetPrice", { number:number,price:price}, function (data) {
@@ -153,7 +159,11 @@
         $(obj).val("开户中...");
         $.post("/Proprietor/AmmeterOpenAccount", { number:number}, function (data) {
             if (data.res = "Ok") {
-                $(obj).val("已开户");
+                layer.msg(data.msg, { time: 2000 ,end:function myfunction() {
+                    $(obj).val("已开户");
+                }});
+                 
+                
             } else {
                 layer.msg(data.msg);
             }

@@ -74,7 +74,11 @@
             success: function (data) {
                 if (data.res == "Ok") {
                     if (type==1) {
-                        layer.msg("支付成功", { time: 2000 });
+                        layer.msg("支付成功", {
+                            time: 2000, end: function myfunction() {
+                                location.href = "/Personal/OldBill";
+                            }
+                        });
                     }
                     else {
                         jsonParm = jQuery.parseJSON(data.json);
@@ -103,7 +107,6 @@
                 else {
                     layer.msg(data.msg, { time: 2000 });
                 }
-
             }
         });
     }

@@ -9576,6 +9576,7 @@
     <Content Include="Views\Proprietor\RepairMasterList.cshtml" />
     <Content Include="Views\Proprietor\RepairMasterAdd.cshtml" />
     <Content Include="Views\Callback\Index.cshtml" />
+    <Content Include="Views\Proprietor\EquipmentDeposit.cshtml" />
     <None Include="Views\Utility\PrintPage.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

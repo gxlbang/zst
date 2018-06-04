@@ -368,10 +368,6 @@ namespace LeaRun.WebApp.Controllers
 
             if (ammeter != null && ammeter.Number != null)
             {
-                if (ammeter.AmmeterMoney==null )
-                {
-                    var clear = CommonClass.AmmeterApi.ClearZero(ammeter.Collector_Code, ammeter.AM_Code,ammeter.Acount_Id.ToString());
-                }
                 var result = CommonClass.AmmeterApi.AmmeterSetPrice(ammeter.Collector_Code, ammeter.AM_Code, decimal.Parse(price));
                 if (result.suc)
                 {
@@ -693,6 +689,51 @@ namespace LeaRun.WebApp.Controllers
                         database.Insert<Am_Task>(task);
                         CommonClass.AmmeterApi.InserOperateLog(user.Number, ammeter.Collector_Code, ammeter.AM_Code, 3, "剩余金额", task.Number, item.suc, item.result);
                     }
+                    return Json(new { res = "Ok", msg = item.result });
+                }
+            }
+            return Json(new { res = "No", msg = "操作失败" });
+        }
+        /// <summary>
+        /// 电表清零
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public ActionResult AmmeterClear(string number)
+        {
+            var user = wbll.GetUserInfo(Request);
+            List<DbParameter> parAmmeter = new List<DbParameter>();
+            parAmmeter.Add(DbFactory.CreateDbParameter("@Number", number));
+            var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number=@Number ", parAmmeter.ToArray());
+
+            if (ammeter != null && ammeter.Number != null)
+            {
+                var item = CommonClass.AmmeterApi.ClearZero(ammeter.Collector_Code, ammeter.AM_Code, ammeter.Acount_Id.Value);
+                if (item.suc)
+                {
+                    var task = new Am_Task
+                    {
+                        Number = item.opr_id,
+                        AmmeterCode = ammeter.AM_Code,
+                        AmmeterNumber = ammeter.Number,
+                        CollectorCode = ammeter.Collector_Code,
+                        CollectorNumber = ammeter.Collector_Number,
+                        CreateTime = DateTime.Now,
+                        OperateType = 3,
+                        OperateTypeStr = "电表清零",
+                        OrderNumber = "",
+                        OverTime = DateTime.Now,
+                        Remark = "",
+                        Status = 0,
+                        StatusStr = "队列中",
+                        TaskMark = "",
+                        UserName = user.Account,
+                        U_Name = user.Name,
+                        U_Number = user.Number
+                    };
+
+                    database.Insert<Am_Task>(task);
+                    CommonClass.AmmeterApi.InserOperateLog(user.Number, ammeter.Collector_Code, ammeter.AM_Code, 10, "电表清零", task.Number, item.suc, item.result);
                     return Json(new { res = "Ok", msg = item.result });
                 }
             }
@@ -1418,7 +1459,7 @@ namespace LeaRun.WebApp.Controllers
                     ViewBag.template = template;
                     List<DbParameter> par2 = new List<DbParameter>();
                     par2.Add(DbFactory.CreateDbParameter("@Template_Number", template.Number));
-                    var templateContentList = database.FindList<Am_TemplateContent>(" and Template_Number=@Template_Number  ", par2.ToArray());
+                    var templateContentList = database.FindList<Am_TemplateContent>(" and Template_Number=@Template_Number  ", par2.ToArray()).OrderBy(o=>o.ChargeItem_Title).ToList();
                     //模板内容
                     if (templateContentList != null && templateContentList.Count() > 0)
                     {
@@ -1430,7 +1471,7 @@ namespace LeaRun.WebApp.Controllers
                 par3.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
                 par3.Add(DbFactory.CreateDbParameter("@U_Number2", "System"));
                 //收费项
-                var chargeItemList = database.FindList<Am_ChargeItem>(" and U_Number=@U_Number or U_Number=@U_Number2 ", par3.ToArray());
+                var chargeItemList = database.FindList<Am_ChargeItem>(" and U_Number=@U_Number or U_Number=@U_Number2 ", par3.ToArray()).OrderBy(o=>o.Title).ToList();
                 ViewBag.chargeItemList = chargeItemList;
 
                 return View(ammeter);
@@ -2042,7 +2083,7 @@ namespace LeaRun.WebApp.Controllers
                 sbWhere.Append(" and T_U_Name=@T_U_Name ");
             }
 
-            var data = database.FindListPageBySql<UserBill>("SELECT [T_U_Number],T_U_Name FROM[AmmeterDB].[dbo].[Am_Bill] where 1=1  " + sbWhere.ToString() + " group by T_U_Number, T_U_Name", parameter.ToArray(), "T_U_Name", "desc", pageIndex, pageSize, ref recordCount);
+            var data = database.FindListPageBySql<UserBill>("SELECT [T_U_Number],T_U_Name,T_UserName FROM [AmmeterDB].[dbo].[Am_Bill] where 1=1  " + sbWhere.ToString() + " group by T_U_Number, T_U_Name,T_UserName", parameter.ToArray(), "T_U_Name", "desc", pageIndex, pageSize, ref recordCount);
             ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize);
             if (Request.IsAjaxRequest())
             {
@@ -2159,22 +2200,31 @@ namespace LeaRun.WebApp.Controllers
             var rent = database.FindEntityByWhere<Am_Rent>(" and Number=@Number and F_Number=@F_Number", par.ToArray());
             if (rent != null && rent.Number != null)
             {
+                //获取电表
                 List<DbParameter> par1 = new List<DbParameter>();
                 par1.Add(DbFactory.CreateDbParameter("@Number", rent.AmmeterNumber));
                 var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and  Number=@Number ", par1.ToArray());
                 ViewBag.ammeter = ammeter;
 
-
+                //用户押金
                 List<DbParameter> par2 = new List<DbParameter>();
                 par2.Add(DbFactory.CreateDbParameter("@U_Number", rent.U_Number));
                 par2.Add(DbFactory.CreateDbParameter("@Ammeter_Number", rent.AmmeterNumber));
                 var userDeposit = database.FindEntityByWhere<Am_UserDeposit>(" and U_Number=@U_Number and Ammeter_Number=@Ammeter_Number ", par2.ToArray());
                 ViewBag.userDeposit = userDeposit;
 
+                //电表用户关系
                 List<DbParameter> par3 = new List<DbParameter>();
                 par3.Add(DbFactory.CreateDbParameter("@Ammeter_Number", rent.AmmeterNumber));
                 var ammeterPermission = database.FindEntityByWhere<Am_AmmeterPermission>(" and Ammeter_Number=@Ammeter_Number ", par3.ToArray());
                 ViewBag.ammeterPermission = ammeterPermission;
+                //合同
+                List<DbParameter> par4 = new List<DbParameter>();
+                par4.Add(DbFactory.CreateDbParameter("@AmmeterNumber", rent.AmmeterNumber));
+                par4.Add(DbFactory.CreateDbParameter("@Status","1"));
+                var contract = database.FindEntityByWhere<Am_Contract>(" and AmmeterNumber=@AmmeterNumber and Status=@Status  ", par4.ToArray());
+
+                ViewBag.contract = contract;
 
                 return View(rent);
             }
@@ -2501,5 +2551,23 @@ namespace LeaRun.WebApp.Controllers
             return Json(new { res = "No", msg = "添加失败" });
         }
         #endregion
+        /// <summary>
+        /// 设备押金
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult EquipmentDeposit()
+        {
+            var user = wbll.GetUserInfo(Request);
+            List<DbParameter> par = new List<DbParameter>();
+            par.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+            var returned = database.FindTableBySql(" select sum(Money)as money from Am_AmDepositDetail where  U_Number=@U_Number and Money<0", par.ToArray());
+            ViewBag.deposit = user.FreezeMoney.Value.ToString("0.00");
+            ViewBag.returned =decimal.Parse(returned.Rows[0]["money"].ToString()).ToString("0.00");
+
+            int recordCount = 0;
+            var rentList = database.FindListPage<Am_AmDepositDetail>(" and U_Number=@U_Number ", par.ToArray(), "CreateTime", "desc", 1, 10, ref recordCount);
+            ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / 10);
+            return View();
+        }
     }
 }

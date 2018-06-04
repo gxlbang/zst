@@ -26,7 +26,7 @@
                         <span class="op-ju clear">采集器： @Model.Collector_Code @*<span class="op-lian fr">已连接</span>*@</span>
                         <span class="op-ju">表号：@Model.AM_Code</span>
                         <span class="op-ju">电表类型：@Model.AmmeterType_Name</span>
-                        <span class="op-ju">电价：@Model.AmmeterMoney.Value.ToString("0.00") 元/度</span>
+                        <span class="op-ju">电价：@(Model.AmmeterMoney == null ? "" : Model.AmmeterMoney.Value.ToString("0.00")) 元/度</span>
                         <span class="op-ju">绑定用户：@Model.U_Name</span>
                         @*<span class="op-ju">起充金额：0.00 元</span>*@
                         <span class="op-ju">区域：@Model.Province @Model.City @Model.County </span>
@@ -36,7 +36,7 @@
                         <span class="op-ju">安装地址：@Model.Address </span>
                         <span class="op-ju">备注：</span>
                         <div class="op-btnall clear">
-                            @*<a href="" class="op-abtn fl">电表清零</a>*@
+                            <a href="javascript:;" class="op-abtn fl" onclick="AmmeterClear('@Model.Number')" >电表清零</a>
                             <a href="javascript:;" onclick="pullOff('@Model.Number',10)" class="op-abtn fl">跳闸</a>
                             <a href="javascript:;" onclick="pullOff('@Model.Number',11)" class="op-abtn fl">合闸</a>
                         </div>
@@ -48,21 +48,21 @@
                         <span class="op-ju">表号：@Model.AM_Code</span>
                         <span class="op-ju clear">当前剩余电量：@Model.CurrPower kWh<a href="javascript:;" onclick="checkAmmeter('@Model.Number',20)" class="op-cha fr">立即查询电量</a></span>
                         <span class="op-ju">电量同步时间：@Model.CP_Time.Value.ToString("yyyy-MM-dd HH:mm:ss")</span>
-                        <span class="op-ju clear">当前剩余余额：@Model.CurrMoney.Value.ToString("0.00") 元<a href="javascript:;" onclick="checkAmmeter('@Model.Number',22)"  class="op-cha fr">立即查询剩余余额</a></span>
+                        <span class="op-ju clear">当前剩余余额：@Model.CurrMoney.Value.ToString("0.00") 元<a href="javascript:;" onclick="checkAmmeter('@Model.Number',22)" class="op-cha fr">立即查询剩余余额</a></span>
                         <span class="op-ju">剩余余额同步时间：@Model.CM_Time.Value.ToString("yyyy-MM-dd HH:mm:ss")</span>
                         <span class="op-ju">总充值金额：@Model.AllMoney.Value.ToString("0.00") 元</span>
-                        <span class="op-ju clear">充值金额：<input type="text" class="money fr" placeholder="0"  id="money"/></span>
+                        <span class="op-ju clear">充值金额：<input type="text" class="money fr" placeholder="0" id="money" /></span>
                         <div class="op-btnall op-cho clear">
-                            <a href="javascript;;"  onclick="recharge('@Model.Number')" class="btn-all fl">充值</a>
+                            <a href="javascript:;" onclick="recharge('@Model.Number')" class="btn-all fl">充值</a>
                             @*<a href="" class="op-abtn fl">返回</a>
-                            <a href="" class="op-abtn fr">刷新</a>*@
+                                <a href="" class="op-abtn fr">刷新</a>*@
                         </div>
                     </div>
                 </div>
                 <!--操作记录-->
-                <div id="con_3" class="list-index op-none" style="display:none" >
-                    <div   id="containerList">
-                         
+                <div id="con_3" class="list-index op-none" style="display:none">
+                    <div id="containerList">
+
                     </div>
                 </div>
             </div>
@@ -74,8 +74,8 @@
 <script>
     $(function() {
         binList();
-    });  
-    
+    });
+
     //<!--
     /*第一种形式 第二种形式 更换显示样式*/
     function setTab(name, cursel, n) {
@@ -98,6 +98,15 @@
     }
     function checkAmmeter(number, type) {
         $.post("/Proprietor/AmmeterCheck", { number: number, type: type }, function (data) {
+            if (data.res == "Ok") {
+                layer.msg(data.msg, { time: 2000 });
+            } else {
+                layer.msg(data.msg, { time: 2000 });
+            }
+        });
+    }
+    function AmmeterClear(number) {
+        $.post("/Proprietor/AmmeterClear", { number: number}, function (data) {
             if (data.res == "Ok") {
                 layer.msg(data.msg, { time: 2000 });
             } else {
@@ -139,12 +148,12 @@
                                 lis.push("<div class=\"list-index\">");
                                 lis.push("<a class=\"pro repair-m\" href=\"javascript:;\">");
                                 lis.push("<table >");
-                                lis.push("<tr><td style=\"width:45%\"  >操作者："+data[i].U_Name+"</td><td style=\"width:53%\" >状态："+data[i].StatusStr+"</td></tr>");
+                                lis.push("<tr><td style=\"width:50%\"  >操作者："+data[i].U_Name+"</td><td style=\"width:50%\" >状态："+data[i].StatusStr+"</td></tr>");
                                 lis.push("<tr><td >操作类型："+data[i].OperateTypeStr+"</td> <td>备注："+data[i].Remark+"</td> </tr>");
                                 lis.push("<tr><td colspan=\"2\">提交时间:"+formatDate(data[i].CreateTime,"yyyy-MM-dd hh:mm:ss")+"</td></tr>");
                                 lis.push("<tr><td colspan=\"2\">完成时间:"+formatDate(data[i].OverTime,"yyyy-MM-dd hh:mm:ss")+"</td></tr>");
-                               // lis.push("<tr><td colspan=\"2\">备注:"+data[i].Remark+"</td></tr>");
-                             
+                                // lis.push("<tr><td colspan=\"2\">备注:"+data[i].Remark+"</td></tr>");
+
                                 lis.push("</table>");
                                 lis.push("</a>");
                                 lis.push("</div>");
@@ -161,7 +170,7 @@
         var money=$("#money").val();
         $.post("/Proprietor/AmmeterRecharge", { number: number, money: money }, function (data) {
             if (data.res == "Ok") {
-                alert(data.msg);
+                layer.msg(data.msg, { time: 2000 });
             } else {
                 layer.msg(data.msg, { time: 2000 });
             }
@@ -172,4 +181,3 @@
 
 <link href="~/Content/Scripts/layui/css/layui.css" rel="stylesheet" />
 <script src="~/Content/Scripts/layui/layui.js"></script>
- 

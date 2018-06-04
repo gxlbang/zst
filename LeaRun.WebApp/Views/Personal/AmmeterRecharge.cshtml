@@ -173,11 +173,11 @@
             <span class="re-span"><span class="re-name">累计充值金额：</span>@Model.AllMoney.Value.ToString("0.00")元</span>
             <span class="re-span"><span class="re-name">余额同步时间：</span>@Model.CM_Time.Value.ToString("yyyy-MM-dd HH:mm:ss")</span>
         </div>
- 
+
         <div class="re-all clear">
             <div class="re-fu fl clear">
                 <span class="l-ch fl">
-                    <input type="radio" id="checkbox-3-1" class="btn-xuan"   name="radio" value="0" />
+                    <input type="radio" id="checkbox-3-1" class="btn-xuan" name="radio" value="0" />
                     <label for="checkbox-3-1"></label>
                     <span class="re-t">微信</span>
                 </span>
@@ -185,8 +185,8 @@
             </div>
             <div class="re-fu fl clear">
                 <span class="l-ch fl">
-                    <input type="radio" id="checkbox-3-2" checked="checked" class="btn-xuan"  name="radio" value="1" />
-                    <label for="checkbox-3-2" class="checked" ></label>
+                    <input type="radio" id="checkbox-3-2" checked="checked" class="btn-xuan" name="radio" value="1" />
+                    <label for="checkbox-3-2" class="checked"></label>
                     <span class="re-t">余额</span>
                 </span>
 
@@ -200,7 +200,7 @@
                     <span>&yen;</span>
                     <div id="div"></div>
                 </div>
-            @*<input type="text" name="money" id="money" class="l-input" value="" placeholder="0.00" />*@
+                @*<input type="text" name="money" id="money" class="l-input" value="" placeholder="0.00" />*@
             </div>
             <a href="javascript:;" onclick="jsApiCall()" class="btn-all">充值</a>
         </div>
@@ -208,7 +208,7 @@
     }
 
 </div>
- <div class="layer-content">
+<div class="layer-content">
     <div class="form_edit clearfix">
         <div class="num">1</div>
         <div class="num">2</div>
@@ -225,7 +225,7 @@
     </div>
 </div>
 <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
-<script>   
+<script>
     function jsApiCall() {
         var jsonParm = '';
         var money = parseFloat($("#div").text());
@@ -236,12 +236,12 @@
         var number = $("#number").val();
         var type = $("input[name='radio']:checked").val();
         var pwd = "";
-         
+
         if (type == 1) {
             layer.prompt({
                 title: '',
                 formType: 1
-            }, function (pass,index) {
+            }, function (pass, index) {
                 pwd = pass;
                 myfunction(number, money, type, pwd);
             });
@@ -249,7 +249,7 @@
         } else {
             myfunction(number, money, type, pwd);
         }
-       
+
 
 
     }
@@ -261,8 +261,12 @@
             data: { number: number, money: money, type: type, pwd: pwd },
             success: function (data) {
                 if (data.res == "Ok") {
-                    if (type==1) {
-                        layer.msg("支付成功", { time: 2000 });
+                    if (type == 1) {
+                        layer.msg("支付成功", {
+                            time: 2000, end: function myfunction() {
+                                location.href = "/Personal/AmmeterPayCost?number=" + number;
+                            }
+                        });
                     }
                     else {
                         jsonParm = jQuery.parseJSON(data.json);
@@ -272,7 +276,11 @@
                             function (res) {
                                 WeixinJSBridge.log(res.err_msg);
                                 if (res.err_msg == "get_brand_wcpay_request:ok") {
-                                    layer.msg("支付成功", { time: 2000 });
+                                    layer.msg("支付成功", {
+                                        time: 2000, end: function myfunction() {
+                                            location.href = "/Personal/AmmeterPayCost?number=" + number;
+                                        }
+                                    });
 
                                 } else {
                                     if (res.err_msg == "get_brand_wcpay_request:cancel") {
@@ -286,17 +294,17 @@
                             }
                         );
                     }
-                    
+
                 }
                 else {
                     layer.msg(data.msg, { time: 2000 });
                 }
-
             }
         });
     }
     $(function () {
 
+        $('.layer-content').hide();
         //填写信息
         $('.infor-sub').click(function (e) {
             $('.layer').hide();
@@ -320,11 +328,13 @@
                 bottom: 0
             }, 200)
             e.stopPropagation();
+            $('.layer-content').show();
         })
         $('.all').click(function () {
             $('.layer-content').animate({
                 bottom: '-200px'
-            }, 200)
+            }, 200);
+            $('.layer-content').hide();
         })
 
         $('.form_edit .num').click(function () {

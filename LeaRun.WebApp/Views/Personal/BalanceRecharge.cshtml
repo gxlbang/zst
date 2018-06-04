@@ -255,6 +255,7 @@
 
     $(function () {
 
+        $('.layer-content').hide();
         //填写信息
         $('.infor-sub').click(function (e) {
             $('.layer').hide();
@@ -276,13 +277,15 @@
         $('.shuru').click(function (e) {
             $('.layer-content').animate({
                 bottom: 0
-            }, 200)
+            }, 200);
+            $('.layer-content').show();
             e.stopPropagation();
         })
         $('.all').click(function () {
             $('.layer-content').animate({
                 bottom: '-200px'
-            }, 200)
+            }, 200);
+            $('.layer-content').hide();
         })
 
         $('.form_edit .num').click(function () {

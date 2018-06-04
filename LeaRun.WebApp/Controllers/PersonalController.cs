@@ -31,7 +31,7 @@ namespace LeaRun.WebApp.Controllers
         /// 个人中心
         /// </summary>
         /// <returns></returns>
-
+        [AllowAnonymous]
         public ActionResult Index()
         {
             var user = wbll.GetUserInfo(Request);
@@ -659,6 +659,29 @@ namespace LeaRun.WebApp.Controllers
             var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Number='" + user.Number + "'");
             if (account != null && account.Number != null /*&& account.Status == 3*/)
             {
+                #region 检测首充
+                List<DbParameter> par = new List<DbParameter>();
+                par.Add(DbFactory.CreateDbParameter("@AmmeterNumber", user.Number));
+                par.Add(DbFactory.CreateDbParameter("@OperateType", "4"));
+                par.Add(DbFactory.CreateDbParameter("@Status", "1"));
+                var firstFlush = database.FindCount<Am_Task>(" and AmmeterNumber=@AmmeterNumber and OperateType=@OperateType and Status=@Status");
+                if (firstFlush == 0)
+                {
+                    var config = database.FindEntityByWhere<Fx_WebConfig>("");
+                    if (config != null && config.Number != null)
+                    {
+                        if (money < config.AmCharge)
+                        {
+                            return Json(new { res = "No", msg = "首次充值金额必须大于:" + config.AmCharge + "元" });
+                        }
+                    }
+                    else
+                    {
+                        return Json(new { res = "No", msg = "读取配置失败" });
+                    }
+                }
+                #endregion
+
                 List<DbParameter> parameter = new List<DbParameter>();
                 parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
                 parameter.Add(DbFactory.CreateDbParameter("@Number", number));
@@ -701,7 +724,6 @@ namespace LeaRun.WebApp.Controllers
                             List<DbParameter> parameter2 = new List<DbParameter>();
                             parameter2.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
                             parameter2.Add(DbFactory.CreateDbParameter("@OrderNumber", charge.OrderNumber));
-
 
                             var payOrder = database.FindEntityByWhere<Am_Charge>(" and U_Number=@U_Number and @OrderNumber=OrderNumber", parameter2.ToArray());
                             if (payOrder == null)
@@ -806,15 +828,14 @@ namespace LeaRun.WebApp.Controllers
             List<DbParameter> parameter = new List<DbParameter>();
             parameter.Add(DbFactory.CreateDbParameter("@AmmeterNumber", number));
             parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
-            parameter.Add(DbFactory.CreateDbParameter("@STATUS", "1"));
+            parameter.Add(DbFactory.CreateDbParameter("@OperateType", "4"));
 
-            var chargeList = database.FindListPage<Am_Charge>(" and U_Number=@U_Number and STATUS=@STATUS and AmmeterNumber=@AmmeterNumber", parameter.ToArray(), "CreateTime", "desc", pageIndex, pageSize, ref recordCount);
+            var taskList = database.FindListPage<Am_Task>(" and U_Number=@U_Number and OperateType=@OperateType and AmmeterNumber=@AmmeterNumber", parameter.ToArray(), "CreateTime", "desc", pageIndex, pageSize, ref recordCount);
             ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize);
 
             if (Request.IsAjaxRequest())
             {
-
-                return Json(chargeList);
+                return Json(taskList);
             }
             else
             {
@@ -936,8 +957,8 @@ namespace LeaRun.WebApp.Controllers
                     charge.ChargeType = 3;
                     charge.ChargeTypeStr = "账单支付";
                     charge.CreateTime = DateTime.Now;
-                    charge.AmmeterNumber = "";
-                    charge.AmmeterCode = "";
+                    charge.AmmeterNumber = bill.AmmeterNumber;
+                    charge.AmmeterCode = bill.AmmeterCode;
                     charge.Money = bill.Money;
                     charge.ObjectName = "账单支付";
                     charge.ObjectNumber = number;
@@ -1000,13 +1021,20 @@ namespace LeaRun.WebApp.Controllers
                                 var st = database.Update<Am_Charge>(charge);
                                 if (st > 0)
                                 {
+
+                                    bill.Status = 2;
+                                    bill.StatusStr = "已支付";
+                                    bill.PayTime = DateTime.Now;
+                                    database.Update<Am_Bill>(bill);
+
+
                                     var ammeter = database.FindEntity<Am_Ammeter>(charge.AmmeterNumber);
                                     //发送微信通知
                                     #region 发送微信通知给业主
                                     var first = new First()
                                     {
                                         color = "#000000",
-                                        value ="租户 "+ account.Name+ "本月账单已支付成功！"
+                                        value = "租户 " + account.Name + "本月账单已支付成功！"
                                     };
                                     var keynote1 = new Keynote1()
                                     {
@@ -1698,5 +1726,8 @@ namespace LeaRun.WebApp.Controllers
 
             return Content("上传成功！");
         }
+
+
+        
     }
 }

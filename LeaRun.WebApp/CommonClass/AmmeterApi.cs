@@ -364,7 +364,7 @@ namespace LeaRun.WebApp.CommonClass
         /// <param name="address"></param>
         /// <param name="account_id"></param>
         /// <returns></returns>
-        public static Result ClearZero(string cid, string address,string account_id)
+        public static Result ClearZero(string cid, string address,int account_id)
         {
             Result r = new CommonClass.AmmeterApi.Result();
             var opr_id = Utilities.CommonHelper.GetGuid;

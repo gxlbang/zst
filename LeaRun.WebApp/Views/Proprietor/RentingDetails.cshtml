@@ -8,6 +8,7 @@
 {
     var userDeposit = ViewBag.userDeposit as LeaRun.Entity.Am_UserDeposit;
     var ammeter = ViewBag.ammeter as LeaRun.Entity.Am_Ammeter;
+    var contract = ViewBag.contract as LeaRun.Entity.Am_Contract;
 
     <input type="hidden" name="name" value="@Model.Number" id="number" />
     <div class="all pro-all">
@@ -32,7 +33,7 @@
                 }
 
 
-                <span class="pro-li">押金：@(userDeposit.Money == null?"0.00":userDeposit.Money.Value.ToString("0.00"))元</span>
+                <span class="pro-li">押金：@(userDeposit.Money == null ? "0.00" : userDeposit.Money.Value.ToString("0.00"))元</span>
 
 
                 @if (ViewBag.ammeterPermission != null)
@@ -43,6 +44,10 @@
                         <span class="pro-li">租赁时间：@ammeterPermission.BeginTime.Value.ToString("yyyy-MM-dd")</span>
                         <span class="pro-li">到期时间：@ammeterPermission.EndTime.Value.ToString("yyyy-MM-dd")</span>
                     }
+                }
+                @if (contract != null && contract.Number != null)
+                {
+                    <span class="pro-li">合同：<a href="/Common/Contract?KeyValue='@contract.Number'">查看</a></span>
                 }
 
             </div>

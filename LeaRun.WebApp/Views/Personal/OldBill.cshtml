@@ -11,9 +11,9 @@
     <form action="/Personal/OldBill" method="get">
         <div class="acc-se hiss-bill clear">
             @*<input type="date" class="acc-in fl" placeholder="开始时间">*@
-            <input type="text" class="acc-in fl" name="star" id="test1" placeholder="开始时间">
+            <input type="datetime" class="acc-in fl" name="star" id="test1" placeholder="开始时间">
             <span class="his-line fl">-</span>
-            <input type="text" class="acc-in fr" name="end" id="test2" placeholder="结束时间">
+            <input type="datetime" class="acc-in fr" name="end" id="test2" placeholder="结束时间">
         </div>
         <div class="acc-se his-bill clear">
             <input type="text" class="acc-in list-mi fl" name="billCode" id="billCode" placeholder="表号">
@@ -28,6 +28,13 @@
 <link href="~/Content/Scripts/layui/css/layui.css" rel="stylesheet" />
 <script src="~/Content/Scripts/layui/layui.js"></script>
 <script>
+    $("#test1").focus(function () {
+        document.activeElement.blur();
+    });
+    $("#test2").focus(function () {
+        document.activeElement.blur();
+    });
+
     $("#billCode").val(GetQuery("billCode"));
     layui.use('laydate', function(){
         var laydate = layui.laydate;
@@ -75,9 +82,9 @@
                             lis.push("<span class=\"bill-span fr\">"+parseFloat(data[i].Money).toFixed(2)+"元</span></div>");
 
                             
-                            lis.push("<span class=\"bill-span\">"+data[i].Province+data[i].City+data[i].County+data[i].Address+"</span>");
-                            lis.push("<span class=\"bill-span\">"+data[i].Cell+"单元"+data[i].Floor+"楼层"+data[i].Room+"号");
-                            lis.push("<span class=\"bill-span fr\">"+formatDate(data[i].SendTime,"yyyy-MM-dd")+"</span></span>");
+                            lis.push("<span class=\"bill-span\">区域："+data[i].Province+data[i].City+data[i].County+"</span>");
+                            lis.push("<span class=\"bill-span\">地址："+data[i].Address+"  "+data[i].Cell+"单元"+data[i].Floor+"楼层"+data[i].Room+"号");
+                            lis.push("<span class=\"bill-span  \">时间："+formatDate(data[i].SendTime,"yyyy-MM-dd")+"</span></span>");
 
                             lis.push("<i class=\"icon-next\"></i></a>");
                         }
