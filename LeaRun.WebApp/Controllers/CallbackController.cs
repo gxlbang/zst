@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
+using System.Xml;
 using Weixin.Mp.Sdk.Domain;
 
 namespace LeaRun.WebApp.Controllers
@@ -407,6 +408,59 @@ namespace LeaRun.WebApp.Controllers
             templateMessage.touser = usermodel.OpenId;
             templateMessage.url = "http://am.zst0771.com/Personal/AmmeterPayCost?number=" + Number;
             templateMessage.SendTemplateMessage();
+        }
+
+        public void WXPayNotify_URL()
+        {
+            Stream postData = Request.InputStream;
+            StreamReader sRead = new StreamReader(postData);
+            string postContent = sRead.ReadToEnd();
+            sRead.Close();
+            var dic = FromXml(postContent);
+            string returnCode = GetValueFromDic<string>(dic, "result_code");
+            if (returnCode == "SUCCESS")
+            {
+                //分账成功
+            }
+            else {
+                //分账失败 - 写入余额
+                
+            }
+            //记录日志
+        }
+
+        public static SortedDictionary<string, string> FromXml(string xml)
+        {
+            SortedDictionary<string, string> sortDic = new SortedDictionary<string, string>();
+            if (string.IsNullOrEmpty(xml))
+            {
+                throw new Exception("将空的xml串转换为WxPayData不合法!");
+            }
+
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(xml);
+            XmlNode xmlNode = xmlDoc.FirstChild;//获取到根节点<xml>
+            XmlNodeList nodes = xmlNode.ChildNodes;
+            foreach (XmlNode xn in nodes)
+            {
+                XmlElement xe = (XmlElement)xn;
+
+                if (!sortDic.ContainsKey(xe.Name))
+                    sortDic.Add(xe.Name, xe.InnerText);
+            }
+            return sortDic;
+        }
+
+        private static T GetValueFromDic<T>(SortedDictionary<string, string> dic, string key)
+        {
+            string val;
+            dic.TryGetValue(key, out val);
+
+            T returnVal = default(T);
+            if (val != null)
+                returnVal = (T)Convert.ChangeType(val, typeof(T));
+
+            return returnVal;
         }
 
         public class Root

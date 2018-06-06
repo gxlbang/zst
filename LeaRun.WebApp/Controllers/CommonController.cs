@@ -1,4 +1,5 @@
-﻿using LeaRun.DataAccess;
+﻿using BusinessCard.Web.Code;
+using LeaRun.DataAccess;
 using LeaRun.Entity;
 using LeaRun.Repository;
 using LeaRun.Utilities;
@@ -580,6 +581,11 @@ namespace LeaRun.WebApp.Controllers
             }
         }
 
-
+        public ActionResult Test()
+        {
+            PayToPerson pay = new BusinessCard.Web.Code.PayToPerson();
+            pay.EnterprisePay("123456xxx11", "oDzrzt9iODNdANrhGnAezMKfmb_A",1,"何忠锋","测试付款");
+            return View();
+        }
     }
 }

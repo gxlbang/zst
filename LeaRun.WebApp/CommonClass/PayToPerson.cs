@@ -31,19 +31,19 @@ namespace BusinessCard.Web.Code
         /// 企业付款给个人，直接入帐到微信钱包中
         /// </summary>
 
-        public static string TENPAY = "1";
-        public static string APPID = ConfigHelper.AppSettings("WEPAY_WEB_APPID");            //开发者应用ID
-        public static string PARTNER = ConfigHelper.AppSettings("WEPAY_WEB_MCH_ID");           //商户号
-        public static string APPSECRET = ConfigHelper.AppSettings("WEPAY_APP_KEY");       //开发者应用密钥
-        public static string PARTNER_KEY = ConfigHelper.AppSettings("WEPAY_WEB_APIPAYKEY");    //商户秘钥
+        public  string TENPAY = "1";
+        public  string APPID = ConfigHelper.AppSettings("WEPAY_WEB_APPID");            //开发者应用ID
+        public  string PARTNER = ConfigHelper.AppSettings("WEPAY_WEB_MCH_ID");           //商户号
+        public  string APPSECRET = ConfigHelper.AppSettings("WEPAY_WEb_AppSecret");       //开发者应用密钥
+        public  string PARTNER_KEY = ConfigHelper.AppSettings("WEPAY_WEB_KEY");    //商户秘钥
 
         public const string URL = "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers";
 
         //服务器异步通知页面路径(流量卡)
-        public static string WebUrl = ConfigHelper.AppSettings("WebUrl");
-        public static readonly string NOTIFY_URL_Card_Store = "http://" + WebUrl + "/weixinpay/WXPayNotify_URL.aspx";// ConfigurationManager.AppSettings["WXPayNotify_URL_CardStore"].ToString();
-        public static readonly string NOTIFY_URL_Card_User = "http://" + WebUrl + "/weixinpay/WXPayNotify_URL.aspx"; //ConfigurationManager.AppSettings["WXPayNotify_URL_CardUser"].ToString();
-        public static readonly string NOTIFY_URL_HB_Store = "http://" + WebUrl + "/weixinpay/WXPayNotify_URL.aspx";// ConfigurationManager.AppSettings["WXPayNotify_URL_CardStore"].ToString();
+        public  string WebUrl = ConfigHelper.AppSettings("WebUrl");
+        public  readonly string NOTIFY_URL_Card_Store = "http://" + ConfigHelper.AppSettings("WebUrl") + "/Callback/WXPayNotify_URL";// ConfigurationManager.AppSettings["WXPayNotify_URL_CardStore"].ToString();
+        public  readonly string NOTIFY_URL_Card_User = "http://" + ConfigHelper.AppSettings("WebUrl") + "/Callback/WXPayNotify_URL"; //ConfigurationManager.AppSettings["WXPayNotify_URL_CardUser"].ToString();
+        public  readonly string NOTIFY_URL_HB_Store = "http://" + ConfigHelper.AppSettings("WebUrl") + "/Callback/WXPayNotify_URL";// ConfigurationManager.AppSettings["WXPayNotify_URL_CardStore"].ToString();
 
         //=======【代理服务器设置】===================================
         /* 默认IP和端口号分别为0.0.0.0和0，此时不开启代理（如有需要才设置）
@@ -53,15 +53,15 @@ namespace BusinessCard.Web.Code
         //=======【证书路径设置】===================================== 
         /* 证书路径,注意应该填写绝对路径（仅退款、撤销订单时需要）
         */
-        public const string SSLCERT_PATH = "weixin\\businesscard\\cert\\apiclient_cert.p12";
-        public static string SSLCERT_PASSWORD = PARTNER;
+        public const string SSLCERT_PATH = "cart\\apiclient_cert.p12";
+        public  string SSLCERT_PASSWORD = ConfigHelper.AppSettings("WEPAY_WEB_MCH_ID");
 
 
         /// <summary>
         /// 企业付款给个人
         /// </summary>       
         /// <returns></returns>
-        public static string EnterprisePay(string Bill_No, string toOpenid, decimal Charge_Amt, string userName, string title)
+        public  string EnterprisePay(string Bill_No, string toOpenid, decimal Charge_Amt, string userName, string title)
         {
 
             //公众账号appid mch_appid 是 wx8888888888888888 String 微信分配的公众账号ID（企业号corpid即为此appId） 
@@ -97,7 +97,7 @@ namespace BusinessCard.Web.Code
             dic.Add("check_name", "NO_CHECK");
             dic.Add("amount", total_fee);
             dic.Add("desc", title);//商品描述
-            dic.Add("spbill_create_ip", "211.149.234.224");   //用户的公网ip，不是商户服务器IP
+            dic.Add("spbill_create_ip", "120.78.12.92");   //用户的公网ip，不是商户服务器IP
             //生成签名
 
             string get_sign = BuildRequest(dic, PARTNER_KEY);
@@ -114,7 +114,7 @@ namespace BusinessCard.Web.Code
             _req_data += "<check_name>NO_CHECK</check_name>";
             _req_data += "<amount>" + total_fee + "</amount>";
             _req_data += "<desc>" + title + "</desc>";
-            _req_data += "<spbill_create_ip>211.149.234.224</spbill_create_ip>";
+            _req_data += "<spbill_create_ip>120.78.12.92</spbill_create_ip>";
             _req_data += "<sign>" + get_sign + "</sign>";
             _req_data += "</xml>";
 
@@ -123,6 +123,18 @@ namespace BusinessCard.Web.Code
             var result = HttpPost(URL, _req_data.Trim(), true, 300);
             //var result = HttpPost(URL, _req_data, Encoding.UTF8);
             Vincent._Log.SaveMessage("返回结果：" + result);
+            var resultdic = XMLHelper.FromXml(result);
+            string returnCode = XMLHelper.GetValueFromDic<string>(resultdic, "result_code");
+            if (returnCode == "SUCCESS")
+            {
+                //分账成功
+            }
+            else
+            {
+                //分账失败 - 写入余额
+
+            }
+            //记录日志
 
             return result;
 
@@ -131,13 +143,13 @@ namespace BusinessCard.Web.Code
             //return retValue.ErrorCode;            
         }
 
-        public static string getTimestamp()
+        public  string getTimestamp()
         {
             TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
             return Convert.ToInt64(ts.TotalSeconds).ToString();
         }
 
-        public static string BuildRequest(SortedDictionary<string, string> sParaTemp, string key)
+        public  string BuildRequest(SortedDictionary<string, string> sParaTemp, string key)
         {
             //获取过滤后的数组
             Dictionary<string, string> dicPara = new Dictionary<string, string>();
@@ -162,7 +174,7 @@ namespace BusinessCard.Web.Code
         /// </summary>
         /// <param name="dicArrayPre">过滤前的参数组</param>
         /// <returns>过滤后的参数组</returns>
-        public static Dictionary<string, string> FilterPara(SortedDictionary<string, string> dicArrayPre)
+        public  Dictionary<string, string> FilterPara(SortedDictionary<string, string> dicArrayPre)
         {
             Dictionary<string, string> dicArray = new Dictionary<string, string>();
             foreach (KeyValuePair<string, string> temp in dicArrayPre)
@@ -177,7 +189,7 @@ namespace BusinessCard.Web.Code
         }
 
         //组合参数数组
-        public static string CreateLinkString(Dictionary<string, string> dicArray)
+        public  string CreateLinkString(Dictionary<string, string> dicArray)
         {
             StringBuilder prestr = new StringBuilder();
             foreach (KeyValuePair<string, string> temp in dicArray)
@@ -192,7 +204,7 @@ namespace BusinessCard.Web.Code
         }
 
         //加密
-        public static string GetMD5(string pwd)
+        public  string GetMD5(string pwd)
         {
             MD5 md5Hasher = MD5.Create();
 
@@ -208,7 +220,7 @@ namespace BusinessCard.Web.Code
         }
 
 
-        public static string HttpPost(string postUrl, string paramData, Encoding dataEncode)
+        public  string HttpPost(string postUrl, string paramData, Encoding dataEncode)
         {
             string ret = string.Empty;
             try
@@ -236,7 +248,7 @@ namespace BusinessCard.Web.Code
             return ret;
         }
 
-        public static bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
+        public  bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
         {
             //直接确认，否则打不开    
             return true;
@@ -250,7 +262,7 @@ namespace BusinessCard.Web.Code
         /// <param name="isUseCert">是否使用证书</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public static string HttpPost(string url, string xml, bool isUseCert, int timeout)
+        public  string HttpPost(string url, string xml, bool isUseCert, int timeout)
         {
             System.GC.Collect();//垃圾回收，回收没有正常关闭的http连接
 
@@ -359,7 +371,7 @@ namespace BusinessCard.Web.Code
         /// </summary>
         /// <param name="url">请求的url地址</param>
         /// <returns>http GET成功后返回的数据，失败抛WebException异常</returns>
-        public static string Get(string url)
+        public  string Get(string url)
         {
             System.GC.Collect();
             string result = "";
@@ -436,5 +448,15 @@ namespace BusinessCard.Web.Code
         }
 
 
+    }
+
+    public class PayToPersonModel {
+        public string result_code { get; set; }
+        public string return_code { get; set; }
+        public string return_msg { get; set; }
+        public string err_code_des { get; set; }
+        public string partner_trade_no { get; set; }
+        public string payment_no { get; set; }
+        public string payment_time { get; set; }
     }
 }
