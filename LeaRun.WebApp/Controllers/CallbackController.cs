@@ -31,6 +31,8 @@ namespace LeaRun.WebApp.Controllers
             int type = 0;//0.前台操作，1.后台操作
 
             var result = Request["response_content"];
+            log.Error(result);
+            
             if (result==null )
             {
                 return Content("");
@@ -58,6 +60,11 @@ namespace LeaRun.WebApp.Controllers
                             type = 1;
                         }
 
+                    }
+                    //没有找任务
+                    if (item==null&&item.Number ==null )
+                    {
+                        return Content("SUCCESS");
                     }
 
                     item.TaskMark = postContent;
@@ -102,6 +109,17 @@ namespace LeaRun.WebApp.Controllers
                     {
                         item.StatusStr = "正在处理中";
                     }
+                    else if (example.status == "RESPONSE_TIMEOUT")
+                    {
+                        if (item.OperateType != 4)
+                        {
+                            item.Status = 2;
+                            item.StatusStr = "超时失败";
+                            item.OverTime = DateTime.Parse(example.resolve_time);
+                            item.Remark = example.error_msg;
+                        }
+                    }
+
                     if (type==0)
                     {
                         database.Update<Am_Task>(item);
@@ -143,7 +161,7 @@ namespace LeaRun.WebApp.Controllers
                             };
                             database.Insert<Am_MoneyDetail>(moneyDetail);
                             List<DbParameter> par1 = new List<DbParameter>();
-                            par.Add(DbFactory.CreateDbParameter("@Number", item.AmmeterNumber));
+                            par1.Add(DbFactory.CreateDbParameter("@Number", item.AmmeterNumber));
                             var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number =@Number ", par1.ToArray());
                             //发送微信通知租户缴费失败
                             SendMessage(ammeter.Number, user.Number, ammeter.CurrMoney.Value.ToString("0.00"), "失败", item.Money.Value.ToString("0.00"), item.CreateTime.Value.ToString("yyyy-MM-dd HH:mm:dd"));

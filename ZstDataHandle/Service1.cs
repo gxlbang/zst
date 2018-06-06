@@ -34,7 +34,7 @@ namespace ZstDataHandle
 
             //前台异步处理
             timer.Elapsed += new System.Timers.ElapsedEventHandler(TimedEvent);
-            timer.Interval = 1000 * 60 * 50;//每50分钟执行一次
+            timer.Interval = 1000 * 60 * 1;//每50分钟执行一次
             timer.Enabled = true;
 
             //账单生成
@@ -49,12 +49,12 @@ namespace ZstDataHandle
 
             //抄表生成
             ReadingTimer.Elapsed += new System.Timers.ElapsedEventHandler(ReadingTimerEvent);
-            ReadingTimer.Interval = 10000;//每5分钟执行一次
+            ReadingTimer.Interval = 1000*60*10;//每10分钟执行一次
             ReadingTimer.Enabled = true;
 
             //抄表异步处理
             ReadingHandleTimer.Elapsed += new System.Timers.ElapsedEventHandler(ReadingHandleTimerTimerEvent);
-            ReadingHandleTimer.Interval = 500000;//每50秒执行一次
+            ReadingHandleTimer.Interval = 1000 * 60 * 1; ;//每50秒执行一次
             ReadingHandleTimer.Enabled = true;
 
         }
@@ -67,256 +67,274 @@ namespace ZstDataHandle
         {
             timer.Stop();
 
-            List<DbParameter> parTask = new List<DbParameter>();
-            parTask.Add(DbFactory.CreateDbParameter("@CreateTime", DateTime.Now.AddMinutes(-5)));
-
-            var taskList = database.FindList<Am_Task>(" and Status=0 and CreateTime<=@CreateTime",parTask.ToArray());
-            foreach (var item in taskList)
+            try
             {
-                var result = GetResult(item.Number);
-                var root = JsonHelper.JonsToList<Root>(result);
-                if (root != null)
+                List<DbParameter> parTask = new List<DbParameter>();
+                parTask.Add(DbFactory.CreateDbParameter("@CreateTime", DateTime.Now.AddMinutes(-5)));
+
+                var taskList = database.FindList<Am_Task>(" and Status=0 and CreateTime<=@CreateTime", parTask.ToArray());
+                foreach (var item in taskList)
                 {
-                    if (root.Count == 1)
+                    var result = GetResult(item.Number);
+                    var root = JsonHelper.JonsToList<Root>(result);
+                    if (root != null)
                     {
-                        var example = root[0];
-                        item.TaskMark = example.status;
-                        if (example.status == "SUCCESS")
+                        if (root.Count == 1)
                         {
-                            item.Status = 1;
-                            item.StatusStr = "成功";
-                            if (example.data != null)
+                            var example = root[0];
+                            item.TaskMark = example.status;
+                            if (example.status == "SUCCESS")
                             {
-                                if (example.data[0].type == 20)
+                                item.Status = 1;
+                                item.StatusStr = "成功";
+                                if (example.data != null)
                                 {
-                                    item.Remark = "剩余电量:" + example.data[0].dsp;
-                                }
-                                else if (example.data[0].type == 22)
-                                {
-                                    item.Remark = "剩余金额:" + example.data[0].dsp;
-                                }
-                            }
-
-                            item.OverTime = DateTime.Parse(example.resolve_time);
-
-                            if (item.OperateType == 8)
-                            {
-                                List<DbParameter> par = new List<DbParameter>();
-                                par.Add(DbFactory.CreateDbParameter("@Number", item.AmmeterNumber));
-                                var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number =@Number ", par.ToArray());
-                                if (ammeter != null && ammeter.Number != null)
-                                {
-                                    ammeter.Count = 2;
-                                    ammeter.Status = 1;
-                                    ammeter.StatusStr = "已开户";
-                                    ammeter.Acount_Id = null;
-                                    database.Update<Am_Ammeter>(ammeter);
-                                }
-                                item.Remark = "开户成功";
-
-                            }
-                            else if (item.OperateType == 4 || item.OperateType == 9)
-                            {
-                                List<DbParameter> par = new List<DbParameter>();
-                                par.Add(DbFactory.CreateDbParameter("@Number", item.AmmeterNumber));
-                                var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number =@Number ", par.ToArray());
-                                if (ammeter != null && ammeter.Number != null)
-                                {
-                                    ammeter.Count = ammeter.Count + 1;
-                                    ammeter.Acount_Id = null;
-                                    ammeter.CurrMoney = ammeter.CurrMoney+item.Money.Value;
-                                    if (ammeter.CurrMoney > ammeter.FirstAlarm)
+                                    if (example.data[0].type == 20)
                                     {
-                                        ammeter.IsLowerWarning = 1;
+                                        item.Remark = "剩余电量:" + example.data[0].dsp;
                                     }
-                                    database.Update<Am_Ammeter>(ammeter);
-                                }
-                                if (result.Contains("params"))
-                                {
-                                    var pr = JsonHelper.JonsToList<Root>(result.Replace("params", "paramsContent"));
-                                    if (pr[0].paramsContent != null)
+                                    else if (example.data[0].type == 22)
                                     {
-                                        item.Remark = "充值成功:" + pr[0].paramsContent.money + "元";
+                                        item.Remark = "剩余金额:" + example.data[0].dsp;
                                     }
-                                    item.TaskMark = result;
                                 }
-                                //发送通知租户缴费成功
-                                SendMessage(ammeter.Number, ammeter.U_Number, ammeter.CurrMoney.Value.ToString("0.00"), "成功", item.Money.Value.ToString("0.00"), item.CreateTime.Value.ToString("yyyy-MM-dd HH:mm:dd"));
 
-                            }
-                            else if (item.OperateType == 20)//设置电价
-                            {
-                                if (result.Contains("params"))
+                                item.OverTime = DateTime.Parse(example.resolve_time);
+
+                                if (item.OperateType == 8)
                                 {
-                                    var pr = JsonHelper.JonsToList<Root>(result.Replace("params", "paramsContent"));
-                                    if (pr[0].paramsContent != null)
-                                    {
-                                        item.Remark = "设置电价成功:" + pr[0].paramsContent.p1 + "元";
-                                    }
-                                    item.TaskMark = result;
-
-
                                     List<DbParameter> par = new List<DbParameter>();
                                     par.Add(DbFactory.CreateDbParameter("@Number", item.AmmeterNumber));
                                     var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number =@Number ", par.ToArray());
                                     if (ammeter != null && ammeter.Number != null)
                                     {
-                                        ammeter.AmmeterMoney =decimal.Parse(pr[0].paramsContent.p1);
+                                        ammeter.Count = 2;
+                                        ammeter.Status = 1;
+                                        ammeter.StatusStr = "已开户";
+                                        ammeter.Acount_Id = null;
+                                        database.Update<Am_Ammeter>(ammeter);
+                                    }
+                                    item.Remark = "开户成功";
+
+                                }
+                                else if (item.OperateType == 4 || item.OperateType == 9)
+                                {
+                                    List<DbParameter> par = new List<DbParameter>();
+                                    par.Add(DbFactory.CreateDbParameter("@Number", item.AmmeterNumber));
+                                    var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number =@Number ", par.ToArray());
+                                    if (ammeter != null && ammeter.Number != null)
+                                    {
+                                        ammeter.Count = ammeter.Count + 1;
+                                        ammeter.Acount_Id = null;
+                                        ammeter.CurrMoney = ammeter.CurrMoney + item.Money.Value;
+                                        if (ammeter.CurrMoney > ammeter.FirstAlarm)
+                                        {
+                                            ammeter.IsLowerWarning = 1;
+                                        }
+                                        database.Update<Am_Ammeter>(ammeter);
+                                    }
+                                    if (result.Contains("params"))
+                                    {
+                                        var pr = JsonHelper.JonsToList<Root>(result.Replace("params", "paramsContent"));
+                                        if (pr[0].paramsContent != null)
+                                        {
+                                            item.Remark = "充值成功:" + pr[0].paramsContent.money + "元";
+                                        }
+                                        item.TaskMark = result;
+                                    }
+                                    //发送通知租户缴费成功
+                                    SendMessage(ammeter.Number, ammeter.U_Number, ammeter.CurrMoney.Value.ToString("0.00"), "成功", item.Money.Value.ToString("0.00"), item.CreateTime.Value.ToString("yyyy-MM-dd HH:mm:dd"));
+
+                                }
+                                else if (item.OperateType == 20)//设置电价
+                                {
+                                    if (result.Contains("params"))
+                                    {
+                                        var pr = JsonHelper.JonsToList<Root>(result.Replace("params", "paramsContent"));
+                                        if (pr[0].paramsContent != null)
+                                        {
+                                            item.Remark = "设置电价成功:" + pr[0].paramsContent.p1 + "元";
+                                        }
+                                        item.TaskMark = result;
+
+
+                                        List<DbParameter> par = new List<DbParameter>();
+                                        par.Add(DbFactory.CreateDbParameter("@Number", item.AmmeterNumber));
+                                        var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number =@Number ", par.ToArray());
+                                        if (ammeter != null && ammeter.Number != null)
+                                        {
+                                            ammeter.AmmeterMoney = decimal.Parse(pr[0].paramsContent.p1);
+                                            ammeter.Acount_Id = null;
+                                            database.Update<Am_Ammeter>(ammeter);
+                                        }
+
+                                    }
+                                }
+                                else if (item.OperateType == 3)
+                                {
+                                    List<DbParameter> par = new List<DbParameter>();
+                                    par.Add(DbFactory.CreateDbParameter("@Number", item.AmmeterNumber));
+                                    var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number =@Number ", par.ToArray());
+                                    if (ammeter != null && ammeter.Number != null)
+                                    {
+                                        ammeter.Count = 1;
+                                        ammeter.Status = 0;
+                                        ammeter.StatusStr = "未开户";
+                                        ammeter.Acount_Id = null;
+                                        database.Update<Am_Ammeter>(ammeter);
+                                    }
+                                }
+                                else if (item.OperateType == 1)
+                                {
+                                    item.Remark = "合闸成功";
+                                }
+                                else if (item.OperateType == 2)
+                                {
+                                    item.Remark = "拉闸成功";
+                                }
+
+                            }
+                            else if (example.status == "RESPONSE_FAIL")
+                            {
+                                item.Status = 2;
+                                item.StatusStr = "失败";
+                                item.OverTime = DateTime.Parse(example.resolve_time);
+                                item.Remark = example.error_msg;
+                            }
+                            else if (example.status == "FAIL")
+                            {
+                                item.Status = 2;
+                                item.StatusStr = "失败";
+                                item.OverTime = DateTime.Parse(example.resolve_time);
+                            }
+                            else if (example.status == "NOTSUPPORT")
+                            {
+                                item.Status = 2;
+                                item.StatusStr = "不支持此功能";
+                                item.OverTime = DateTime.Parse(example.resolve_time);
+                            }
+                            else if (example.status == "TIMEOUT")
+                            {
+                                item.Status = 2;
+                                item.StatusStr = "超时";
+                                item.OverTime = DateTime.Parse(example.resolve_time);
+                            }
+                            else if (example.status == "ACCEPTED")
+                            {
+                                item.StatusStr = "请求已接受";
+                            }
+                            else if (example.status == "QUEUE")
+                            {
+                                item.StatusStr = "调度状态";
+                            }
+                            else if (example.status == "PROCESSING")
+                            {
+                                item.StatusStr = "正在处理中";
+                            }
+                            else if (example.status== "RESPONSE_TIMEOUT")
+                            {
+                                if (item.OperateType!=4)
+                                {
+                                    item.Status = 2;
+                                    item.StatusStr = "电表回复超时";
+                                    item.OverTime = DateTime.Parse(example.resolve_time);
+                                }
+                            }
+                            DbHelper.UpdateTask(item);
+                        }
+                    }
+                    if (item.Status > 0 && item.Status < 4)
+                    {
+                        var log = DbHelper.GetLog(item.Number);
+                        if (log != null)
+                        {
+                            log.Result = item.StatusStr;
+                            DbHelper.UpdateLog(log);
+                        }
+                        if (root.Count == 1)
+                        {
+                            var example = root[0];
+                            if (example.data != null && example.data.Count > 0)
+                            {
+                                int type = example.data[0].type;
+                                List<DbParameter> par = new List<DbParameter>();
+                                par.Add(DbFactory.CreateDbParameter("@Number", item.AmmeterNumber));
+                                var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number =@Number ", par.ToArray());
+                                //查询余额
+                                if (type == 22)
+                                {
+                                    if (ammeter != null)
+                                    {
+                                        ammeter.CurrMoney = double.Parse(example.data[0].value[0].ToString());
+                                        ammeter.CM_Time = DateTime.Parse(example.resolve_time);
+                                        DbHelper.UpdateAmmeter(ammeter);
+                                    }
+                                }
+                                //查询电量
+                                if (type == 20)
+                                {
+                                    if (ammeter != null)
+                                    {
+                                        ammeter.CurrPower = decimal.Parse(example.data[0].value[0].ToString()).ToString("0.00");
+                                        ammeter.CP_Time = DateTime.Parse(example.resolve_time);
+                                        DbHelper.UpdateAmmeter(ammeter);
+                                    }
+                                }
+                                //电价设置
+                                if (type == 12)
+                                {
+                                    if (ammeter != null)
+                                    {
+                                        ammeter.AmmeterMoney = decimal.Parse(example.data[0].value[0].ToString());
                                         ammeter.Acount_Id = null;
                                         database.Update<Am_Ammeter>(ammeter);
                                     }
 
                                 }
                             }
-                            else if (item.OperateType == 3)
-                            {
-                                List<DbParameter> par = new List<DbParameter>();
-                                par.Add(DbFactory.CreateDbParameter("@Number", item.AmmeterNumber));
-                                var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number =@Number ", par.ToArray());
-                                if (ammeter != null && ammeter.Number != null)
-                                {
-                                    ammeter.Count = 1;
-                                    ammeter.Status = 0;
-                                    ammeter.StatusStr = "未开户";
-                                    ammeter.Acount_Id = null;
-                                    database.Update<Am_Ammeter>(ammeter);
-                                }
-                            }
-                            else if (item.OperateType == 1)
-                            {
-                                item.Remark = "合闸成功";
-                            }
-                            else if (item.OperateType == 2)
-                            {
-                                item.Remark = "拉闸成功";
-                            }
-
                         }
-                        else if (example.status == "RESPONSE_FAIL")
-                        {
-                            item.Status = 2;
-                            item.StatusStr = "失败";
-                            item.OverTime = DateTime.Parse(example.resolve_time);
-                            item.Remark = example.error_msg;
-                        }
-                        else if (example.status == "FAIL")
-                        {
-                            item.Status = 2;
-                            item.StatusStr = "失败";
-                            item.OverTime = DateTime.Parse(example.resolve_time);
-                        }
-                        else if (example.status == "NOTSUPPORT")
-                        {
-                            item.Status = 2;
-                            item.StatusStr = "不支持此功能";
-                            item.OverTime = DateTime.Parse(example.resolve_time);
-                        }
-                        else if (example.status == "TIMEOUT")
-                        {
-                            item.Status = 2;
-                            item.StatusStr = "超时";
-                            item.OverTime = DateTime.Parse(example.resolve_time);
-                        }
-                        else if (example.status == "ACCEPTED")
-                        {
-                            item.StatusStr = "请求已接受";
-                        }
-                        else if (example.status == "QUEUE")
-                        {
-                            item.StatusStr = "调度状态";
-                        }
-                        else if (example.status == "PROCESSING")
-                        {
-                            item.StatusStr = "正在处理中";
-                        }
-                        DbHelper.UpdateTask(item);
                     }
-                }
-                if (item.Status > 0 && item.Status < 4)
-                {
-                    var log = DbHelper.GetLog(item.Number);
-                    if (log != null)
+                    if (item.Status == 2 && item.OperateType == 4)
                     {
-                        log.Result = item.StatusStr;
-                        DbHelper.UpdateLog(log);
-                    }
-                    if (root.Count == 1)
-                    {
-                        var example = root[0];
-                        if (example.data != null && example.data.Count > 0)
+                        List<DbParameter> par = new List<DbParameter>();
+                        par.Add(DbFactory.CreateDbParameter("@Number", item.U_Number));
+                        par.Add(DbFactory.CreateDbParameter("@Status", "3"));
+                        var user = database.FindEntityByWhere<Ho_PartnerUser>(" and Number =@Number and Status=@Status ", par.ToArray());
+                        if (user != null && user.Number != null)
                         {
-                            int type = example.data[0].type;
-                            List<DbParameter> par = new List<DbParameter>();
-                            par.Add(DbFactory.CreateDbParameter("@Number", item.AmmeterNumber));
-                            var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number =@Number ", par.ToArray());
-                            //查询余额
-                            if (type == 22)
+                            user.Money = user.Money + item.Money;
+                            database.Update<Ho_PartnerUser>(user);
+                            var moneyDetail = new Am_MoneyDetail
                             {
-                                if (ammeter != null)
-                                {
-                                    ammeter.CurrMoney = double.Parse(example.data[0].value[0].ToString());
-                                    ammeter.CM_Time = DateTime.Parse(example.resolve_time);
-                                    DbHelper.UpdateAmmeter(ammeter);
-                                }
-                            }
-                            //查询电量
-                            if (type == 20)
-                            {
-                                if (ammeter != null)
-                                {
-                                    ammeter.CurrPower = decimal.Parse(example.data[0].value[0].ToString()).ToString("0.00");
-                                    ammeter.CP_Time = DateTime.Parse(example.resolve_time);
-                                    DbHelper.UpdateAmmeter(ammeter);
-                                }
-                            }
-                            //电价设置
-                            if (type==12)
-                            {
-                                if (ammeter != null)
-                                {
-                                    ammeter.AmmeterMoney = decimal.Parse(example.data[0].value[0].ToString());
-                                    ammeter.Acount_Id = null;
-                                    database.Update<Am_Ammeter>(ammeter);
-                                }
-
-                            }
+                                Number = CommonHelper.GetGuid,
+                                CreateTime = DateTime.Now,
+                                CreateUserId = user.Number,
+                                CreateUserName = user.Name,
+                                CurrMoney = user.Money,
+                                Money = item.Money,
+                                OperateType = 6,
+                                OperateTypeStr = "电费充值退款",
+                                Remark = "",
+                                UserName = user.Account,
+                                U_Number = user.Number
+                            };
+                            database.Insert<Am_MoneyDetail>(moneyDetail);
+                            List<DbParameter> par1 = new List<DbParameter>();
+                            par1.Add(DbFactory.CreateDbParameter("@Number", item.AmmeterNumber));
+                            var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number =@Number ", par1.ToArray());
+                            //发送微信通知租户缴费失败
+                            SendMessage(ammeter.Number, user.Number, ammeter.CurrMoney.Value.ToString("0.00"), "失败", item.Money.Value.ToString("0.00"), item.CreateTime.Value.ToString("yyyy-MM-dd HH:mm:dd"));
                         }
                     }
-                }
-                if (item.Status == 2 && item.OperateType == 4)
-                {
-                    List<DbParameter> par = new List<DbParameter>();
-                    par.Add(DbFactory.CreateDbParameter("@Number", item.U_Number));
-                    par.Add(DbFactory.CreateDbParameter("@Status", "3"));
-                    var user = database.FindEntityByWhere<Ho_PartnerUser>(" and Number =@Number and Status=@Status ", par.ToArray());
-                    if (user != null && user.Number != null)
-                    {
-                        user.Money = user.Money + item.Money;
-                        database.Update<Ho_PartnerUser>(user);
-                        var moneyDetail = new Am_MoneyDetail
-                        {
-                            Number = CommonHelper.GetGuid,
-                            CreateTime = DateTime.Now,
-                            CreateUserId = user.Number,
-                            CreateUserName = user.Name,
-                            CurrMoney = user.Money,
-                            Money = item.Money,
-                            OperateType = 6,
-                            OperateTypeStr = "电费充值退款",
-                            Remark = "",
-                            UserName = user.Account,
-                            U_Number = user.Number
-                        };
-                        database.Insert<Am_MoneyDetail>(moneyDetail);
-                        List<DbParameter> par1 = new List<DbParameter>();
-                        par.Add(DbFactory.CreateDbParameter("@Number", item.AmmeterNumber));
-                        var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number =@Number ", par1.ToArray());
-                        //发送微信通知租户缴费失败
-                        SendMessage(ammeter.Number,user.Number, ammeter.CurrMoney.Value.ToString("0.00") ,"失败", item.Money.Value.ToString("0.00"),item.CreateTime.Value.ToString("yyyy-MM-dd HH:mm:dd"));
-                    }
-                }
 
+                } 
             }
+            catch (Exception ex )
+            {
+
+                this.WriteLog("异步处理操作异常："+ex.Message+" 异常详情："+ex .StackTrace);
+            }
+            
             timer.Start();
 
             //业务逻辑代码
@@ -643,7 +661,7 @@ namespace ZstDataHandle
                     if (root.Count == 1)
                     {
                         var example = root[0];
-                        item.TaskMark = example.status;
+                        item.TaskMark = "[主动查询]"+ result;
                         if (example.status == "SUCCESS")
                         {
                             item.Status = 1;
