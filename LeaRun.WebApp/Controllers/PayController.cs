@@ -1,6 +1,7 @@
 ﻿
 using AlipayAndWepaySDK;
 using AlipayAndWepaySDK.Model;
+using BusinessCard.Web.Code;
 using LeaRun.DataAccess;
 using LeaRun.Entity;
 using LeaRun.Repository;
@@ -8,6 +9,8 @@ using LeaRun.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
+using System.Text;
 using System.Web.Mvc;
 
 namespace LeaRun.WebApp.Controllers
@@ -264,44 +267,122 @@ namespace LeaRun.WebApp.Controllers
                             par.Add(DbFactory.CreateDbParameter("@Number", order.ObjectNumber));
                             par.Add(DbFactory.CreateDbParameter("@Status", "1"));
                             var bill = database.FindEntityByWhere<Am_Bill>(" and Number=@Number and Status=@Status ", par.ToArray());
+
                             if (bill != null && bill.Number != null)
                             {
                                 bill.Status = 2;
                                 bill.StatusStr = "已支付";
                                 bill.PayTime = DateTime.Now;
-                                if (database.Update<Am_Bill>(bill) > 0)
-                                {
-                                    List<DbParameter> par1 = new List<DbParameter>();
-                                    par1.Add(DbFactory.CreateDbParameter("@Bill_Number", bill.Number));
-                                    par1.Add(DbFactory.CreateDbParameter("@ChargeItem_Title", "押金"));
 
-                                    var content = database.FindEntityByWhere<Am_BillContent>(" and Bill_Number=@Bill_Number and ChargeItem_Title=@ChargeItem_Title ", par1.ToArray());
-                                    if (content != null && content.Number != null)
+                                List<DbParameter> parBill = new List<DbParameter>();
+                                parBill.Add(DbFactory.CreateDbParameter("@Number", bill.Number));
+                                parBill.Add(DbFactory.CreateDbParameter("@Status", bill.Status));
+                                parBill.Add(DbFactory.CreateDbParameter("@PayTime", bill.PayTime));
+
+                                StringBuilder sql = new StringBuilder("update Am_Bill set Status=@Status,PayTime=@PayTime where Number=@Number  and Status = 1");
+
+                                if (database.ExecuteBySql(sql, parBill.ToArray()) > 0)
+                                {
+                                    //押金
+                                    UserDeposit(bill);
+
+                                    var ammodel = database.FindEntity<Am_Ammeter>(bill.AmmeterNumber);
+                                    //给余额加钱
+                                    var userModel = database.FindEntity<Ho_PartnerUser>(ammodel.UY_Number);
+                                    userModel.Money += bill.Money;
+                                    userModel.Modify(userModel.Number);
+                                    database.Update(userModel);
+                                    //记录余额日志
+                                    var modeldetail = new Am_MoneyDetail()
                                     {
-                                        var deposit = new Am_UserDeposit
+                                        CreateTime = DateTime.Now,
+                                        CreateUserId = userModel.Number,
+                                        CreateUserName = userModel.Account ,
+                                        CurrMoney = userModel.Money + bill.Money, //变动后余额
+                                        Money = bill.Money,
+                                        OperateType = 4,
+                                        OperateTypeStr = "电表充值",
+                                        UserName = userModel.Account,
+                                        U_Name = userModel.Name,
+                                        U_Number = userModel.Number,
+                                        Number = CommonHelper.GetGuid,
+                                        Remark = ""
+                                    };
+                                    database.Insert(modeldetail); //记录日志
+                                                                  //分账
+                                    var config = database.FindList<Fx_WebConfig>().FirstOrDefault();
+                                    double fmoney = 0;
+                                    double money = 0;//1:1押金返还金额
+                                    fmoney = bill.Money.Value * (1 - config.ChargeFee.Value);
+                                    PayToPerson pay = new BusinessCard.Web.Code.PayToPerson();
+                                    try
+                                    {
+                                        var user = database.FindEntity<Ho_PartnerUser>(ammodel.UY_Number);
+                                        if (user.FreezeMoney > 0) //首先要有押金
                                         {
-                                            Number = CommonHelper.GetGuid,
-                                            Address = bill.Address,
-                                            Ammeter_Code = bill.AmmeterCode,
-                                            Ammeter_Number = bill.AmmeterNumber,
-                                            Cell = bill.Cell,
-                                            City = bill.City,
-                                            County = bill.County,
-                                            CreateTime = DateTime.Now,
-                                            Money = content.Money,
-                                            Floor = bill.Floor,
-                                            PayTime = DateTime.Now,
-                                            Province = bill.Province,
-                                            Remark = "",
-                                            Room = bill.Room,
-                                            Status = 0,
-                                            StatusStr = "冻结押金",
-                                            UserName = bill.T_UserName,
-                                            U_Name = bill.T_U_Name,
-                                            U_Number = bill.T_U_Number
-                                        };
-                                        database.Insert<Am_UserDeposit>(deposit);
+                                            money = bill.Money.Value * config.ChargeFee.Value;
+                                            //如果返还的金额大于
+                                            if (money > user.FreezeMoney)
+                                            {
+                                                money = user.FreezeMoney.Value;
+                                            }
+                                            fmoney += money;
+                                        }
+
+                                        PayToPersonModel m = pay.EnterprisePay(bill.Number.Replace("-", ""), userModel.OpenId, decimal.Parse(fmoney.ToString("0.00")), userModel.Name, bill.T_U_Name + ",账单支付");
+                                        if (m.result_code == "SUCCESS")//分成功
+                                        {
+                                            userModel.Money -= bill.Money;
+                                            userModel.FreezeMoney -= money;
+                                            userModel.Modify(userModel.Number);
+                                            database.Update(userModel); //扣掉余额
+
+
+                                            //添加押金返还记录
+                                            var recordModel = new Am_AmDepositDetail()
+                                            {
+                                                CreateTime = DateTime.Now,
+                                                CurrMoney = user.FreezeMoney,
+                                                Mark = "押金1:1返还",
+                                                Money = money,
+                                                UserName = userModel.Account,
+                                                U_Name = userModel.Name,
+                                                U_Number = userModel.Number
+                                            };
+                                            recordModel.Create();
+                                            database.Insert(recordModel); //添加返还记录
+
+
+                                            //记录余额日志
+                                            var modeldetail1 = new Am_MoneyDetail()
+                                            {
+                                                CreateTime = DateTime.Now,
+                                                CreateUserId = userModel.Number,
+                                                CreateUserName = userModel.Account,
+                                                CurrMoney = userModel.Money - bill.Money, //变动后余额
+                                                Money = -bill.Money,
+                                                OperateType = 6,
+                                                OperateTypeStr = "分账",
+                                                UserName = userModel.Account,
+                                                U_Name = userModel.Name,
+                                                U_Number = userModel.Number,
+                                                Number = CommonHelper.GetGuid,
+                                                Remark = ""
+                                            };
+                                            database.Insert(modeldetail1); //记录日志
+
+                                            //记录分账信息
+                                        }
+                                        else
+                                        {
+                                            
+                                        }
                                     }
+                                    catch (Exception ex)
+                                    {
+                                    }
+
+
                                 }
                                 return Content(payResult.ReturnXml);
                             }
@@ -313,6 +394,44 @@ namespace LeaRun.WebApp.Controllers
 
             }
             return Content(BuildWepayReturnXml("FAIL", ""));
+        }
+        /// <summary>
+        /// 用户押金
+        /// </summary>
+        /// <param name="bill"></param>
+        private void UserDeposit(Am_Bill bill)
+        {
+            List<DbParameter> par1 = new List<DbParameter>();
+            par1.Add(DbFactory.CreateDbParameter("@Bill_Number", bill.Number));
+            par1.Add(DbFactory.CreateDbParameter("@ChargeItem_Title", "押金"));
+
+            var content = database.FindEntityByWhere<Am_BillContent>(" and Bill_Number=@Bill_Number and ChargeItem_Title=@ChargeItem_Title ", par1.ToArray());
+            if (content != null && content.Number != null)
+            {
+                var deposit = new Am_UserDeposit
+                {
+                    Number = CommonHelper.GetGuid,
+                    Address = bill.Address,
+                    Ammeter_Code = bill.AmmeterCode,
+                    Ammeter_Number = bill.AmmeterNumber,
+                    Cell = bill.Cell,
+                    City = bill.City,
+                    County = bill.County,
+                    CreateTime = DateTime.Now,
+                    Money = content.Money,
+                    Floor = bill.Floor,
+                    PayTime = DateTime.Now,
+                    Province = bill.Province,
+                    Remark = "",
+                    Room = bill.Room,
+                    Status = 0,
+                    StatusStr = "冻结押金",
+                    UserName = bill.T_UserName,
+                    U_Name = bill.T_U_Name,
+                    U_Number = bill.T_U_Number
+                };
+                database.Insert<Am_UserDeposit>(deposit);
+            }
         }
 
         private string BuildWepayReturnXml(string code, string returnMsg)

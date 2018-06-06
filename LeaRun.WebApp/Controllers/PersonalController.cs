@@ -710,7 +710,8 @@ namespace LeaRun.WebApp.Controllers
                     charge.STATUS = 0;
                     charge.StatusStr = "待支付";
                     charge.SucTime = DateTime.Now;
-                    charge.UserName = user.Name;
+                    charge.U_Name = user.Name;
+                    charge.UserName = user.Account;
                     charge.U_Number = user.Number;
                     charge.ChargeType = 2;
                     charge.ChargeTypeStr = "电费充值";
@@ -834,7 +835,7 @@ namespace LeaRun.WebApp.Controllers
             parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
             parameter.Add(DbFactory.CreateDbParameter("@OperateType", "4"));
 
-            var taskList = database.FindListPage<Am_Task>(" and U_Number=@U_Number and OperateType=@OperateType and AmmeterNumber=@AmmeterNumber", parameter.ToArray(), "CreateTime", "desc", pageIndex, pageSize, ref recordCount);
+            var taskList = database.FindListPage<Am_Task>(" and U_Number=@U_Number and (OperateType=@OperateType or OperateType=9)  and AmmeterNumber=@AmmeterNumber", parameter.ToArray(), "CreateTime", "desc", pageIndex, pageSize, ref recordCount);
             ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize);
 
             if (Request.IsAjaxRequest())

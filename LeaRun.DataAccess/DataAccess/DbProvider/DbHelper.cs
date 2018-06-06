@@ -67,7 +67,7 @@ namespace LeaRun.DataAccess
             catch (Exception ex)
             {
                 num = -1;
-                log.Error(ex.Message);
+                log.Error(ex.Message+ex.StackTrace);
             }
             return num;
         }
@@ -93,7 +93,7 @@ namespace LeaRun.DataAccess
             catch (Exception ex)
             {
                 num = -1;
-                log.Error(ex.Message);
+                log.Error(ex.Message+ex.StackTrace);
             }
             return num;
         }
@@ -118,7 +118,7 @@ namespace LeaRun.DataAccess
             catch (Exception ex)
             {
                 num = -1;
-                log.Error(ex.Message);
+                log.Error(ex.Message+ex.StackTrace);
             }
             return num;
         }
@@ -142,7 +142,7 @@ namespace LeaRun.DataAccess
             catch (Exception ex)
             {
                 num = -1;
-                log.Error(ex.Message);
+                log.Error(ex.Message+ex.StackTrace);
             }
             return num;
         }
@@ -178,7 +178,7 @@ namespace LeaRun.DataAccess
             catch (Exception ex)
             {
                 num = -1;
-                log.Error(ex.Message);
+                log.Error(ex.Message+ex.StackTrace);
             }
             return num;
         }
@@ -202,7 +202,7 @@ namespace LeaRun.DataAccess
             catch (Exception ex)
             {
                 num = -1;
-                log.Error(ex.Message);
+                log.Error(ex.Message+ex.StackTrace);
             }
             return num;
         }
@@ -229,7 +229,7 @@ namespace LeaRun.DataAccess
             {
                 conn.Close();
                 cmd.Dispose();
-                log.Error(ex.Message);
+                log.Error(ex.Message+ex.StackTrace);
                 throw;
             }
         }
@@ -255,7 +255,7 @@ namespace LeaRun.DataAccess
             {
                 conn.Close();
                 cmd.Dispose();
-                log.Error(ex.Message);
+                log.Error(ex.Message+ex.StackTrace);
                 throw;
             }
         }
@@ -280,7 +280,7 @@ namespace LeaRun.DataAccess
             {
                 conn.Close();
                 cmd.Dispose();
-                log.Error(ex.Message);
+                log.Error(ex.Message+ex.StackTrace);
                 throw;
             }
         }
@@ -307,7 +307,7 @@ namespace LeaRun.DataAccess
             {
                 conn.Close();
                 cmd.Dispose();
-                log.Error(ex.Message);
+                log.Error(ex.Message+ex.StackTrace);
                 throw;
             }
         }
@@ -333,7 +333,7 @@ namespace LeaRun.DataAccess
             {
                 conn.Close();
                 cmd.Dispose();
-                log.Error(ex.Message);
+                log.Error(ex.Message+ex.StackTrace);
                 throw;
             }
         }
@@ -360,7 +360,7 @@ namespace LeaRun.DataAccess
             }
             catch (Exception ex)
             {
-                log.Error(ex.Message);
+                log.Error(ex.Message+ex.StackTrace);
                 throw;
             }
         }
@@ -386,7 +386,7 @@ namespace LeaRun.DataAccess
             }
             catch (Exception ex)
             {
-                log.Error(ex.Message);
+                log.Error(ex.Message+ex.StackTrace);
                 throw;
             }
         }
@@ -411,7 +411,7 @@ namespace LeaRun.DataAccess
             }
             catch (Exception ex)
             {
-                log.Error(ex.Message);
+                log.Error(ex.Message+ex.StackTrace);
                 throw;
             }
         }
@@ -436,7 +436,7 @@ namespace LeaRun.DataAccess
             }
             catch (Exception ex)
             {
-                log.Error(ex.Message);
+                log.Error(ex.Message+ex.StackTrace);
                 throw;
             }
         }
@@ -461,7 +461,7 @@ namespace LeaRun.DataAccess
             }
             catch (Exception ex)
             {
-                log.Error(ex.Message);
+                log.Error(ex.Message+ex.StackTrace);
                 throw;
             }
         }
@@ -486,7 +486,7 @@ namespace LeaRun.DataAccess
             }
             catch (Exception ex)
             {
-                log.Error(ex.Message);
+                log.Error(ex.Message+ex.StackTrace);
                 throw;
             }
         }

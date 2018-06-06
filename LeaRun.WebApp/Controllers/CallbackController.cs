@@ -33,6 +33,9 @@ namespace LeaRun.WebApp.Controllers
             int type = 0;//0.前台操作，1.后台操作
 
             var result = Request["response_content"];
+            log.Error(result);
+
+            //result = "[{\"opr_id\":\"0a50b06a-da9a-455b-a1a6-1a4dbb5f4d4a\",\"resolve_time\":\"2018-06-06 18:44:37\",\"status\":\"SUCCESS\",\"params\":{\"account_id\":30,\"count\":11,\"money\":1}}]";
             if (result == null)
             {
                 return Content("");
@@ -48,11 +51,12 @@ namespace LeaRun.WebApp.Controllers
                     }
                     List<DbParameter> parameter = new List<DbParameter>();
                     parameter.Add(DbFactory.CreateDbParameter("@Number", example.opr_id));
-                    var item = database.FindEntityByWhere<Am_Task>(" and Number=@Number ", parameter.ToArray());
+                    parameter.Add(DbFactory.CreateDbParameter("@Status", "0"));
+                    var item = database.FindEntityByWhere<Am_Task>(" and Number=@Number and Status=@Status ", parameter.ToArray());
                     if (item == null || item.Number == null)
                     {
 
-                        var bTast = database.FindEntityByWhere<Am_BackstageTask>(" and Number=@Number ", parameter.ToArray());
+                        var bTast = database.FindEntityByWhere<Am_BackstageTask>(" and Number=@Number  and Status=@Status ", parameter.ToArray());
 
                         item = Mapper<Am_Task, Am_BackstageTask>(bTast);
                         if (item != null && item.Number != null)
@@ -62,7 +66,7 @@ namespace LeaRun.WebApp.Controllers
 
                     }
                     //没有找任务
-                    if (item==null&&item.Number ==null )
+                    if (item == null || item.Number == null)
                     {
                         return Content("SUCCESS");
                     }
@@ -78,6 +82,7 @@ namespace LeaRun.WebApp.Controllers
                         item.StatusStr = "失败";
                         item.OverTime = DateTime.Parse(example.resolve_time);
                         item.Remark = example.error_msg;
+
                     }
                     else if (example.status == "FAIL")
                     {
@@ -120,75 +125,141 @@ namespace LeaRun.WebApp.Controllers
                         }
                     }
 
-                    if (type==0)
+                    if (type == 0)
                     {
-                        StringBuilder sql = new StringBuilder("update Am_Task set Status = " + item.Status + " ,StatusStr='" + item.StatusStr + "',OverTime = '" + item.OverTime + "',TaskMark='" + item.TaskMark + "' where Number = " + item.Number + " and Status = 0");
-                        if (database.ExecuteBySql(sql) > 0)
+                        if (item.Remark == null)
                         {
-                            var ammodel = database.FindEntity<Am_Ammeter>(item.AmmeterNumber);
-                            //给余额加钱
-                            var userModel = database.FindEntity<Ho_PartnerUser>(ammodel.UY_Number);
-                            userModel.Money += item.Money;
-                            userModel.Modify(userModel.Number);
-                            database.Update(userModel);
-                            //记录余额日志
-                            var modeldetail = new Am_MoneyDetail()
+                            item.Remark = "";
+                        }
+                        List<DbParameter> parTask = new List<DbParameter>();
+                        parTask.Add(DbFactory.CreateDbParameter("@Status", item.Status));
+                        parTask.Add(DbFactory.CreateDbParameter("@StatusStr", item.StatusStr));
+                        parTask.Add(DbFactory.CreateDbParameter("@OverTime", item.OverTime));
+                        parTask.Add(DbFactory.CreateDbParameter("@TaskMark", item.TaskMark));
+                        parTask.Add(DbFactory.CreateDbParameter("@Remark", item.Remark));
+                        parTask.Add(DbFactory.CreateDbParameter("@Number", item.Number));
+
+                        StringBuilder sql = new StringBuilder("update Am_Task set Status=@Status,StatusStr=@StatusStr,OverTime=@OverTime,TaskMark=@TaskMark,Remark=@Remark  where Number=@Number  and Status = 0");
+                        if (database.ExecuteBySql(sql, parTask.ToArray()) > 0)
+                        {
+                            if (item.OperateType == 4 && item.Status == 1)
                             {
-                                CreateTime = DateTime.Now,
-                                CreateUserId = item.U_Number,
-                                CreateUserName = item.UserName,
-                                CurrMoney = userModel.Money + item.Money, //变动后余额
-                                Money = item.Money,
-                                OperateType = 4,
-                                OperateTypeStr = "电表充值",
-                                UserName = userModel.Account,
-                                U_Name = userModel.Name,
-                                U_Number = userModel.Number,
-                                Number= CommonHelper.GetGuid
-                            };
-                            database.Insert(modeldetail); //记录日志
-                            //分账
-                            var taskList = database.FindList<Am_Task>(" and Status = 1 and OperateType = 4");
-                            var config = database.FindList<Fx_WebConfig>().FirstOrDefault();
-                            double fmoney = 0;
-                            if (taskList.Count == 1 && taskList[0].Money >= config.AmCharge)
-                            {
-                                //首次充值
-                                 fmoney = (taskList[0].Money.Value - config.AmCharge.Value) * (1 - config.ChargeFee.Value);
-                                
-                            }
-                            else
-                            {
-                                fmoney= taskList[0].Money.Value  * (1 - config.ChargeFee.Value);
-                            }
-                            PayToPerson pay = new BusinessCard.Web.Code.PayToPerson();
-                            PayToPersonModel m = pay.EnterprisePay(item.Number.Replace("-", ""), userModel.OpenId, 1, userModel.Name, item.U_Name + ",电费缴费");
-                            if (m.result_code == "SUCCESS")//分成功
-                            {
-                                userModel.Money -= item.Money;
+                                var ammodel = database.FindEntity<Am_Ammeter>(item.AmmeterNumber);
+                                //给余额加钱
+                                var userModel = database.FindEntity<Ho_PartnerUser>(ammodel.UY_Number);
+                                userModel.Money += item.Money;
                                 userModel.Modify(userModel.Number);
-                                database.Update(userModel); //扣掉余额
-                                                            //记录余额日志
-                                var modeldetail1 = new Am_MoneyDetail()
+                                database.Update(userModel);
+                                //记录余额日志
+                                var modeldetail = new Am_MoneyDetail()
                                 {
                                     CreateTime = DateTime.Now,
                                     CreateUserId = item.U_Number,
                                     CreateUserName = item.UserName,
-                                    CurrMoney = userModel.Money - item.Money, //变动后余额
+                                    CurrMoney = userModel.Money + item.Money, //变动后余额
                                     Money = item.Money,
-                                    OperateType = 6,
-                                    OperateTypeStr = "分账",
+                                    OperateType = 4,
+                                    OperateTypeStr = "电表充值",
                                     UserName = userModel.Account,
                                     U_Name = userModel.Name,
                                     U_Number = userModel.Number,
-                                    Number = CommonHelper.GetGuid
+                                    Number = CommonHelper.GetGuid,
+                                    Remark = ""
                                 };
-                                database.Insert(modeldetail1); //记录日志
+                                database.Insert(modeldetail); //记录日志
+                                                              //分账
 
-                                //记录分账信息
+                                List<DbParameter> parfisrt = new List<DbParameter>();
+                                parfisrt.Add(DbFactory.CreateDbParameter("@U_Number", item.U_Number));
+
+                                var taskList = database.FindCount<Am_Task>(" and Status = 1 and OperateType = 4  and U_Number=@U_Number " ,parfisrt.ToArray());
+                                var config = database.FindList<Fx_WebConfig>().FirstOrDefault();
+                                double fmoney = 0;
+                                double money = 0;//1:1押金返还金额
+                                if (taskList==1)
+                                {
+                                    //首次充值
+                                    fmoney = (item.Money.Value - config.AmCharge.Value) * (1 - config.ChargeFee.Value);
+
+                                }
+                                else
+                                {
+                                    fmoney = item.Money.Value * (1 - config.ChargeFee.Value);
+                                }
+                                PayToPerson pay = new BusinessCard.Web.Code.PayToPerson();
+                                try
+                                {
+                                    log.Error(fmoney.ToString("0.00"));
+                                    var user = database.FindEntity<Ho_PartnerUser>(ammodel.UY_Number);
+                                    if (user.FreezeMoney > 0) //首先要有押金
+                                    {
+                                         money = item.Money.Value * config.ChargeFee.Value;
+                                        //如果返还的金额大于
+                                        if (money > user.FreezeMoney)
+                                        {
+                                            money = user.FreezeMoney.Value;
+                                        }
+                                        fmoney += money;
+                                    }
+
+                                    PayToPersonModel m = pay.EnterprisePay(item.Number.Replace("-", ""), userModel.OpenId, decimal.Parse(fmoney.ToString("0.00")), userModel.Name, item.U_Name + ",电费缴费");
+                                    log.Error(m.return_msg);
+                                    if (m.result_code == "SUCCESS")//分成功
+                                    {
+                                        userModel.Money -= item.Money;
+                                        userModel.FreezeMoney -= money;
+                                        userModel.Modify(userModel.Number);
+                                        database.Update(userModel); //扣掉余额
+
+                                         
+                                                               //添加押金返还记录
+                                        var recordModel = new Am_AmDepositDetail()
+                                        {
+                                            CreateTime = DateTime.Now,
+                                            CurrMoney = user.FreezeMoney,
+                                            Mark = "押金1:1返还",
+                                            Money = money,
+                                            UserName = userModel.Account,
+                                            U_Name = userModel.Name,
+                                            U_Number = userModel.Number
+                                        };
+                                        recordModel.Create();
+                                        database.Insert(recordModel); //添加返还记录
+
+
+                                                                      //记录余额日志
+                                        var modeldetail1 = new Am_MoneyDetail()
+                                        {
+                                            CreateTime = DateTime.Now,
+                                            CreateUserId = item.U_Number,
+                                            CreateUserName = item.UserName,
+                                            CurrMoney = userModel.Money - item.Money, //变动后余额
+                                            Money = -item.Money,
+                                            OperateType = 6,
+                                            OperateTypeStr = "分账",
+                                            UserName = userModel.Account,
+                                            U_Name = userModel.Name,
+                                            U_Number = userModel.Number,
+                                            Number = CommonHelper.GetGuid,
+                                            Remark = ""
+                                        };
+                                        database.Insert(modeldetail1); //记录日志
+
+                                        //记录分账信息
+                                    }
+                                    else
+                                    {
+                                        log.Error(m.result_code);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+
+                                    log.Error(ex.Message);
+                                }
+
                             }
                         }
-
                     }
                     else
                     {
@@ -388,6 +459,8 @@ namespace LeaRun.WebApp.Controllers
 
                 //发送通知租户缴费成功
                 SendMessage(ammeter.Number, ammeter.U_Number, ammeter.CurrMoney.Value.ToString("0.00"), "成功", item.Money.Value.ToString("0.00"), item.CreateTime.Value.ToString("yyyy-MM-dd HH:mm:dd"));
+                //发送通知给业主
+                SendMessage(ammeter.Number, ammeter.UY_Number, ammeter.CurrMoney.Value.ToString("0.00"), "成功", item.Money.Value.ToString("0.00"), item.CreateTime.Value.ToString("yyyy-MM-dd HH:mm:dd"));
 
             }
             else if (item.OperateType == 20)//设置电价

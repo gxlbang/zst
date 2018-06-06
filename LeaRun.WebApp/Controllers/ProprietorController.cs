@@ -438,9 +438,9 @@ namespace LeaRun.WebApp.Controllers
                         Status = 0,
                         StatusStr = "队列",
                         TaskMark = "",
-                        UserName = user.Account,
-                        U_Name = user.Name,
-                        U_Number = user.Number,
+                        UserName = ammeter.UserName,
+                        U_Name = ammeter.U_Name,
+                        U_Number = ammeter.U_Number,
                         Money = money
                     };
 
@@ -2562,7 +2562,8 @@ namespace LeaRun.WebApp.Controllers
             par.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
             var returned = database.FindTableBySql(" select sum(Money)as money from Am_AmDepositDetail where  U_Number=@U_Number and Money<0", par.ToArray());
             ViewBag.deposit = user.FreezeMoney.Value.ToString("0.00");
-            ViewBag.returned =decimal.Parse(returned.Rows[0]["money"].ToString()).ToString("0.00");
+             
+            ViewBag.returned =decimal.Parse(returned.Rows[0]["money"].ToString()==""?"0":returned.Rows[0]["money"].ToString()).ToString("0.00");
 
             int recordCount = 0;
             var rentList = database.FindListPage<Am_AmDepositDetail>(" and U_Number=@U_Number ", par.ToArray(), "CreateTime", "desc", 1, 10, ref recordCount);

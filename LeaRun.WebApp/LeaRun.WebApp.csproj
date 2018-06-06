@@ -9466,6 +9466,7 @@
     <Content Include="Areas\AmmeterModule\Views\Am_Test\Detail.cshtml" />
     <Content Include="Areas\AmmeterModule\Views\Am_Test\Form.cshtml" />
     <Content Include="Areas\AmmeterModule\Views\Am_Test\Index.cshtml" />
+    <Content Include="cart\apiclient_cert.p12" />
     <None Include="Properties\PublishProfiles\Ammeter.pubxml" />
     <None Include="Properties\PublishProfiles\House.pubxml" />
     <Content Include="Views\Home\SkinIndex.cshtml" />

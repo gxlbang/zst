@@ -80,7 +80,7 @@ namespace BusinessCard.Web.Code
             //企业付款描述信息 desc 是 理赔 String 企业付款操作说明信息。必填。 
             //Ip地址 spbill_create_ip 是 192.168.0.1 String(32) 调用接口的机器Ip地址 
 
-            Bill_No = PARTNER + getTimestamp() + Bill_No;  //订单号组成 商户号 + 随机时间串 + 记录ID
+            //Bill_No = PARTNER + getTimestamp() + Bill_No;  //订单号组成 商户号 + 随机时间串 + 记录ID
 
             //设置package订单参数
             SortedDictionary<string, string> dic = new SortedDictionary<string, string>();
