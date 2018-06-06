@@ -175,7 +175,7 @@ namespace LeaRun.WebApp.Controllers
                         //{
                         //    return Content(payResult.ReturnXml);
                         //}
-                        if (order.ChargeType == 1)
+                        if (order.ChargeType == 1) //余额充值
                         {
                             List<DbParameter> par = new List<DbParameter>();
                             par.Add(DbFactory.CreateDbParameter("@Number", order.U_Number));
@@ -212,7 +212,7 @@ namespace LeaRun.WebApp.Controllers
                                 }
                             }
                         }
-                        else if (order.ChargeType == 2)
+                        else if (order.ChargeType == 2) //电费缴费
                         {
                             order.OutNumber = payResult.TradeNo;
                             order.STATUS = 1;
@@ -252,7 +252,7 @@ namespace LeaRun.WebApp.Controllers
                             }
                             return Content(payResult.ReturnXml);
                         }
-                        else if (order.ChargeType == 3)
+                        else if (order.ChargeType == 3)  //账单支付
                         {
                             order.OutNumber = payResult.TradeNo;
                             order.STATUS = 1;

@@ -1,4 +1,5 @@
-﻿using LeaRun.DataAccess;
+﻿using BusinessCard.Web.Code;
+using LeaRun.DataAccess;
 using LeaRun.Entity;
 using LeaRun.Repository;
 using LeaRun.Utilities;
@@ -8,6 +9,7 @@ using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml;
@@ -31,7 +33,7 @@ namespace LeaRun.WebApp.Controllers
             int type = 0;//0.前台操作，1.后台操作
 
             var result = Request["response_content"];
-            if (result==null )
+            if (result == null)
             {
                 return Content("");
             }
@@ -40,13 +42,13 @@ namespace LeaRun.WebApp.Controllers
             {
                 foreach (var example in root)
                 {
-                    if (example.opr_id==null )
+                    if (example.opr_id == null)
                     {
                         continue;
                     }
                     List<DbParameter> parameter = new List<DbParameter>();
                     parameter.Add(DbFactory.CreateDbParameter("@Number", example.opr_id));
-                    var item = database.FindEntityByWhere<Am_Task>(" and Number=@Number ",parameter.ToArray());
+                    var item = database.FindEntityByWhere<Am_Task>(" and Number=@Number ", parameter.ToArray());
                     if (item == null || item.Number == null)
                     {
 
@@ -102,16 +104,82 @@ namespace LeaRun.WebApp.Controllers
                     {
                         item.StatusStr = "正在处理中";
                     }
-                    if (type==0)
+                    if (type == 0)
                     {
-                        database.Update<Am_Task>(item);
+                        StringBuilder sql = new StringBuilder("update Am_Task set Status = " + item.Status + " ,StatusStr='" + item.StatusStr + "',OverTime = '" + item.OverTime + "',TaskMark='" + item.TaskMark + "' where Number = " + item.Number + " and Status = 0");
+                        if (database.ExecuteBySql(sql) > 0)
+                        {
+                            var ammodel = database.FindEntity<Am_Ammeter>(item.AmmeterNumber);
+                            //给余额加钱
+                            var userModel = database.FindEntity<Ho_PartnerUser>(ammodel.UY_Number);
+                            userModel.Money += item.Money;
+                            userModel.Modify(userModel.Number);
+                            database.Update(userModel);
+                            //记录余额日志
+                            var modeldetail = new Am_MoneyDetail()
+                            {
+                                CreateTime = DateTime.Now,
+                                CreateUserId = item.U_Number,
+                                CreateUserName = item.UserName,
+                                CurrMoney = userModel.Money + item.Money, //变动后余额
+                                Money = item.Money,
+                                OperateType = 4,
+                                OperateTypeStr = "电表充值",
+                                UserName = userModel.Account,
+                                U_Name = userModel.Name,
+                                U_Number = userModel.Number,
+                                Number= CommonHelper.GetGuid
+                            };
+                            database.Insert(modeldetail); //记录日志
+                            //分账
+                            var taskList = database.FindList<Am_Task>(" and Status = 1 and OperateType = 4");
+                            var config = database.FindList<Fx_WebConfig>().FirstOrDefault();
+                            double fmoney = 0;
+                            if (taskList.Count == 1 && taskList[0].Money >= config.AmCharge)
+                            {
+                                //首次充值
+                                 fmoney = (taskList[0].Money.Value - config.AmCharge.Value) * (1 - config.ChargeFee.Value);
+                                
+                            }
+                            else
+                            {
+                                fmoney= taskList[0].Money.Value  * (1 - config.ChargeFee.Value);
+                            }
+                            PayToPerson pay = new BusinessCard.Web.Code.PayToPerson();
+                            PayToPersonModel m = pay.EnterprisePay(item.Number.Replace("-", ""), userModel.OpenId, 1, userModel.Name, item.U_Name + ",电费缴费");
+                            if (m.result_code == "SUCCESS")//分成功
+                            {
+                                userModel.Money -= item.Money;
+                                userModel.Modify(userModel.Number);
+                                database.Update(userModel); //扣掉余额
+                                                            //记录余额日志
+                                var modeldetail1 = new Am_MoneyDetail()
+                                {
+                                    CreateTime = DateTime.Now,
+                                    CreateUserId = item.U_Number,
+                                    CreateUserName = item.UserName,
+                                    CurrMoney = userModel.Money - item.Money, //变动后余额
+                                    Money = item.Money,
+                                    OperateType = 6,
+                                    OperateTypeStr = "分账",
+                                    UserName = userModel.Account,
+                                    U_Name = userModel.Name,
+                                    U_Number = userModel.Number,
+                                    Number = CommonHelper.GetGuid
+                                };
+                                database.Insert(modeldetail1); //记录日志
+
+                                //记录分账信息
+                            }
+                        }
+
                     }
                     else
                     {
-                        var bTask= Mapper<Am_BackstageTask, Am_Task>(item);
-                        database.Update<Am_BackstageTask >(bTask);
+                        var bTask = Mapper<Am_BackstageTask, Am_Task>(item);
+                        database.Update<Am_BackstageTask>(bTask);
                     }
-                    
+
 
                     if (item.Status > 0 && item.Status < 4)
                     {
@@ -284,7 +352,7 @@ namespace LeaRun.WebApp.Controllers
                 {
                     ammeter.Count = ammeter.Count + 1;
                     ammeter.Acount_Id = null;
-                    ammeter.CurrMoney = ammeter.CurrMoney+item.Money.Value;
+                    ammeter.CurrMoney = ammeter.CurrMoney + item.Money.Value;
                     if (ammeter.CurrMoney > ammeter.FirstAlarm)
                     {
                         ammeter.IsLowerWarning = 1;
@@ -300,6 +368,8 @@ namespace LeaRun.WebApp.Controllers
                     }
                     item.TaskMark = result;
                 }
+                //如果是用户充值
+
                 //发送通知租户缴费成功
                 SendMessage(ammeter.Number, ammeter.U_Number, ammeter.CurrMoney.Value.ToString("0.00"), "成功", item.Money.Value.ToString("0.00"), item.CreateTime.Value.ToString("yyyy-MM-dd HH:mm:dd"));
 
@@ -408,59 +478,6 @@ namespace LeaRun.WebApp.Controllers
             templateMessage.touser = usermodel.OpenId;
             templateMessage.url = "http://am.zst0771.com/Personal/AmmeterPayCost?number=" + Number;
             templateMessage.SendTemplateMessage();
-        }
-
-        public void WXPayNotify_URL()
-        {
-            Stream postData = Request.InputStream;
-            StreamReader sRead = new StreamReader(postData);
-            string postContent = sRead.ReadToEnd();
-            sRead.Close();
-            var dic = FromXml(postContent);
-            string returnCode = GetValueFromDic<string>(dic, "result_code");
-            if (returnCode == "SUCCESS")
-            {
-                //分账成功
-            }
-            else {
-                //分账失败 - 写入余额
-                
-            }
-            //记录日志
-        }
-
-        public static SortedDictionary<string, string> FromXml(string xml)
-        {
-            SortedDictionary<string, string> sortDic = new SortedDictionary<string, string>();
-            if (string.IsNullOrEmpty(xml))
-            {
-                throw new Exception("将空的xml串转换为WxPayData不合法!");
-            }
-
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(xml);
-            XmlNode xmlNode = xmlDoc.FirstChild;//获取到根节点<xml>
-            XmlNodeList nodes = xmlNode.ChildNodes;
-            foreach (XmlNode xn in nodes)
-            {
-                XmlElement xe = (XmlElement)xn;
-
-                if (!sortDic.ContainsKey(xe.Name))
-                    sortDic.Add(xe.Name, xe.InnerText);
-            }
-            return sortDic;
-        }
-
-        private static T GetValueFromDic<T>(SortedDictionary<string, string> dic, string key)
-        {
-            string val;
-            dic.TryGetValue(key, out val);
-
-            T returnVal = default(T);
-            if (val != null)
-                returnVal = (T)Convert.ChangeType(val, typeof(T));
-
-            return returnVal;
         }
 
         public class Root
