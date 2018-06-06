@@ -173,6 +173,7 @@
     <Compile Include="Areas\AmmeterModule\Controllers\Am_ContractTemplateController.cs" />
     <Compile Include="Areas\AmmeterModule\Controllers\Am_ContractTemplateImageController.cs" />
     <Compile Include="Areas\AmmeterModule\Controllers\Am_MoneyDetailController.cs" />
+    <Compile Include="Areas\AmmeterModule\Controllers\Am_PayToUserMoneyDetailsController.cs" />
     <Compile Include="Areas\AmmeterModule\Controllers\Am_RentBillController.cs" />
     <Compile Include="Areas\AmmeterModule\Controllers\Am_RentController.cs" />
     <Compile Include="Areas\AmmeterModule\Controllers\Am_RepairAnswerController.cs" />
@@ -9889,6 +9890,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\AmmeterModule\Models\" />
+    <Folder Include="Areas\AmmeterModule\Views\Am_PayToUserMoneyDetails\" />
     <Folder Include="Areas\AmmeterModule\Views\Shared\" />
     <Folder Include="Areas\HouseModule\Models\" />
     <Folder Include="Areas\HouseModule\Views\Shared\" />

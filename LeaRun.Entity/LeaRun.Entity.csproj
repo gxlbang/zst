@@ -96,6 +96,7 @@
     <Compile Include="AmmeterModule\Ho_PartnerUserNew.cs" />
     <Compile Include="AmmeterModule\Ho_PartnerUser.cs" />
     <Compile Include="AmmeterModule\Am_Collector.cs" />
+    <Compile Include="AmmeterModule\Am_PayToUserMoneyDetails.cs" />
     <Compile Include="BaseUtility\BaseEntity.cs" />
     <Compile Include="BaseUtility\DataContext.cs" />
     <Compile Include="CommonModule\Base_FormAttribute.cs" />
