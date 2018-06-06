@@ -180,6 +180,7 @@
     var Device = GetQuery('Device');
     var html = $('#add').html();
     var id = 1;
+    var curSrc, srcList;
     $(function () {
         $("#imguploadimg1").checkFileTypeAndSize({
             allowedExtensions: ['jpg', 'jpeg', 'gif', 'png'],
@@ -349,8 +350,10 @@
         for (var i = 0; i < image.length; i++) {
             src[i] = RootPath() + $(image[i]).attr("src");
         }
-        var srclist = arrayToJson(src);
-        imagePreview($(image[0]).attr("src"), srclist);
+        //var srclist = arrayToJson(src);
+        srcList = src;//不用arrayToJson,用了苹果手机黑屏
+        curSrc = $(image[0]).attr("src");
+        imagePreview();
     }
     function arrayToJson(o) {
         var r = [];
@@ -374,7 +377,7 @@
         return o.toString();
     }
     //这个是调用微信图片浏览器的函数
-    function imagePreview(curSrc, srcList) {
+    function imagePreview() {
         if (!curSrc || !srcList || srcList.length == 0) {
             return;
         }

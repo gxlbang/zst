@@ -96,7 +96,7 @@
 
         <div class="text-right">
             <p>签订时间：<input id="CreateTimeYear" type="text" class="inp" />年<input id="CreateTimeMonth" type="text" class="inp" />月<input id="CreateTimeDay" type="text" class="inp" />日</p>
-            <p>签订地址：<input id="CreateAddress" type="text" class="inp inp-long" /></p>
+            <p><a href="/Common/Test">签订地址</a>：<input id="CreateAddress" type="text" class="inp inp-long" /></p>
         </div>
     </div>
     <div class="par-top pa-btm" id="ContractImage">
@@ -107,25 +107,30 @@
         </div>
     </div>
     <div class="layui-form-item layui-form-text" style="text-align:center;display:none;" id="btnContract">
-        <button class="layui-btn layui-btn-normal" type="button" onclick="sub()">同意并签订合同</button>
+        <button class="layui-btn layui-btn-normal" type="button" onclick="printpage()">打印合同</button>
     </div>
 </body>
 </html>
 <script type="text/javascript">
     var KeyValue = GetQuery('KeyValue');//主键
     var Device = GetQuery('Device');
+    var curSrc, srcList;
     $(function () {
+        if (Device == "PC") {
+            $("#btnContract").show();
+        }
         InitControl();
         $("input").attr("readonly", "readonly");
     })
+    function printpage() {
+        window.print();
+    }
     //得到一个对象实体
     function InitControl() {
         if (!!GetQuery('KeyValue')) {
             AjaxJson("/Common/GetContract", { KeyValue: KeyValue }, function (data) {
                 SetWebControls(data);
-                if (data.Status == 0) {
-                    $("#btnContract").show();
-                }
+                
                 $("#U_Name1").val(data.U_Name);
                 var myDate = new Date(data.CreateTime);
                 $("#CreateTimeYear").val(myDate.getFullYear());
@@ -210,8 +215,10 @@
         for (var i = 0; i < image.length; i++) {
             src[i] = RootPath() + $(image[i]).attr("src");
         }
-        var srclist = arrayToJson(src);
-        imagePreview($(image[0]).attr("src"), srclist);
+        //var srclist = arrayToJson(src);
+        srcList = src;//不用arrayToJson,用了苹果手机黑屏
+        curSrc = $(image[0]).attr("src");
+        imagePreview();
     }
     function arrayToJson(o) {
         var r = [];
@@ -235,7 +242,7 @@
         return o.toString();
     }
     //这个是调用微信图片浏览器的函数
-    function imagePreview(curSrc, srcList) {
+    function imagePreview() {
         if (!curSrc || !srcList || srcList.length == 0) {
             return;
         }
