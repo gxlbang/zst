@@ -61,7 +61,7 @@ namespace BusinessCard.Web.Code
         /// 企业付款给个人
         /// </summary>       
         /// <returns></returns>
-        public  string EnterprisePay(string Bill_No, string toOpenid, decimal Charge_Amt, string userName, string title)
+        public PayToPersonModel EnterprisePay(string Bill_No, string toOpenid, decimal Charge_Amt, string userName, string title)
         {
 
             //公众账号appid mch_appid 是 wx8888888888888888 String 微信分配的公众账号ID（企业号corpid即为此appId） 
@@ -125,18 +125,27 @@ namespace BusinessCard.Web.Code
             Vincent._Log.SaveMessage("返回结果：" + result);
             var resultdic = XMLHelper.FromXml(result);
             string returnCode = XMLHelper.GetValueFromDic<string>(resultdic, "result_code");
+            PayToPersonModel model = new PayToPersonModel();
             if (returnCode == "SUCCESS")
             {
                 //分账成功
+                model.partner_trade_no = XMLHelper.GetValueFromDic<string>(resultdic, "partner_trade_no");
+                model.payment_no = XMLHelper.GetValueFromDic<string>(resultdic, "payment_no");
+                model.payment_time = XMLHelper.GetValueFromDic<string>(resultdic, "payment_time");
+                model.result_code = XMLHelper.GetValueFromDic<string>(resultdic, "result_code");
+                model.return_code = XMLHelper.GetValueFromDic<string>(resultdic, "return_code");
+                model.return_msg = XMLHelper.GetValueFromDic<string>(resultdic, "return_msg");
             }
             else
             {
                 //分账失败 - 写入余额
-
+                model.err_code_des= XMLHelper.GetValueFromDic<string>(resultdic, "err_code_des");
+                model.return_code = XMLHelper.GetValueFromDic<string>(resultdic, "return_code");
+                model.return_msg = XMLHelper.GetValueFromDic<string>(resultdic, "return_msg");
             }
             //记录日志
 
-            return result;
+            return model;
 
             //ReturnValue retValue = StreamReaderUtils.StreamReader(URL, Encoding.UTF8.GetBytes(_req_data), System.Text.Encoding.UTF8, true);
             //Vincent._Log.SaveMessage("返回结果：" + retValue.ErrorCode);
