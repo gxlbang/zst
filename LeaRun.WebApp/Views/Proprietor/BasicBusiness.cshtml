@@ -147,9 +147,9 @@
                             for (var i in data) {
                                 lis.push("<div class=\"list-index\">");
                                 lis.push("<a class=\"pro repair-m\" href=\"javascript:;\">");
-                                lis.push("<table >");
-                                lis.push("<tr><td style=\"width:50%\"  >操作者："+data[i].U_Name+"</td><td style=\"width:50%\" >状态："+data[i].StatusStr+"</td></tr>");
-                                lis.push("<tr><td >操作类型："+data[i].OperateTypeStr+"</td> <td>备注："+data[i].Remark+"</td> </tr>");
+                                lis.push("<table style=\"width:100%\" >");
+                                lis.push("<tr><td style=\"width:40%\"  >操作者："+data[i].U_Name+"</td><td style=\"width:50%\" >状态："+data[i].StatusStr+"</td></tr>");
+                                lis.push("<tr><td style=\"width:40%\"  >操作类型："+data[i].OperateTypeStr+"</td> <td style=\"width:50%\"  >备注："+data[i].Remark+"</td> </tr>");
                                 lis.push("<tr><td colspan=\"2\">提交时间:"+formatDate(data[i].CreateTime,"yyyy-MM-dd hh:mm:ss")+"</td></tr>");
                                 lis.push("<tr><td colspan=\"2\">完成时间:"+formatDate(data[i].OverTime,"yyyy-MM-dd hh:mm:ss")+"</td></tr>");
                                 // lis.push("<tr><td colspan=\"2\">备注:"+data[i].Remark+"</td></tr>");

@@ -49,7 +49,7 @@ namespace LeaRun.WebApp.Controllers
                 }
                 else
                 {
-                    if (hpf.ContentLength > 1024 * 1024 * 6) //如果大于规定最大尺寸
+                    if (hpf.ContentLength > 1024 * 1024 * 8) //如果大于规定最大尺寸
                     {
                         results.Add(new UploadFileResult()
                         {
@@ -57,7 +57,7 @@ namespace LeaRun.WebApp.Controllers
                             FilePath = "",
                             IsValid = false,
                             Length = hpf.ContentLength,
-                            Message = "图片尺寸不能超过6144KB",
+                            Message = "图片尺寸不能超过8192KB",
                             Type = hpf.ContentType
                         });
                     }
@@ -91,7 +91,7 @@ namespace LeaRun.WebApp.Controllers
                             {
                                 //保存小图
                                 var versions = new Dictionary<string, string>();
-                                versions.Add("_small", "maxwidth=1024&maxheight=800&format=jpg");
+                                versions.Add("_small", "maxwidth=8192&maxheight=800&format=jpg");
                                 //versions.Add("_medium", "maxwidth=200&maxheight=200&format=jpg");
                                 //versions.Add("_large", "maxwidth=600&maxheight=600&format=jpg");
 

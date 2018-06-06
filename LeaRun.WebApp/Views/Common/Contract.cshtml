@@ -44,10 +44,10 @@
 
         <strong class="textbold">第三条<span class="span-pa">租金押金及支付方式</span></strong>
         <p>3.1月租金人民币：<span class="red"><input id="Money" type="text" class="inp" />元（大写：<input id="MoneyStr" type="text" class="inp in-lo" />元整）</span>乙方支付租房履约押金人民币：<span class="red"><input id="DepositMoney" type="text" class="inp" />元（大写：<input id="DepositMoneyStr" type="text" class="inp in-lo" />元整）</span>乙方租赁期届满满且未续租并达成退租条件的甲方应一次性无息退回。</p>
-        <p>3.2租金每<span class="red"><input id="CycleTime" type="text" class="inp" />月</span> 支付一次合计人民币：<span class="red"><input id="TotalMoney" type="text" class="inp" />元（大写：<input id="TotalMoneyStr" type="text" class="inp in-lo" />元整）</span>。租金支付应在当期租金届满前<span class="red"><input id="AgoDay" type="text" class="inp" />个</span>工作日支付下期房屋租金。租金转账至本合同中甲方指定账户，乙方的转账凭条或汇款凭条作为支付依据。</p>
-        <p>开户行：<input id="BankInfo" type="text" class="inp inp-long" /></p>
+        <p>3.2租金每<span class="red"><input id="CycleTime" type="text" class="inp" />月</span> 支付一次合计人民币：<span class="red"><input id="TotalMoney" type="text" class="inp" />元（大写：<input id="TotalMoneyStr" type="text" class="inp in-lo" />元整）</span>。租金支付应在当期租金届满前<span class="red"><input id="AgoDay" type="text" class="inp" />个</span>工作日支付下期房屋租金。租金转账至本合同中甲方约定账户，乙方的转账凭条或汇款凭条作为支付依据。</p>
+        @*<p>开户行：<input id="BankInfo" type="text" class="inp inp-long" /></p>
         <p>户  名：<input id="BankUserName" type="text" class="inp inp-long" /></p>
-        <p>账  号：<input id="BankCode" type="text" class="inp inp-long" /></p>
+        <p>账  号：<input id="BankCode" type="text" class="inp inp-long" /></p>*@
 
         <strong class="textbold">第四条<span class="span-pa">相关费用：</span></strong>
         <p>
@@ -156,6 +156,9 @@
                         $("#ContractImage").append(tempstr);
                     });
                 });
+                var input_size = $("#Address").val().length;
+                var current_width = parseInt(input_size) * 16;
+                $("#Address").css("width", current_width + "px");
             });
         }
     }
@@ -182,7 +185,7 @@
             title: false,
             closeBtn: 1,
             shadeClose: true,
-            area: ['85%'],
+            area: ['85%', '20%'],
             //skin: 'yourclass',
             content: $("#xx" + s).val()
         });

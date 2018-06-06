@@ -20,7 +20,7 @@
                 <span class="pro-li">区域：@Model.Province@Model.City@Model.County</span>
                 <span class="pro-li">地址：@Model.Address</span>
                 <span class="pro-li">单元：@Model.Cell 单元 @Model.Floor 层 @Model.Room 号</span>
-                <span class="pro-li">账单状态：@Model.StatusStr</span>
+                <span class="pro-li" style="color:orangered">账单状态：@Model.StatusStr</span>
                 <span class="pro-li">账单出账时间：@Model.SendTime.Value.ToString("yyyy-MM-dd")</span>
             </div>
             <div class="pro mt15">
@@ -37,7 +37,7 @@
                 </div>
  
                 <div class="op-litwo his-all btop">
-                    <span class="op-sshow his-show fl">滞纳金：@Model.OtherFees.Value.ToString("0.00") 元</span>
+                    <span class="op-sshow his-show fl" style="color:orangered">滞纳金：@Model.OtherFees.Value.ToString("0.00") 元</span>
                 <span class="op-sshow">合计：@Model.Money.Value.ToString("0.00") 元</span></div>
             </div>
             <div class="pro mt15">

@@ -48,7 +48,7 @@ window.onload = function () {
                 }
 
                 // 留自己
-                sec.style.height = 4.5 + "rem";
+                sec.style.height = 5.3 + "rem";
                 this.getElementsByTagName("i")[0].classList.add("arrowRot");
                 this.classList.remove("obtain");
                 this.classList.add("obFocus");

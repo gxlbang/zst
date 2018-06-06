@@ -192,6 +192,22 @@ namespace LeaRun.WebApp.Controllers
                                 var status = database.Update<Ho_PartnerUser>(accout);
                                 if (status > 0)
                                 {
+                                    var moneyDetail = new Am_MoneyDetail
+                                    {
+                                        Number = CommonHelper.GetGuid,
+                                        CreateTime = DateTime.Now,
+                                        CreateUserId = order.U_Number,
+                                        CreateUserName = order.UserName,
+                                        CurrMoney = accout.Money,
+                                        Money = order.Money,
+                                        OperateType = 1,
+                                        OperateTypeStr = "微信充值",
+                                        Remark = "",
+                                        UserName = order.UserName,
+                                        U_Number = order.U_Number
+                                    };
+                                    database.Insert<Am_MoneyDetail>(moneyDetail);
+
                                     return Content(payResult.ReturnXml);
                                 }
                             }

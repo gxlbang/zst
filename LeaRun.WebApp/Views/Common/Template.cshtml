@@ -37,7 +37,7 @@
         <h3 class="top">《房屋租赁合同》</h3>
         <div class="l-mot clear"><span class="nane fl">甲方（出租方）：<input disabled="disabled" id="F_U_Name" type="text" class="inp inp-long" /></span></div>
         <div class="l-mot clear"><span class="nane fl">乙方（承租方）：<input disabled="disabled" id="U_Name" type="text" class="inp inp-long" /></span></div>
-        <p class="mt15">甲方自愿将名下位于<span class="red"><input id="Province" type="text" class="inp"  /><input id="City" type="text" class="inp" /><input id="County" type="text" class="inp" /><input id="Address" type="text" class="inp" />  <input id="Floor" type="text" class="inp" />栋<input id="Cell" type="text" class="inp" />单元<input id="Room" type="text" class="inp" />号<input id="RoomNum" type="text" class="inp" />房<input id="HallNum" type="text" class="inp" />厅<input id="KitchenNum" type="text" class="inp" />厨<input id="ToiletNum" type="text" class="inp" />卫</span>户型房屋，（建筑面积约为<span class="red"><input id="HouseSize" type="text" class="inp" />平米</span>）出租给乙方作为<input id="Useing" type="text" class="inp in-lot" />使用。（以下简称：<span class="red">该房屋、铺面</span>）。为明确各事项，经协商一致签订本合同。</p>
+        <p class="mt15">甲方自愿将名下位于<span class="red"><input id="Province" type="text" class="inp" /><input id="City" type="text" class="inp" /><input id="County" type="text" class="inp" /><input id="Address" type="text" class="inp" />  <input id="Floor" type="text" class="inp" />栋<input id="Cell" type="text" class="inp" />单元<input id="Room" type="text" class="inp" />号<input id="RoomNum" type="text" class="inp" />房<input id="HallNum" type="text" class="inp" />厅<input id="KitchenNum" type="text" class="inp" />厨<input id="ToiletNum" type="text" class="inp" />卫</span>户型房屋，（建筑面积约为<span class="red"><input id="HouseSize" type="text" class="inp" />平米</span>）出租给乙方作为<input id="Useing" type="text" class="inp in-lot" />使用。（以下简称：<span class="red">该房屋、铺面</span>）。为明确各事项，经协商一致签订本合同。</p>
 
         <strong class="textbold">第一条<span class="span-pa">房屋基本情况</span></strong>
         <p>1.1使用面积约为<b class="b-blod"><input id="UseingSize" type="text" class="inp" value="120" /></b>平方米。 配套设备及装修情况详见（附件1）</p>
@@ -105,7 +105,7 @@
         <div class="text-right">
             <p>
                 签订时间：@*<input id="CreateTimeYear" type="text" class="inp" />年<input id="CreateTimeMonth" type="text" class="inp" />月<input id="CreateTimeDay" type="text" class="inp" />日</p>*@
-                <input  type="text" name="name" value="" id="CreateTime" disabled="disabled" />
+                <input type="text" name="name" value="" id="CreateTime" disabled="disabled" />
             <p>签订地址：<input id="CreateAddress" type="text" class="inp inp-long" /></p>
         </div>
     </div>
@@ -121,7 +121,7 @@
     </div>
 
     <div class="layui-form-item layui-form-text" style="text-align:center">
-        <button  class="layui-btn layui-btn-normal" type="button" onclick="sub()">保存并生成合同</button>
+        <button class="layui-btn layui-btn-normal" type="button" onclick="sub()">保存并生成合同</button>
     </div>
 
 
@@ -130,45 +130,29 @@
             <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
                 <legend>添加附件</legend>
             </fieldset>
-            <form class="layui-form layui-form-pane" action="">
-                <div class="layui-form-item">
-                    <label class="layui-form-label">标题</label>
-                    <div class="layui-input-block">
-                        <input type="text" name="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
-                    </div>
-                </div>
 
-                <div class="layui-form-item">
-                    <label class="layui-form-label">数量</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="username" lay-verify="required" placeholder="请输入数量" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">单价</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="username" lay-verify="required" placeholder="请输入单价" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">图片</label>
-
-                    <img id="img1" style="width:80px;height:80px;" src="/content/images/upto.png" onclick="img()">
-                    <input type="hidden" name="CodeImg1" id="CodeImg1" />
-                    <input style="display :none " type="file" id="imguploadimg1" />
-                </div>
-
-
-                <div class="layui-form-item layui-form-text">
-                    <label class="layui-form-label">详情描述</label>
-                    <div class="layui-input-block">
+            <table class="layui-table">
+                <tr><td>标题</td><td><input type="text" name="title" autocomplete="off" placeholder="请输入标题" class="layui-input" /></td> </tr>
+                <tr><td>数量</td><td><input type="text" name="username" lay-verify="required" placeholder="请输入数量" autocomplete="off" class="layui-input" /></td> </tr>
+                <tr><td>单价</td><td><input type="text" name="username" lay-verify="required" placeholder="请输入单价" autocomplete="off" class="layui-input" /></td> </tr>
+                <tr>
+                    <td>图片</td>
+                    <td>
+                        <img id="img1" style="width:80px;height:80px;" src="/content/images/upto.png" onclick="img()">
+                        <input type="hidden" name="CodeImg1" id="CodeImg1" />
+                        <input style="display :none " type="file" id="imguploadimg1" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>详情描述</td>
+                    <td>
                         <textarea placeholder="请输入内容" class="layui-textarea"></textarea>
-                    </div>
-                </div>
-                <div class="layui-form-item layui-form-text" style="text-align:center">
-                    <button class="layui-btn layui-btn-normal" type="button" onclick="ser(this)">添加</button>
-                </div>
-            </form>
+                    </td>
+                </tr>
+            </table>
+            <div class="layui-form-item layui-form-text" style="text-align:center">
+                <button class="layui-btn layui-btn-normal" type="button" onclick="ser(this)">添加</button>
+            </div>
 
         </div>
     </div>
@@ -199,7 +183,7 @@
     $(function () {
         $("#imguploadimg1").checkFileTypeAndSize({
             allowedExtensions: ['jpg', 'jpeg', 'gif', 'png'],
-            maxSize: 1024, //最大允许1024KB，即1MB
+            maxSize: 8192, //最大允许1024KB，即1MB
             success: function () {
                 //上传文件数据准备
                 var fd = new FormData();
@@ -226,7 +210,7 @@
                 return;
             },
             sizeerror: function () {
-                $.toast("最大尺寸1024KB,即1MB");
+                $.toast("最大尺寸8192KB,即8MB");
                 return;
             }
         });
@@ -239,6 +223,23 @@
         var ss = $(obj).parent().html();
         var form = $(obj).parent().parent();
         id = id + 1;
+        if (form.find("input:eq(0)").val().length < 1) {
+            layer.msg("请输入标题", { time: 2000 });
+            return;
+        }
+        if (form.find("input:eq(1)").val().length < 1) {
+            layer.msg("请输入数量", { time: 2000 });
+            return;
+        }
+        if (form.find("input:eq(2)").val().length < 1) {
+            layer.msg("请输入单价", { time: 2000 });
+            return;
+        }
+        if (form.find("input:eq(3)").val().length < 1) {
+            layer.msg("请上传图片", { time: 2000 });
+            return;
+        }
+
         var tempstr = '<div class="form itemList clear">';
         tempstr += '<span class="form-li fl"><input type="text" class="inp" value="' + form.find("input:eq(0)").val() + '" /></span><span class="form-li fl"><input type="text" class="inp" value="' + form.find("input:eq(1)").val() + '" /></span><span class="form-li fl"><input type="text" class="inp" value="' + form.find("input:eq(2)").val() + '" /></span><span class="form-li fl">' +
             '<a href="javascript:;" onclick="ViewImage(this)">' + '<img width="32" height="32" src="' + form.find("input:eq(3)").val() + '" /></a>'
@@ -248,7 +249,6 @@
     }
 
     function add() {
-
         layer.open({
             type: 1,
             title: false,
@@ -309,6 +309,11 @@
                         $("#ContractImage").append(tempstr);
                     });
                 });
+                var input_size = $("#Address").val().length;
+                var current_width = parseInt(input_size) * 16;
+                $("#Address").css("width", current_width + "px");
+
+
             });
         }
     }
@@ -319,7 +324,7 @@
             title: false,
             closeBtn: 1,
             shadeClose: true,
-            area: ['85%'],
+            area: ['85%', '20%'],
             //skin: 'yourclass',
             content: $("#xx" + s).val()
         });
@@ -415,4 +420,13 @@
 
         console.log(json);
     }
+
+    var textWidth = function (text) {
+        var sensor = $('<pre>' + text + '</pre>').css({ display: 'none' });
+        $('body').append(sensor);
+        var width = sensor.width();
+        sensor.remove();
+        return width;
+    };
+
 </script>

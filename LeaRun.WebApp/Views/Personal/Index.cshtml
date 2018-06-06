@@ -6,18 +6,15 @@
 
 <div class="all">
     <div class="my-center clear">
-        @*<a href="my-personal-information.html" class="my-cleft fl"></a>*@
-        <a href="javascript:;" class="my-cleft my-cright fr"></a>
-
         <div class="my-img">
             <div class="my-border"></div>
-            <img src="/Content/Images/top.png" alt="" />
+            <img src="@(Model.HeadImg==null?"/Content/Images/top.png":Model.HeadImg)" alt="" />
         </div>
         <span class="my-xing">@Model.Name</span>
     </div>
     <div class="my-all">
         <a href="/Personal/Information" class="my-list clear bbot">
-            <i class="icon icon-two fl"></i>
+            <i class="icon icon-eight fl"></i>
             <span class="my-edit">我的个人信息</span>
             <i class="icon-next"></i>
         </a>
@@ -38,29 +35,28 @@
                 <div class="secondary">
                     <div class="op-show btop">
                         <a href="/Personal/MyAmmeter" class="my-list clear bbot">
-                            <i class="icon icon-one fl"></i>
                             <span class="my-edit">我的电表</span>
                             <i class="icon-next"></i>
                         </a>
                         
                         <a href="/Personal/MyNewBill" class="my-list clear bbot">
-                            <i class="icon icon-eleven fl"></i>
                             <span class="my-edit">我的新账单</span>
                             <i class="icon-next"></i>
                         </a>
                         <a href="/Personal/OldBill" class="my-list clear bbot">
-                            <i class="icon icon-twelve fl"></i>
                             <span class="my-edit">历史账单</span>
                             <i class="icon-next"></i>
                         </a>
                         <a href="/Personal/MyRent" class="my-list clear bbot">
-                            <i class="icon icon-ten fl"></i>
                             <span class="my-edit">我要退租</span>
                             <i class="icon-next"></i>
                         </a>
                         <a href="/Personal/MyDeposit" class="my-list clear bbot">
-                            <i class="icon icon-three fl"></i>
                             <span class="my-edit">我的押金</span>
+                            <i class="icon-next"></i>
+                        </a>
+                        <a href="/Personal/Contract" class="my-list clear bbot">
+                            <span class="my-edit">我的合同</span>
                             <i class="icon-next"></i>
                         </a>
                     </div>
@@ -80,6 +76,11 @@
             <span class="my-edit">报修</span>
             <i class="icon-next"></i>
         </a>
+        <a href="/Account/ForgetPwd" class="my-list clear bbot">
+            <i class="icon icon-password fl"></i>
+            <span class="my-edit">修改密码</span>
+            <i class="icon-next"></i>
+        </a>
         <div class="gary"></div>
         @*<a href="tel:0771-5824097" class="my-list clear bbot btop">
             <i class="icon icon-seven fl"></i>
@@ -97,30 +98,50 @@
         @if (Model.UserRole == "运营商")
         {
             <a href="/Proprietor/Index" class="my-list clear bbot">
-                <i class="icon icon-eight fl"></i>
+                <i class="icon icon-fourth fl"></i>
                 <span class="my-edit">业主中心</span>
                 <i class="icon-next"></i>
             </a>
         }
         
-        <a href="share.html" class="my-list clear bbot">
+        @*<a href="share.html" class="my-list clear bbot">
             <i class="icon icon-nine fl"></i>
             <span class="my-edit">我要分享</span>
             <i class="icon-next"></i>
-        </a>
+        </a>*@
+
+        
+
     </div>
 </div>
-<div id="dialogBg"></div>
+ 
 <div id="dialog" class="animated">
     <a href="/Account/ForgetPwd" class="my-paw bbot">修改密码</a>
     @*<a href="javascript:;" onclick="Exit()" class="my-paw btn-close">退出</a>*@
     <i class="icon-top"></i>
 </div>
+
 <script src="~/Content/Scripts/jqthumb.min.js"></script>
 <script src="~/Content/Scripts/menu.js"></script>
 <script src="~/Content/Scripts/leftnav.js"></script>
 <script src="~/Content/Scripts/layer/layer.js"></script>
+<link href="~/Content/Scripts/layui/css/layui.css" rel="stylesheet" />
+<script src="~/Content/Scripts/layui/layui.js"></script>
 <script>
+ 
+    $(".all").click(function(){
+        //layer.closeAll();
+    });
+    function showNav(obj) {
+        layer.tips('修改密码', $(obj), {
+            tips: [1, '#3595CC'],
+            area: ['70px', '30px'],
+            time: 10000
+        });
+    }
+
+    
+
     $(function () {
         $('.my-img img').jqthumb({
             width: 2.8,
@@ -137,34 +158,9 @@
 
         });
     }
-    var w, h, className;
-    function getSrceenWH() {
-        w = $(window).width();
-        h = $(window).height();
-        $('#dialogBg').width(w).height(h);
-    }
-
-    window.onresize = function () {
-        getSrceenWH();
-    }
-    $(window).resize();
-
+ 
     $(function () {
-        getSrceenWH();
-
-        //显示弹框
-        $('.my-cright').click(function () {
-            className = $(this).attr('class');
-            $('#dialogBg').fadeIn(300);
-            $('#dialog').removeAttr('class').addClass('animated ' + className + '').fadeIn();
-        });
-
-        //关闭弹窗
-        $('.btn-close').click(function () {
-            $('#dialogBg').fadeOut(300, function () {
-                $('#dialog').addClass('bounceOutUp').fadeOut();
-            });
-        });
+       
     });
 
 

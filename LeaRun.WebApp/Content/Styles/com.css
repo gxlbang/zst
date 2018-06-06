@@ -447,6 +447,8 @@ modify-password 修改密码*/
 .icon-nine { background: url(../images/share.png) center center no-repeat; }
 .icon-ten { background: url(../images/check-out.png) center center no-repeat; }
 .icon-eleven { background: url(../images/mine-bill.png) center center no-repeat; }
+.icon-password { background: url(../images/password.png) center center no-repeat; }
+
 .icon-twelve { background: url(../images/report-query.png) center center no-repeat; }
 .my-list h2 { font-size: 0.32rem; text-align: left; padding-left: 0.8rem; position: relative;  }
 .my-none { padding: 0; }

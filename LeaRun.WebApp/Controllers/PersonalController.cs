@@ -141,7 +141,10 @@ namespace LeaRun.WebApp.Controllers
             ViewBag.recordCount = 0;
             if (Request.IsAjaxRequest())
             {
-                var balanDetailList = database.FindListPage<Am_MoneyDetail>("CreateTime", "desc", pageIndex, pageSize, ref recordCount);
+                List<DbParameter> par = new List<DbParameter>();
+                par.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+
+                var balanDetailList = database.FindListPage<Am_MoneyDetail>(" and U_Number=@U_Number ", par.ToArray(),"CreateTime", "desc", pageIndex, pageSize, ref recordCount);
                 ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize); ;
                 return Json(balanDetailList);
             }
@@ -659,35 +662,36 @@ namespace LeaRun.WebApp.Controllers
             var account = database.FindEntityByWhere<Ho_PartnerUser>(" and Number='" + user.Number + "'");
             if (account != null && account.Number != null /*&& account.Status == 3*/)
             {
-                #region 检测首充
-                List<DbParameter> par = new List<DbParameter>();
-                par.Add(DbFactory.CreateDbParameter("@AmmeterNumber", user.Number));
-                par.Add(DbFactory.CreateDbParameter("@OperateType", "4"));
-                par.Add(DbFactory.CreateDbParameter("@Status", "1"));
-                var firstFlush = database.FindCount<Am_Task>(" and AmmeterNumber=@AmmeterNumber and OperateType=@OperateType and Status=@Status");
-                if (firstFlush == 0)
-                {
-                    var config = database.FindEntityByWhere<Fx_WebConfig>("");
-                    if (config != null && config.Number != null)
-                    {
-                        if (money < config.AmCharge)
-                        {
-                            return Json(new { res = "No", msg = "首次充值金额必须大于:" + config.AmCharge + "元" });
-                        }
-                    }
-                    else
-                    {
-                        return Json(new { res = "No", msg = "读取配置失败" });
-                    }
-                }
-                #endregion
-
                 List<DbParameter> parameter = new List<DbParameter>();
                 parameter.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
                 parameter.Add(DbFactory.CreateDbParameter("@Number", number));
                 var ammeter = database.FindEntityByWhere<Am_Ammeter>(" and Number=@Number and U_Number=@U_Number", parameter.ToArray());
                 if (ammeter != null && ammeter.Number != null)
                 {
+
+                    #region 检测首充
+                    List<DbParameter> par = new List<DbParameter>();
+                    par.Add(DbFactory.CreateDbParameter("@AmmeterNumber", ammeter.Number));
+                    par.Add(DbFactory.CreateDbParameter("@OperateType", "4"));
+                    par.Add(DbFactory.CreateDbParameter("@Status", "1"));
+                    var firstFlush = database.FindCount<Am_Task>(" and AmmeterNumber=@AmmeterNumber and OperateType=@OperateType and Status=@Status", par.ToArray());
+                    if (firstFlush == 0)
+                    {
+                        var config = database.FindEntityByWhere<Fx_WebConfig>("");
+                        if (config != null && config.Number != null)
+                        {
+                            if (money < config.AmCharge)
+                            {
+                                return Json(new { res = "No", msg = "首次充值金额必须大于:" + config.AmCharge + "元" });
+                            }
+                        }
+                        else
+                        {
+                            return Json(new { res = "No", msg = "读取配置失败" });
+                        }
+                    }
+                    #endregion
+
                     if (type == 1)
                     {
                         if (account.PayPassword == null || account.PayPassword == "")
@@ -768,7 +772,7 @@ namespace LeaRun.WebApp.Controllers
                                 CreateUserId = user.Number,
                                 CreateUserName = user.Name,
                                 CurrMoney = account.Money,
-                                Money = money,
+                                Money = -money,
                                 OperateType = 4,
                                 OperateTypeStr = "电费充值",
                                 Remark = "",
@@ -1726,8 +1730,21 @@ namespace LeaRun.WebApp.Controllers
 
             return Content("上传成功！");
         }
+        /// <summary>
+        /// 我的合同
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Contract()
+        {
+            var user = wbll.GetUserInfo(Request);
+            List<DbParameter> par = new List<DbParameter>();
+            par.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+            par.Add(DbFactory.CreateDbParameter("@Status", "1"));
+
+            var contractList = database.FindList<Am_Contract>(" and U_Number=@U_Number and Status=@Status ",par.ToArray()).OrderBy(o=>o.CreateTime).ToList();
+            return View(contractList);
+        }
 
 
-        
     }
 }

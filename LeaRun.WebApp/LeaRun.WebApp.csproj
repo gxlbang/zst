@@ -9573,12 +9573,12 @@
     <Content Include="Views\Info\Perfect.cshtml" />
     <Content Include="Views\Info\Information.cshtml" />
     <Content Include="Views\Personal\RepairInfo_wx.cshtml" />
-    <Content Include="Views\Common\Template.cshtml" />
-    <Content Include="Views\Common\Template.cshtml" />
     <Content Include="Views\Proprietor\RepairMasterList.cshtml" />
     <Content Include="Views\Proprietor\RepairMasterAdd.cshtml" />
     <Content Include="Views\Callback\Index.cshtml" />
     <Content Include="Views\Proprietor\EquipmentDeposit.cshtml" />
+    <Content Include="Views\Personal\Contract.cshtml" />
+    <Content Include="Views\Common\Template.cshtml" />
     <None Include="Views\Utility\PrintPage.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

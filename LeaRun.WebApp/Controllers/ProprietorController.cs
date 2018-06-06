@@ -2567,7 +2567,32 @@ namespace LeaRun.WebApp.Controllers
             int recordCount = 0;
             var rentList = database.FindListPage<Am_AmDepositDetail>(" and U_Number=@U_Number ", par.ToArray(), "CreateTime", "desc", 1, 10, ref recordCount);
             ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / 10);
+
             return View();
+        }
+        /// <summary>
+        /// 设备押金明细
+        /// </summary>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        public ActionResult EquipmentDepositList(int pageIndex = 1, int pageSize = 10)
+        {
+            var user = wbll.GetUserInfo(Request);
+            List<DbParameter> par = new List<DbParameter>();
+            par.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
+
+            int recordCount = 0;
+            var data = database.FindListPage<Am_AmDepositDetail>(" and U_Number=@U_Number", par.ToArray(), "CreateTime", "desc", pageIndex, pageSize, ref recordCount);
+            ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize);
+            if (Request.IsAjaxRequest())
+            {
+                return Json(data);
+            }
+            else
+            {
+                return View();
+            }
         }
     }
 }
