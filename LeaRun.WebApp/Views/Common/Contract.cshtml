@@ -106,8 +106,11 @@
             <span class="form-li fl" style="border-top:0.02rem solid #ccc">名称</span><span style="border-top:0.02rem solid #ccc" class="form-li fl">数量</span><span style="border-top:0.02rem solid #ccc" class="form-li fl">单价</span><span style="border-top:0.02rem solid #ccc" class="form-li fl">图片</span><span style="border-top:0.02rem solid #ccc" class="form-li fl">详情描述</span>
         </div>
     </div>
-    <div class="layui-form-item layui-form-text" style="text-align:center;display:none;" id="btnContract">
+    <div class="layui-form-item layui-form-text" style="text-align:center;display:none;" id="btnprintpage">
         <button class="layui-btn layui-btn-normal" type="button" onclick="printpage()">打印合同</button>
+    </div>
+    <div class="layui-form-item layui-form-text" style="text-align:center;display:none;" id="btnContract">
+        <button class="layui-btn layui-btn-normal" type="button" onclick="sub()">同意并签订合同</button>
     </div>
 </body>
 </html>
@@ -117,7 +120,7 @@
     var curSrc, srcList;
     $(function () {
         if (Device == "PC") {
-            $("#btnContract").show();
+            $("#btnprintpage").show();
         }
         InitControl();
         $("input").attr("readonly", "readonly");
@@ -130,7 +133,9 @@
         if (!!GetQuery('KeyValue')) {
             AjaxJson("/Common/GetContract", { KeyValue: KeyValue }, function (data) {
                 SetWebControls(data);
-                
+                if (Device != "PC"&&data.Status == 0) {
+                    $("#btnContract").show();
+                }
                 $("#U_Name1").val(data.U_Name);
                 var myDate = new Date(data.CreateTime);
                 $("#CreateTimeYear").val(myDate.getFullYear());
