@@ -584,7 +584,7 @@ namespace LeaRun.WebApp.Controllers
         public ActionResult Test()
         {
             PayToPerson pay = new BusinessCard.Web.Code.PayToPerson();
-            PayToPersonModel m = pay.EnterprisePay("123456xxx11", "oDzrzt9iODNdANrhGnAezMKfmb_A",1,"何忠锋","测试付款");
+            PayToPersonModel m = pay.EnterprisePay("123456xxx11", "oDzrzt_CsE2iTNZyr51lKC6ptWJ4", 100, "毛尧军", "测试付款");
             return View();
         }
     }

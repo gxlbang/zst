@@ -61,6 +61,7 @@
     <Compile Include="AmmeterModule\Am_ContractTemplateBll.cs" />
     <Compile Include="AmmeterModule\Am_ContractTemplateImageBll.cs" />
     <Compile Include="AmmeterModule\Am_MoneyDetailBll.cs" />
+    <Compile Include="AmmeterModule\Am_PayToUserMoneyDetailsBll.cs" />
     <Compile Include="AmmeterModule\Am_RentBillBll.cs" />
     <Compile Include="AmmeterModule\Am_RentBll.cs" />
     <Compile Include="AmmeterModule\Am_RepairAnswerBll.cs" />
