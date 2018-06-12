@@ -14,27 +14,23 @@
         height: $(window).height() - 149,
         autowidth: true,
         colModel: [
-                { label: 'Number', name: 'Number', index: 'Number', width: 0, align: 'left',sortable: true  },
-                { label: 'U_Number', name: 'U_Number', index: 'U_Number', width: 0, align: 'left',sortable: true  },
-                { label: 'UserName', name: 'UserName', index: 'UserName', width: 0, align: 'left',sortable: true  },
-                { label: 'Ammeter_Number', name: 'Ammeter_Number', index: 'Ammeter_Number', width: 0, align: 'left',sortable: true  },
-                { label: 'Ammeter_Code', name: 'Ammeter_Code', index: 'Ammeter_Code', width: 0, align: 'left',sortable: true  },
-                { label: 'Province', name: 'Province', index: 'Province', width: 0, align: 'left',sortable: true  },
-                { label: 'City', name: 'City', index: 'City', width: 0, align: 'left',sortable: true  },
-                { label: 'County', name: 'County', index: 'County', width: 0, align: 'left',sortable: true  },
-                { label: 'Address', name: 'Address', index: 'Address', width: 0, align: 'left',sortable: true  },
-                { label: 'Cell', name: 'Cell', index: 'Cell', width: 0, align: 'left',sortable: true  },
-                { label: 'Floor', name: 'Floor', index: 'Floor', width: 0, align: 'left',sortable: true  },
-                { label: 'Room', name: 'Room', index: 'Room', width: 0, align: 'left',sortable: true  },
-                { label: 'CreateTime', name: 'CreateTime', index: 'CreateTime', width: 0, align: 'left',sortable: true  },
-                { label: 'Status', name: 'Status', index: 'Status', width: 0, align: 'left',sortable: true  },
-                { label: 'StatusStr', name: 'StatusStr', index: 'StatusStr', width: 0, align: 'left',sortable: true  },
-                { label: 'Money', name: 'Money', index: 'Money', width: 0, align: 'left',sortable: true  },
-                { label: 'PayTime', name: 'PayTime', index: 'PayTime', width: 0, align: 'left',sortable: true  },
-                { label: 'Remark', name: 'Remark', index: 'Remark', width: 0, align: 'left',sortable: true  },
+                { label: 'Number', name: 'Number', index: 'Number', width: 0, align: 'left', hidden: true },
+                { label: '用户名', name: 'UserName', index: 'UserName', width: 120, align: 'left', sortable: true },
+                { label: '姓名', name: 'U_Name', index: 'U_Name', width: 80, align: 'left', sortable: true },
+                { label: '电表编号', name: 'Ammeter_Code', index: 'Ammeter_Code', width: 100, align: 'left',sortable: true  },
+                { label: '省', name: 'Province', index: 'Province', width: 60, align: 'left',sortable: true  },
+                { label: '市', name: 'City', index: 'City', width: 60, align: 'left',sortable: true  },
+                { label: '区', name: 'County', index: 'County', width: 60, align: 'left',sortable: true  },
+                { label: '地址', name: 'Address', index: 'Address', width: 120, align: 'left',sortable: true  },
+                { label: '单元', name: 'Cell', index: 'Cell', width: 60, align: 'left',sortable: true  },
+                { label: '楼层', name: 'Floor', index: 'Floor', width: 60, align: 'left',sortable: true  },
+                { label: '房间', name: 'Room', index: 'Room', width: 60, align: 'left',sortable: true  },
+                { label: '押金时间', name: 'CreateTime', index: 'CreateTime', width: 120, align: 'left',sortable: true  },
+                { label: '状态', name: 'StatusStr', index: 'StatusStr', width: 60, align: 'left',sortable: true  },
+                { label: '押金', name: 'Money', index: 'Money', width: 60, align: 'left',sortable: true  },
         ],
         pager: "#gridPager",
-        sortname: '',
+        sortname: 'CreateTime',
         sortorder: 'desc',
         rownumbers: true,
         shrinkToFit: false,
@@ -81,6 +77,47 @@
         $("#gridTable").trigger("reloadGrid"); //重新载入
         
     }
+    //搜索
+    function btn_Search() {
+        var keywords = $("#keywords").val();
+        var Stuts = $("#Stuts").val();
+        var BeginTime = $("#BeginTime").val();
+        var EndTime = $("#EndTime").val();
+        $("#gridTable").jqGrid('setGridParam', {
+            url: "@Url.Content("~/AmmeterModule/Am_UserDeposit/GridPageListJson")?Stuts=" + Stuts + '&keywords=' + keywords +'&BeginTime=' + BeginTime + '&EndTime=' + EndTime , page: 1
+    }).trigger('reloadGrid');
+    }
+    //要打印数据源，子页面调用的函数
+    function PrintDataSource() {
+        var columnModel = $("#gridTable").jqGrid('getGridParam', 'colModel');
+        var dataModel = $("#gridTable").jqGrid("getRowData");
+        //var footerData = $("#gridTable").jqGrid("footerData");
+        var JsonData = {
+            columnModel: columnModel,
+            dataModel: dataModel,
+            //footerData: footerData,
+        }
+        return JsonData;
+    }
+    //点击打印
+    function btn_Print() {
+        PrintDialog("/Utility/PrintPage", "PrintPage", "打印当前页", 1200, 500, function (iframe) {
+            top.frames[iframe].SubmitPrint()
+        });
+    }
+    //导出Excel
+    function btn_derive() {
+        Loading(true, "正在处理要导出数据...");
+        var keywords = $("#keywords").val();
+        var Stuts = $("#Stuts").val();
+        var BeginTime = $("#BeginTime").val();
+        var EndTime = $("#EndTime").val();
+        window.setTimeout(function () {
+            location.href = "/AmmeterModule/Am_UserDeposit/ExportExcel??keywords=" + keywords + '&Stuts=' + Stuts +
+                '&BeginTime=' + BeginTime + '&EndTime=' + EndTime;
+            Loading(false);
+        }, 200);
+    }
 </script>
 <!--工具栏-->
 <div class="tools_bar leftline rightline" style="margin: 1px; margin-bottom: 0px;">
@@ -94,6 +131,22 @@
             <th>关键字：</th>
             <td>
                 <input id="keywords" type="text" class="txt" style="width: 200px" />
+            </td>
+            <th>时间：</th>
+            <td>
+                <input id="BeginTime" type="text" class="txt Wdate" value="@LeaRun.Utilities.DateTimeHelper.GetToday()" style="width: 120px" onfocus="var endDate=$dp.$('EndTime');WdatePicker({onpicked:function(){EndTime.focus();},maxDate:'#F{$dp.$D(\'EndTime\')}'})" />
+            </td>
+            <td>-</td>
+            <td>
+                <input id="EndTime" type="text" class="txt Wdate" value="@LeaRun.Utilities.DateTimeHelper.GetToday()" style="width: 120px" onfocus="WdatePicker({ minDate: '#F{$dp.$D(\'BeginTime\')}' })" />
+            </td>
+            <th>状态：</th>
+            <td>
+                <select id="Stuts" class="select" style="width: 120px">
+                    <option value="-1">请选择</option>
+                    <option value="0">冻结押金</option>
+                    <option value="1">已退还</option>
+                </select>
             </td>
             <td>
                 <input id="btnSearch" type="button" class="btnSearch" value="搜 索" onclick="btn_Search()" />
