@@ -68,6 +68,12 @@
                 $("#CreatTime").val(formatDate(data.CreatTime, "yyyy-MM-dd hh:mm:ss"));
                 //设置select
                 $("#UserRoleNumber").val(data.UserRoleNumber);
+                if (IsNullOrEmpty(data.CodeImg1)) {
+                    $("#pimg").attr("src", data.CodeImg1);
+                }
+                if (IsNullOrEmpty(data.CodeImg2)) {
+                    $("#pimg1").attr("src", data.CodeImg2);
+                }
             });
         }
     }
