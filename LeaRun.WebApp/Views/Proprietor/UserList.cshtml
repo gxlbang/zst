@@ -43,7 +43,7 @@
                     $.post("/Proprietor/UserList", { pageIndex: page,name:name}, function (data) {
                         var lis = [];
                         for (var i in data) {
-                            lis.push("<a href=\"/Proprietor/UserBillList\" class=\"pen-li user-blist bbot clear\">");
+                            lis.push("<a href=\"/Proprietor/UserBillList?userNumber="+data[i].T_U_Number+"\" class=\"pen-li user-blist bbot clear\">");
                             lis.push("<span class=\"pen-span fl\">"+data[i].T_U_Name+"</span>");
                             lis.push("<span class=\"pen-span fl\">"+data[i].T_UserName+"</span>")
                             lis.push("<i class=\"icon-next fr\"></i>");

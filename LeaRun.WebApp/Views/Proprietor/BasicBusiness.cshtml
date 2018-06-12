@@ -51,7 +51,7 @@
                         <span class="op-ju clear">当前剩余余额：@Model.CurrMoney.Value.ToString("0.00") 元<a href="javascript:;" onclick="checkAmmeter('@Model.Number',22)" class="op-cha fr">立即查询剩余余额</a></span>
                         <span class="op-ju">剩余余额同步时间：@Model.CM_Time.Value.ToString("yyyy-MM-dd HH:mm:ss")</span>
                         <span class="op-ju">总充值金额：@Model.AllMoney.Value.ToString("0.00") 元</span>
-                        <span class="op-ju clear">充值金额：<input type="text" class="money fr" placeholder="0" id="money" /></span>
+                        <span class="op-ju clear">充值金额：<input type="number" class="money fr" placeholder="0" id="money" /></span>
                         <div class="op-btnall op-cho clear">
                             <a href="javascript:;" onclick="recharge('@Model.Number')" class="btn-all fl">充值</a>
                             @*<a href="" class="op-abtn fl">返回</a>

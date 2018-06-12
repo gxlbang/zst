@@ -277,9 +277,10 @@ namespace LeaRun.WebApp.Controllers
                                 List<DbParameter> parBill = new List<DbParameter>();
                                 parBill.Add(DbFactory.CreateDbParameter("@Number", bill.Number));
                                 parBill.Add(DbFactory.CreateDbParameter("@Status", bill.Status));
+                                parBill.Add(DbFactory.CreateDbParameter("@StatusStr", bill.StatusStr));
                                 parBill.Add(DbFactory.CreateDbParameter("@PayTime", bill.PayTime));
 
-                                StringBuilder sql = new StringBuilder("update Am_Bill set Status=@Status,PayTime=@PayTime where Number=@Number  and Status = 1");
+                                StringBuilder sql = new StringBuilder("update Am_Bill set Status=@Status,PayTime=@PayTime,StatusStr=@StatusStr where Number=@Number  and Status = 1");
 
                                 if (database.ExecuteBySql(sql, parBill.ToArray()) > 0)
                                 {
@@ -297,11 +298,11 @@ namespace LeaRun.WebApp.Controllers
                                     {
                                         CreateTime = DateTime.Now,
                                         CreateUserId = userModel.Number,
-                                        CreateUserName = userModel.Account ,
+                                        CreateUserName = userModel.Account,
                                         CurrMoney = userModel.Money + bill.Money, //变动后余额
                                         Money = bill.Money,
                                         OperateType = 4,
-                                        OperateTypeStr = "电表充值",
+                                        OperateTypeStr = "账单缴费",
                                         UserName = userModel.Account,
                                         U_Name = userModel.Name,
                                         U_Number = userModel.Number,
@@ -372,10 +373,33 @@ namespace LeaRun.WebApp.Controllers
                                             database.Insert(modeldetail1); //记录日志
 
                                             //记录分账信息
+                                            var payToUser = new Am_PayToUserMoneyDetails()
+                                            {
+                                                CreateTime = DateTime.Now,
+                                                F_UName = userModel.Name,
+                                                Number = CommonHelper.GetGuid,
+                                                F_UserName = userModel.Account,
+                                                F_UserNumber = userModel.Number,
+                                                Money = fmoney,
+                                                MoneyFree = money,
+                                                ObjectNumber = bill.Number,
+                                                OpenId = userModel.OpenId,
+                                                OperateType = 1,
+                                                OperateTypeStr = "账单缴费",
+                                                Remark = "",
+                                                TaskNumber = "",
+                                                TotalMoney = bill.Money,
+                                                UName = bill.T_U_Name,
+                                                UserName = bill.T_UserName,
+                                                UserNumber = bill.T_U_Number
+                                            };
+
+                                            database.Insert<Am_PayToUserMoneyDetails>(payToUser);
+
                                         }
                                         else
                                         {
-                                            
+
                                         }
                                     }
                                     catch (Exception ex)

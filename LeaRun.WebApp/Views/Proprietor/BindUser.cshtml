@@ -4,18 +4,55 @@
     Layout = "~/Views/Shared/_Partial.cshtml";
 }
 <script src="~/Content/Scripts/layui/layui.js"></script>
+<link href="~/Content/Scripts/layui/css/layui.css" rel="stylesheet" />
 <script>
-    
-
     layui.use('laydate', function () {
         var laydate = layui.laydate;
         laydate.render({
-            elem: '#starTime' 
+            elem: '#starTime'
         });
         laydate.render({
             elem: '#endTime'
         });
     });
+    function userInfo() {
+        var phone = $("#phone").val();
+        var name = $("#name").val();
+        if (!phone.length > 0) {
+            layer.open({ content: "请输入手机号码", skin: 'msg', time: 2 });
+            return;
+        }
+        if (!name.length > 0) {
+            layer.open({ content: "请输入姓名", skin: 'msg', time: 2 });
+            return;
+        }
+        $.post("/Proprietor/GetUserInfo", { phone: phone, name: name }, function (data) {
+            if (data.res == "Ok") {
+                var html = " <table  class=\"layui-table\">"
+                html += " <tr><td>手机号码</td><td>" + data.phone + "</td></tr>";
+                html += " <tr><td>姓名</td><td>" + data.name + "</td></tr>";
+                html += " <tr><td>身份证号码</td><td>" + data.code + "</td></tr>";
+                html += " <tr><td>身份证正面</td><td><img style=\"width:100px; height:50px;\" src=\"" + data.img1 + "\"/ onclick=\"showImg(this.src)\"></td></tr>";
+                html += " <tr><td>身份证背面</td><td><img style=\"width:100px; height:50px;\"  src=\"" + data.img2 + "\" onclick=\"showImg(this.src)\" /></td></tr>";
+                html += "</table>";
+                layer.open({
+                    type: 1,
+                    title: false,
+                    closeBtn: 1,
+                    shadeClose: true,
+                    skin: 'yourclass',
+                    area: '85%',
+                    content: html, //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
+                    cancel: function () {
+
+                    }
+                });
+
+            } else {
+                layer.open({ content: data.msg, skin: 'msg', time: 2 });
+            }
+        });
+    }
 
 
 </script>
@@ -45,9 +82,6 @@
     {
         chargeItemList = ViewBag.chargeItemList as List<LeaRun.Entity.Am_ChargeItem>;
     }
-
-
-
     <div class="all">
         <header class="header clear">
             <a href="javascript:history.go(-1);" class="return fl"></a>
@@ -62,11 +96,12 @@
         <div class="gary charge-bill binding-text bbot clear"><span class="bill-text fl">关联用户</span></div>
         <div class="charge-bill binding-text bbot clear">
             <span class="bill-text fl">手机号：</span>
-            <input type="text" class="l-input fl" maxlength="11" value="@(ammeterPermission.UserName==null?"":ammeterPermission.UserName)" id="phone" placeholder="输入手机号" />
+            <input type="number" class="l-input fl" maxlength="11" value="@(ammeterPermission.UserName==null?"":ammeterPermission.UserName)" id="phone" placeholder="输入手机号" />
         </div>
         <div class="charge-bill binding-text bbot clear">
             <span class="bill-text fl">姓名：</span>
-            <input type="text" class="l-input fl" value="@(ammeterPermission.U_Name==null ?"":ammeterPermission.U_Name)" placeholder="输入姓名" id="name" />
+            <input type="text" class="l-input fl" value="@(ammeterPermission.U_Name==null ?"":ammeterPermission.U_Name)" placeholder="输入姓名" id="name" style="width:70%" />
+            <span class="bill-text fr "><a href="javascript:;" onclick="userInfo()" style="color:#0080ff">查询</a></span>
         </div>
         <div class="charge-bill binding-text bbot clear">
             <span class="bill-text fl">租赁时间：</span>
@@ -98,7 +133,7 @@
             <span class="bill-text fl">滞纳金：</span>
             <input type="text" class="l-input fl" value="@template.OtherFees" placeholder="%" id="lateFee" />
             <span class="bill-text fl">(百分比%)</span>
-            
+
         </div>
         <div class="gary"></div>
         <div class="acc-top bbot btop clear">
@@ -110,56 +145,55 @@
             {
                 foreach (var item in templateContentList)
                 {
-                    <div class="acc-top acc-pa clear">
-                        <input type="hidden" name="name" value="@item.ChargeItem_Number" />
-                        <input type="hidden" name="name" value="@item.ChargeItem_ChargeType" />
+            <div class="acc-top acc-pa clear">
+                <input type="hidden" name="name" value="@item.ChargeItem_Number" />
+                <input type="hidden" name="name" value="@item.ChargeItem_ChargeType" />
 
-                        <span class="acc-one fl">
-                            @if (item.ChargeItem_Number != "0")
+                <span class="acc-one fl">
+                    @if (item.ChargeItem_Number != "0")
                             {
-                                <input type="text" class="acc-in" placeholder="租金" disabled="disabled" value="@item.ChargeItem_Title" />
+                            <input type="text" class="acc-in" placeholder="租金" disabled="disabled" value="@item.ChargeItem_Title" />
                             }
                             else
                             {
-                                <input type="text" class="acc-in" placeholder="租金" value="@item.ChargeItem_Title" />
+                            <input type="text" class="acc-in" placeholder="租金" value="@item.ChargeItem_Title" />
                             }
 
-                        </span>
-                        <span class="acc-one acc-two fl"><input type="text" class="acc-in" placeholder="0.00" value="@item.Money.Value.ToString("0.00")" onkeyup="clearNoNum(this)" /></span>
+                </span>
+                <span class="acc-one acc-two fl"><input type="text" class="acc-in" placeholder="0.00" value="@item.Money.Value.ToString("0.00")" onkeyup="clearNoNum(this)" /></span>
 
-                        @if (chargeItemList.Where(o => o.Title == item.ChargeItem_Title).Count() == 0)
+                @if (chargeItemList.Where(o => o.Title == item.ChargeItem_Title).Count() == 0)
                         {
-                            <input class="icon-close fr" type="button" onclick="test(this)" value="-" />
+                        <input class="icon-close fr" type="button" onclick="test(this)" value="-" />
                         }
 
-                    </div>
+            </div>
                 }
             }
             else
             {
                 foreach (var item in chargeItemList)
                 {
-                    <div class="acc-top acc-pa clear">
-                        <input type="hidden" name="name" value="@item.Number" />
-                        <input type="hidden" name="name" value="@item.ChargeType" />
-                        <span class="acc-one fl"><input type="text" class="acc-in" placeholder="租金" value="@item.Title" disabled="disabled" /></span>
-                        <span class="acc-one acc-two fl"><input type="text" class="acc-in" placeholder="0.00" value="" onkeyup="clearNoNum(this)" /></span>
-                    </div>
+            <div class="acc-top acc-pa clear">
+                <input type="hidden" name="name" value="@item.Number" />
+                <input type="hidden" name="name" value="@item.ChargeType" />
+                <span class="acc-one fl"><input type="text" class="acc-in" placeholder="租金" value="@item.Title" disabled="disabled" /></span>
+                <span class="acc-one acc-two fl"><input type="text" class="acc-in" placeholder="0.00" value="" onkeyup="clearNoNum(this)" /></span>
+            </div>
                 }
 
             }
             <div id="container"></div>
-            <div class="acc-add"><button id="add" class="acc-aj">+增加收费项</button></div>
+            <div class="acc-top bbot   clear"><button id="add" class="acc-aj">+增加收费项</button></div>
 
         </div>
-        <div class="acc-btnt clear">
-            <a href="javascript:;" id="submit1" class="acc-btno fl">保存</a>
-            <a href="" class="acc-btno acc-btntt fr">取消</a>
+        <div class="list-index">
+            <a href="javascript:;" id="submit1" class="btn-all">保存</a>
         </div>
     </div>
+    <script src="~/Content/Scripts/layer.mobile-v2.0/layer_mobile/layer.js"></script>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 
-
-<script src="~/Content/Scripts/layer.mobile-v2.0/layer_mobile/layer.js"></script>
     <script type="text/javascript">
 
         $("#starTime").focus(function () {
@@ -175,15 +209,21 @@
         var node = container.nextSibling;
         add.onclick = function () {
             oDiv = document.createElement('div');
-            oDiv.innerHTML = "<div class='acc-top acc-pa clear'><span class='acc-one fl'><input type=\"hidden\" name=\"name\"  value=\"\" /><input type=\"hidden\" name=\"name\"  value=\"\" /><input type='text' class='acc-in' placeholder='其他' /></span><span class='acc-one acc-two fl'><input type='text' class='acc-in' placeholder='0.00'  onkeyup=\"clearNoNum(this)\" /></span><input class='icon-close fr' type='button' onclick='test(this)' value='-' /></div>";
+            oDiv.innerHTML = "<div class='acc-top acc-pa clear'><span class='acc-one fl'><input type=\"hidden\" name=\"name\"  value=\"\" /><input type=\"hidden\" name=\"name\"  value=\"\" /><input type='text' class='acc-in' placeholder='其他' value=\"0\"  /></span><span class='acc-one acc-two fl'><input type='text' class='acc-in' placeholder='0.00'  onkeyup=\"clearNoNum(this)\" /></span><input class='icon-close fr' type='button' onclick='test(this)' value='-' /></div>";
             container.parentNode.insertBefore(oDiv, node)
             node = oDiv.nextSibling;
-
         }
         function test(test) {
             test.parentNode.parentNode.removeChild(test.parentNode);
         }
-
+        function showImg(obj) {
+            var imgsurl = [];
+            imgsurl[0] = obj;
+            wx.previewImage({
+                current: obj,
+                urls: imgsurl
+            });
+        }
         function clearNoNum(obj) {
             obj.value = obj.value.replace(/[^\d.]/g, ""); //清除"数字"和"."以外的字符
             obj.value = obj.value.replace(/^\./g, ""); //验证第一个字符是数字
@@ -192,9 +232,6 @@
             obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3'); //只能输入两个小数
 
         }
-
-
-
         $(function () {
 
             $('.acc-pa').each(function (i) {
@@ -214,8 +251,9 @@
                     _list["itemList[" + i + "].Title"] = thisItem.find("input:eq(2)").val();
                     _list["itemList[" + i + "].Money"] = thisItem.find("input:eq(3)").val();
                     if (thisItem.find("input:eq(3)").val().length <= 0) {
-                        layer.open({ content: '请输入正确的收费项', skin: 'msg', time: 2 });
-                        isTrue = false;
+                        thisItem.find("input:eq(3)").val(0);
+                        //layer.open({ content: '请输入正确的收费项', skin: 'msg', time: 2 });
+                        //isTrue = false;
                     }
                 });
                 if (!isTrue) {

@@ -22,7 +22,7 @@
                     <span class="op-ju">楼层：@Model.Floor 层</span>
                     <span class="op-ju">房号：@Model.Room 号</span>
                     <span class="op-ju">手机号：@Model.UserName</span>
-                    <span class="op-ju">电费：1.5元/度</span>
+                    <span class="op-ju">电费：@(Model.AmmeterMoney == null ? "" : Model.AmmeterMoney.Value.ToString("0.00")) 元/度</span>
                     <span class="op-ju clear">当前剩余电量：@Model.CurrPower kwh<a href="javascript:;" onclick="checkAmmeter('@Model.Number',20)" class="my-meter fr">电量查询</a></span>
                     <span class="op-ju">电量同步时间：@Model.CP_Time.Value.ToString("yyyy-MM-dd HH:mm:ss") </span>
                     <span class="op-ju clear">当前剩余余额：@Model.CurrMoney.Value.ToString("0.00")元<a href="/Personal/AmmeterRecharge?number=@Model.Number" class="my-meter fr">充值</a><a href="javascript:;" onclick="checkAmmeter('@Model.Number',22)"  class="my-meter my-m fr">查询</a></span>

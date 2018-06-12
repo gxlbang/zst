@@ -172,14 +172,14 @@ namespace LeaRun.WebApp.Controllers
                                 List<DbParameter> parfisrt = new List<DbParameter>();
                                 parfisrt.Add(DbFactory.CreateDbParameter("@U_Number", item.U_Number));
 
-                                var taskList = database.FindCount<Am_Task>(" and Status = 1 and OperateType = 4  and U_Number=@U_Number " ,parfisrt.ToArray());
+                                var taskList = database.FindCount<Am_Task>(" and Status = 1 and OperateType = 4  and U_Number=@U_Number ", parfisrt.ToArray());
                                 var config = database.FindList<Fx_WebConfig>().FirstOrDefault();
                                 double fmoney = 0;
                                 double money = 0;//1:1押金返还金额
-                                if (taskList==1)
+                                if (taskList == 1)
                                 {
                                     //首次充值
-                                    fmoney = (item.Money.Value - config.AmCharge.Value) * (1 - config.ChargeFee.Value);
+                                    fmoney = (item.Money.Value - config.AmDeposit.Value) * (1 - config.ChargeFee.Value);
 
                                 }
                                 else
@@ -193,7 +193,7 @@ namespace LeaRun.WebApp.Controllers
                                     var user = database.FindEntity<Ho_PartnerUser>(ammodel.UY_Number);
                                     if (user.FreezeMoney > 0) //首先要有押金
                                     {
-                                         money = item.Money.Value * config.ChargeFee.Value;
+                                        money = item.Money.Value * config.ChargeFee.Value;
                                         //如果返还的金额大于
                                         if (money > user.FreezeMoney)
                                         {
@@ -211,8 +211,8 @@ namespace LeaRun.WebApp.Controllers
                                         userModel.Modify(userModel.Number);
                                         database.Update(userModel); //扣掉余额
 
-                                         
-                                                               //添加押金返还记录
+
+                                        //添加押金返还记录
                                         var recordModel = new Am_AmDepositDetail()
                                         {
                                             CreateTime = DateTime.Now,
@@ -227,7 +227,7 @@ namespace LeaRun.WebApp.Controllers
                                         database.Insert(recordModel); //添加返还记录
 
 
-                                                                      //记录余额日志
+                                        //记录余额日志
                                         var modeldetail1 = new Am_MoneyDetail()
                                         {
                                             CreateTime = DateTime.Now,
@@ -246,6 +246,28 @@ namespace LeaRun.WebApp.Controllers
                                         database.Insert(modeldetail1); //记录日志
 
                                         //记录分账信息
+                                        var payToUser = new Am_PayToUserMoneyDetails()
+                                        {
+                                            CreateTime = DateTime.Now,
+                                            F_UName = userModel.Name,
+                                            Number = CommonHelper.GetGuid,
+                                            F_UserName = userModel.Account,
+                                            F_UserNumber = userModel.Number,
+                                            Money = fmoney,
+                                            MoneyFree = money,
+                                            ObjectNumber = item.Number,
+                                            OpenId = userModel.OpenId,
+                                            OperateType = 1,
+                                            OperateTypeStr = "电费充值",
+                                            Remark = "",
+                                            TaskNumber = "",
+                                            TotalMoney = item.Money,
+                                            UName = item.U_Name,
+                                            UserName = item.UserName,
+                                            UserNumber = item.U_Number
+                                        };
+
+                                        database.Insert<Am_PayToUserMoneyDetails>(payToUser);
                                     }
                                     else
                                     {

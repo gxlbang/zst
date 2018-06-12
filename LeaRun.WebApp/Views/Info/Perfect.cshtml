@@ -2,7 +2,7 @@
     ViewBag.Title = "完善信息";
     Layout = "~/Views/Shared/_Partial.cshtml";
 }
-<script src="~/Content/Scripts/uijs/jqthumb.min.js"></script>
+@*<script src="~/Content/Scripts/uijs/jqthumb.min.js"></script>*@
 <script src="~/Content/Scripts/uijs/checkFileTypeAndSize.js"></script>
 <script type="text/javascript">
     $(function () {
@@ -14,7 +14,7 @@
                     //关闭并重置密码输入
                     setTimeout("PwdBox.reset();", 500);
                 } else {
-                    alert(JSON.stringify(arguments));
+                    //alert(JSON.stringify(arguments));
                 }
             });
         });
@@ -26,7 +26,7 @@
                     setTimeout("PwdBox.reset();", 500);
                     
                 } else {
-                    alert(JSON.stringify(arguments));
+                    //alert(JSON.stringify(arguments));
                 }
             });
         });
@@ -45,10 +45,10 @@
         $("#img2").click(function () {
             $("#imguploadimg2").click();
         })
-        $('.in-la img').jqthumb({
-            width: 3,
-            height: 3,
-        });
+        //$('.in-la img').jqthumb({
+        //    width: 3,
+        //    height: 3,
+        //});
 
         $("#imguploadimg1").checkFileTypeAndSize({
             allowedExtensions: ['jpg', 'jpeg', 'gif', 'png'],

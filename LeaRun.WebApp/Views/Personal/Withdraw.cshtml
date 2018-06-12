@@ -14,7 +14,7 @@
         <div class="re-pt clear"><span class="re-y fl">￥</span>
             @using (Ajax.BeginForm("Withdraw", "Personal", new { }, new AjaxOptions() { HttpMethod = "post", OnSuccess = "success" }, new { @id = "form" }))
             {
-                <input type="text" name="money" id="money" class="l-input" value="" placeholder="0.00" />
+                <input type="number" name="money" id="money" class="l-input" value="" placeholder="0.00" />
                 <input type="hidden" name="pwd" id="pwd" value="" />
             }
         </div>
@@ -56,11 +56,16 @@
             }
         }
 
-
+        
         <a href="javascript:;" class="btn-all" onclick="myfunction()">提现</a>
+        <a href="/Personal/WithdrawList" class="btn-all btn-li">提现记录</a>
     </div>
 </div>
+<script src="~/Content/Scripts/passwordBox/passwordBox.min.js"></script>
 <script>
+    $(function () {
+        PwdBox.init('', '/Content/Scripts/passwordBox/img/pwd_keyboard.png', '请输入支付密码', '安全支付环境，请放心使用！');
+    });
     function DoCheck() {
         var ch = document.getElementsByName("choose");
         if (document.getElementsByName("allChecked")[0].checked == true) {
@@ -79,13 +84,25 @@
             layer.msg("请输入正确的金额", { time: 2000 });
             return;
         }
-        layer.prompt({
-            title: '',
-            formType: 1
-        }, function (pass) {
-            $("#pwd").val(pass);
-            $("form").submit();
+
+        PwdBox.show(function (res) {
+            if (res.status) {
+                //关闭并重置密码输入
+                $("#pwd").val(res.password);
+                setTimeout("PwdBox.reset();", 500);
+                
+                $("form").submit();
+            } else {
+                //alert(JSON.stringify(arguments));
+            }
         });
+        //layer.prompt({
+        //    title: '',
+        //    formType: 1
+        //}, function (pass) {
+        //    $("#pwd").val(pass);
+           
+        //});
     }
     function success(data) {
         if (data.res == "Ok") {
@@ -96,6 +113,6 @@
         }
     }
     function jump() {
-        window.location.href = '@Url.Action("Index", "Personal")';
+        window.location.href = '@Url.Action("WithdrawList", "Personal")';
     }
 </script>

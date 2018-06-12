@@ -338,7 +338,7 @@ namespace LeaRun.WebApp.Controllers
                             CreateUserId = user.Number,
                             CreateUserName = user.Name,
                             CurrMoney = account.Money,
-                            Money = money,
+                            Money = -money,
                             OperateType = 2,
                             OperateTypeStr = "提现",
                             Remark = "",
@@ -368,7 +368,7 @@ namespace LeaRun.WebApp.Controllers
         {
             var user = wbll.GetUserInfo(Request);
             int recordCount = 0;
-            var list = database.FindListPage<Am_UserGetMoneyToBank>("Number", "desc", pageIndex, pageSize, ref recordCount);
+            var list = database.FindListPage<Am_UserGetMoneyToBank>("CreateTime", "desc", pageIndex, pageSize, ref recordCount);
             ViewBag.recordCount = (int)Math.Ceiling(1.0 * recordCount / pageSize); ;
             if (Request.IsAjaxRequest())
             {
@@ -1502,7 +1502,7 @@ namespace LeaRun.WebApp.Controllers
             var user = wbll.GetUserInfo(Request);
             List<DbParameter> par = new List<DbParameter>();
             par.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
-            par.Add(DbFactory.CreateDbParameter("@Status", "1"));
+            par.Add(DbFactory.CreateDbParameter("@Status", "0"));
 
             var depositList = database.FindList<Am_UserDeposit>(" and U_Number=@U_Number and Status=@Status", par.ToArray());
             if (depositList != null && depositList.Count() > 0)

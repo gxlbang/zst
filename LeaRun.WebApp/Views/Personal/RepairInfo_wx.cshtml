@@ -40,7 +40,7 @@
                         if (repairAnswer!=null&& repairAnswer.Number !=null && repairAnswer.Number !="")
                         {
                             <p>已安排师傅过去维修</p>
-                            <p>联系方式：@repairAnswer.Mobile<span style="padding-left: 0.3rem;">@repairAnswer.U_Name</span></p>
+                            <p>联系方式：<a href="tel:@repairAnswer.Mobile">@repairAnswer.Mobile</a> @repairAnswer.Mobile<span style="padding-left: 0.3rem;">@repairAnswer.U_Name</span></p>
                             <p>备注：@repairAnswer.AContent</p>
                         }
                     }

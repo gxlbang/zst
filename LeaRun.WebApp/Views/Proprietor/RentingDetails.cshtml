@@ -27,7 +27,7 @@
                 @if (ViewBag.ammeter != null)
                 {
                     <span class="pro-li">电表号：@ammeter.AM_Code</span>
-                    <span class="pro-li">剩余电费：@ammeter.CurrMoney.Value.ToString("0.00") 元</span>
+                    <span class="pro-li">剩余电费：@ammeter.CurrMoney.Value.ToString("0.00") 元 <a href="javascript:;" onclick="checkAmmeter('@ammeter.Number',22)" class="my-meter my-m">同步</a> </span>
                     <span class="pro-li">电费同步时间：@ammeter.CM_Time.Value.ToString("yyyy-MM-dd HH:mm:ss")</span>
 
                 }
@@ -47,7 +47,7 @@
                 }
                 @if (contract != null && contract.Number != null)
                 {
-                    <span class="pro-li">合同：<a href="/Common/Contract?KeyValue='@contract.Number'">查看</a></span>
+                    <span class="pro-li">合同：<a href="/Common/Contract?KeyValue=@contract.Number"  style="color:orangered">@contract.ContractCode</a></span>
                 }
 
             </div>
@@ -141,4 +141,33 @@
             return false;
         });
     });
+
+
+    function checkAmmeter(number, type) {
+        $.post("/Personal/AmmeterCheck", { number: number, type: type }, function (data) {
+            if (data.res == "Ok") {
+                layer.open({ content: data.msg, skin: 'msg', time: 2 });
+                layer.open({ type: 2, content: '同步中...' });
+                setInterval(function () {
+                    result(data.pr_id);
+                }, 3000);
+
+            } else {
+                layer.open({ content: data.msg, skin: 'msg', time: 2 });
+            }
+        });
+    }
+    function result(pr_id) {
+        $.post("/Personal/OperationResult", { pr_id: pr_id }, function (data) {
+            if (data.res == "Ok") {
+                layer.close();
+                layer.open({
+                    content: data.msg, skin: 'msg', time: 2, end: function myfunction() {
+                        location.reload();
+                    }
+                });
+
+            }
+        });
+    }
 </script>

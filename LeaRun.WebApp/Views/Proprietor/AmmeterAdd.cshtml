@@ -37,7 +37,7 @@
         </div>*@
         <div class="charge-bill add-ele bbot clear">
             <span class="bill-text fl">表号</span>
-            @Html.TextBoxFor(model => model.AM_Code, new { @class = "l-input fl", placeholder = "表号", })
+            @Html.TextBoxFor(model => model.AM_Code, new { @class = "l-input fl", placeholder = "表号", maxlength = "12" ,type="number"})
         </div>
         @*<div class="charge-bill add-ele bbot clear">
             <span class="bill-text fl">电表起充金额</span>
@@ -133,6 +133,6 @@
         }
     }
     function jump() {
-        window.location.href = '@Url.Action("Index", "Personal")';
+        window.location.href = '@Url.Action("AmmeterList", "Proprietor")';
     }
 </script>

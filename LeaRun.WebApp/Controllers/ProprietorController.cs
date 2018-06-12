@@ -41,6 +41,11 @@ namespace LeaRun.WebApp.Controllers
             List<DbParameter> parameter = new List<DbParameter>();
             parameter.Add(DbFactory.CreateDbParameter("@UNumber", user.Number));
             var collectorList = database.FindList<Am_Collector>(" and UNumber=@UNumber", parameter.ToArray());
+            foreach (var item in collectorList)
+            {
+                
+
+            }
             ViewBag.collectorList = collectorList;
 
 
@@ -80,13 +85,13 @@ namespace LeaRun.WebApp.Controllers
 
                 if (ammeter != null && ammeter.Number != null)
                 {
-                    //获取电价
-                    List<DbParameter> par1 = new List<DbParameter>();
-                    par1.Add(DbFactory.CreateDbParameter("@Number", model.AmmeterMoney_Number));
-                    par1.Add(DbFactory.CreateDbParameter("@UserNumber", user.Number));
-                    var ammeterMoney = database.FindEntityByWhere<Am_AmmeterMoney>(" and Number=@Number ", par1.ToArray());
-                    ammeter.AmmeterMoney_Number = ammeterMoney.Number;
-                    ammeter.AmmeterMoney_Name = ammeterMoney.Name;
+                    ////获取电价
+                    //List<DbParameter> par1 = new List<DbParameter>();
+                    //par1.Add(DbFactory.CreateDbParameter("@Number", model.AmmeterMoney_Number));
+                    //par1.Add(DbFactory.CreateDbParameter("@UserNumber", user.Number));
+                    //var ammeterMoney = database.FindEntityByWhere<Am_AmmeterMoney>(" and Number=@Number ", par1.ToArray());
+                    //ammeter.AmmeterMoney_Number = ammeterMoney.Number;
+                    //ammeter.AmmeterMoney_Name = ammeterMoney.Name;
 
                     //获取电表类型
                     List<DbParameter> par2 = new List<DbParameter>();
@@ -165,10 +170,10 @@ namespace LeaRun.WebApp.Controllers
                 }
 
 
-                //获取电价
-                List<DbParameter> par1 = new List<DbParameter>();
-                par1.Add(DbFactory.CreateDbParameter("@Number", model.AmmeterMoney_Number));
-                var ammeterMoney = database.FindEntityByWhere<Am_AmmeterMoney>(" and Number=@Number ", par1.ToArray());
+                ////获取电价
+                //List<DbParameter> par1 = new List<DbParameter>();
+                //par1.Add(DbFactory.CreateDbParameter("@Number", model.AmmeterMoney_Number));
+                //var ammeterMoney = database.FindEntityByWhere<Am_AmmeterMoney>(" and Number=@Number ", par1.ToArray());
                 //获取电表类型
                 List<DbParameter> par2 = new List<DbParameter>();
                 par2.Add(DbFactory.CreateDbParameter("@Number", model.AmmeterType_Number));
@@ -227,7 +232,7 @@ namespace LeaRun.WebApp.Controllers
                     Address = model.Address,
                     UserTime = DateTime.Now,
                     AllMoney = 0,
-                    AmmeterMoney_Name = ammeterMoney.Name,
+                    AmmeterMoney_Name = "",
                     AmmeterMoney_Number = model.AmmeterMoney_Number,
                     AmmeterType_Name = ammeterType.Name,
                     AmmeterType_Number = model.AmmeterType_Number,
@@ -398,7 +403,7 @@ namespace LeaRun.WebApp.Controllers
                     task.OperateTypeStr = "设置电价";
                     database.Insert<Am_Task>(task);
                     CommonClass.AmmeterApi.InserOperateLog(user.Number, ammeter.Collector_Code, ammeter.AM_Code, 5, "设置电价", task.Number, result.suc, result.result);
-                    return Json(new { res = "Ok", msg = "提交成功", pr_id= result.opr_id });
+                    return Json(new { res = "Ok", msg = "提交成功", pr_id = result.opr_id });
 
                 }
             }
@@ -528,10 +533,10 @@ namespace LeaRun.WebApp.Controllers
             if (ammeter != null && ammeter.Number != null)
             {
                 //获取电价
-                List<DbParameter> par1 = new List<DbParameter>();
-                par1.Add(DbFactory.CreateDbParameter("@Number", ammeter.AmmeterMoney_Number));
-                var ammeterMoney = database.FindEntityByWhere<Am_AmmeterMoney>(" and Number=@Number ", par1.ToArray());
-                ViewBag.ammeterMoney = ammeterMoney.FirstMoney.Value.ToString("0.00");
+                //List<DbParameter> par1 = new List<DbParameter>();
+                //par1.Add(DbFactory.CreateDbParameter("@Number", ammeter.AmmeterMoney_Number));
+                //var ammeterMoney = database.FindEntityByWhere<Am_AmmeterMoney>(" and Number=@Number ", par1.ToArray());
+                //ViewBag.ammeterMoney = ammeterMoney.FirstMoney.Value.ToString("0.00");
                 //操作记录总页
                 List<DbParameter> par = new List<DbParameter>();
                 par.Add(DbFactory.CreateDbParameter("@U_Number", "System"));
@@ -1459,7 +1464,7 @@ namespace LeaRun.WebApp.Controllers
                     ViewBag.template = template;
                     List<DbParameter> par2 = new List<DbParameter>();
                     par2.Add(DbFactory.CreateDbParameter("@Template_Number", template.Number));
-                    var templateContentList = database.FindList<Am_TemplateContent>(" and Template_Number=@Template_Number  ", par2.ToArray()).OrderBy(o=>o.ChargeItem_Title).ToList();
+                    var templateContentList = database.FindList<Am_TemplateContent>(" and Template_Number=@Template_Number  ", par2.ToArray()).OrderBy(o => o.ChargeItem_Title).ToList();
                     //模板内容
                     if (templateContentList != null && templateContentList.Count() > 0)
                     {
@@ -1471,12 +1476,32 @@ namespace LeaRun.WebApp.Controllers
                 par3.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
                 par3.Add(DbFactory.CreateDbParameter("@U_Number2", "System"));
                 //收费项
-                var chargeItemList = database.FindList<Am_ChargeItem>(" and U_Number=@U_Number or U_Number=@U_Number2 ", par3.ToArray()).OrderBy(o=>o.Title).ToList();
+                var chargeItemList = database.FindList<Am_ChargeItem>(" and U_Number=@U_Number or U_Number=@U_Number2 ", par3.ToArray()).OrderBy(o => o.Title).ToList();
                 ViewBag.chargeItemList = chargeItemList;
 
                 return View(ammeter);
             }
             return View();
+        }
+        /// <summary>
+        /// 查询用户
+        /// </summary>
+        /// <param name="phone"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public ActionResult GetUserInfo(string phone, string name)
+        {
+            List<DbParameter> parameter = new List<DbParameter>();
+            parameter.Add(DbFactory.CreateDbParameter("@Account", phone));
+            parameter.Add(DbFactory.CreateDbParameter("@Name", name));
+            parameter.Add(DbFactory.CreateDbParameter("@Status", "9"));
+
+            var userInfo = database.FindEntityByWhere<Ho_PartnerUser>(" and Account=@Account and Name=@Name and Status!=@Status ", parameter.ToArray());
+            if (userInfo != null && userInfo.Number != null)
+            {
+                return Json(new { res = "Ok", msg = "查询成功", phone = userInfo.Account, name = userInfo.Name, code = userInfo.CardCode, img1 = userInfo.CodeImg1, img2 = userInfo.CodeImg2 });
+            }
+            return Json(new { res = "No", msg = "没有找到该用户" });
         }
         /// <summary>
         /// 关联用户
@@ -1503,10 +1528,14 @@ namespace LeaRun.WebApp.Controllers
             //是否存在用户
             if (isTenant != null && isTenant.Number != null)
             {
-                ///要判断状态
-                isTenant.Status =3;
-                isTenant.StatusStr = "审核通过";
-                database.Update<Ho_PartnerUser>(isTenant);
+                //要判断状态
+                if (isTenant.Status == 1)
+                {
+                    isTenant.Status = 3;
+                    isTenant.StatusStr = "审核通过";
+                    database.Update<Ho_PartnerUser>(isTenant);
+                }
+
 
                 List<DbParameter> par = new List<DbParameter>();
                 par.Add(DbFactory.CreateDbParameter("@UY_Number", user.Number));
@@ -2110,6 +2139,7 @@ namespace LeaRun.WebApp.Controllers
             List<DbParameter> parameter = new List<DbParameter>();
             parameter.Add(DbFactory.CreateDbParameter("@F_U_Number", user.Number));
 
+
             StringBuilder sbWhere = new StringBuilder();
             sbWhere.Append(" and F_U_Number=@F_U_Number ");
 
@@ -2122,6 +2152,11 @@ namespace LeaRun.WebApp.Controllers
             {
                 parameter.Add(DbFactory.CreateDbParameter("@endTime", endTime));
                 sbWhere.Append(" and SendTime<=@endTime ");
+            }
+            if (userNumber != null && userNumber != "")
+            {
+                parameter.Add(DbFactory.CreateDbParameter("@T_U_Number", userNumber));
+                sbWhere.Append(" and T_U_Number=@T_U_Number ");
             }
 
             var data = database.FindListPage<Am_Bill>(sbWhere.ToString(), parameter.ToArray(), "SendTime", "desc", pageIndex, pageSize, ref recordCount);
@@ -2221,7 +2256,7 @@ namespace LeaRun.WebApp.Controllers
                 //合同
                 List<DbParameter> par4 = new List<DbParameter>();
                 par4.Add(DbFactory.CreateDbParameter("@AmmeterNumber", rent.AmmeterNumber));
-                par4.Add(DbFactory.CreateDbParameter("@Status","1"));
+                par4.Add(DbFactory.CreateDbParameter("@Status", "1"));
                 var contract = database.FindEntityByWhere<Am_Contract>(" and AmmeterNumber=@AmmeterNumber and Status=@Status  ", par4.ToArray());
 
                 ViewBag.contract = contract;
@@ -2562,8 +2597,8 @@ namespace LeaRun.WebApp.Controllers
             par.Add(DbFactory.CreateDbParameter("@U_Number", user.Number));
             var returned = database.FindTableBySql(" select sum(Money)as money from Am_AmDepositDetail where  U_Number=@U_Number and Money<0", par.ToArray());
             ViewBag.deposit = user.FreezeMoney.Value.ToString("0.00");
-             
-            ViewBag.returned =decimal.Parse(returned.Rows[0]["money"].ToString()==""?"0":returned.Rows[0]["money"].ToString()).ToString("0.00");
+
+            ViewBag.returned = decimal.Parse(returned.Rows[0]["money"].ToString() == "" ? "0" : returned.Rows[0]["money"].ToString()).ToString("0.00");
 
             int recordCount = 0;
             var rentList = database.FindListPage<Am_AmDepositDetail>(" and U_Number=@U_Number ", par.ToArray(), "CreateTime", "desc", 1, 10, ref recordCount);

@@ -88,7 +88,12 @@
                             function (res) {
                                 WeixinJSBridge.log(res.err_msg);
                                 if (res.err_msg == "get_brand_wcpay_request:ok") {
-                                    layer.msg("支付成功", { time: 2000 });
+                                    layer.msg("支付成功", {
+                                        time: 2000, end: function myfunction() {
+                                            location.href = "/Personal/OldBill";
+                                        }
+                                    });
+
 
                                 } else {
                                     if (res.err_msg == "get_brand_wcpay_request:cancel") {

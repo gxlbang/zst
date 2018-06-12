@@ -34,7 +34,7 @@ namespace ZstDataHandle
 
             //前台异步处理
             timer.Elapsed += new System.Timers.ElapsedEventHandler(TimedEvent);
-            timer.Interval = 1000 * 60 * 1;//每50分钟执行一次
+            timer.Interval = 1000 * 60 * 50;//每50分钟执行一次
             timer.Enabled = true;
 
             //账单生成
@@ -49,7 +49,7 @@ namespace ZstDataHandle
 
             //抄表生成
             ReadingTimer.Elapsed += new System.Timers.ElapsedEventHandler(ReadingTimerEvent);
-            ReadingTimer.Interval = 1000*60*10;//每10分钟执行一次
+            ReadingTimer.Interval = 1000*60*30;//每30分钟执行一次
             ReadingTimer.Enabled = true;
 
             //抄表异步处理

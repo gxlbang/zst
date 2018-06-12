@@ -11,7 +11,8 @@ namespace LeaRun.WebApp.ViewsModel.Account
     {
         [Required(ErrorMessage = "请输入手机号码")]
         [Display(Name = "手机号码")]
-        [RegularExpression(@"^1(3[0-9]|4[57]|5[0-35-9]|8[0-9]|7[06-8])\d{8}$", ErrorMessage = "请输入正确的手机号码")]
+        [StringLength(11, MinimumLength = 11, ErrorMessage = "请输入正确的手机号")]
+        //[RegularExpression(@"^1(3[0-9]|4[57]|5[0-35-9]|8[0-9]|7[06-8])\d{8}$", ErrorMessage = "请输入正确的手机号码")]
         public string Name { get; set; }
 
         public string Openid { get; set; }

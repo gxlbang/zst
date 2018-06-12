@@ -14,10 +14,9 @@
         foreach (var item in Model)
         {
             <a class="reti-re bbot clear" href="javascript:;" onclick="rent('@item.Number')">
-                <span class="pen-span">@item.Province@item.City@item.County    @item.Address</span>
-                <span class="pen-span">@item.Cell 单元 @item.Floor 层 @item.Room 号</span>
-                <span class="pen-span reti-span">提交退房</span>
-                <i class="icon-next"></i>
+                <span class="pen-span">区域：@item.Province@item.City@item.County</span>
+                <span class="pen-span">地址：@item.Address @item.Cell 单元 @item.Floor 层 @item.Room 号</span>
+                <i class="icon-next fr "></i>
             </a>
         }
     }
